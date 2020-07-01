@@ -18,14 +18,14 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
     //Temp, iterator and list of textures variables
-    private static List<Texture> textureInstances = new ArrayList<Texture>();
+    private static final List<Texture> textureInstances = new ArrayList<Texture>();
     private static Texture tmp = null;
     private static int i = 0;
+    private final int id;
+    private final int width;
+    private final int height;
     //Stored info about the texture
     private String name = "";
-    private int id;
-    private int width;
-    private int height;
 
     //Create a texture using a file name
     public Texture(String fileName) {
@@ -50,7 +50,7 @@ public class Texture {
             }
 
             bytes = bos.toByteArray();
-            ByteBuffer buffer = (ByteBuffer) BufferUtils.createByteBuffer(bytes.length);
+            ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length);
             buffer.put(bytes);
             buffer.flip();
             data = stbi_load_from_memory(buffer, width, height, channels, 4);

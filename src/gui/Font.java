@@ -17,8 +17,10 @@ import java.util.regex.Pattern;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Font {
-    private static List<Font> fonts = new ArrayList<Font>();
-    private String name;
+    private static final List<Font> fonts = new ArrayList<Font>();
+    private final String name;
+    //Kind of like a library of all the characters glyphs in this font
+    private final Map<Character, Glyph> chars = new HashMap<Character, Glyph>();
     private int fontID;
     private BufferedImage bufferedImage;
     private Vector2 imageSize;
@@ -27,9 +29,6 @@ public class Font {
     private int i;
     private Texture texture;
     private float h;
-
-    //Kind of like a library of all the characters glyphs in this font
-    private Map<Character, Glyph> chars = new HashMap<Character, Glyph>();
 
     //Constructor to Create a font using a name in the fonts folder and font size
     public Font(String name, float size) {

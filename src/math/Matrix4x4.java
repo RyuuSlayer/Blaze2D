@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 
 public class Matrix4x4 {
     //A private 2D float array that stores our 4 float by 4 float matrix
-    private float[][] m = new float[4][4];
+    private final float[][] m = new float[4][4];
 
     //Constructor with no parameters and simple calls our defaulting method
     public Matrix4x4() {

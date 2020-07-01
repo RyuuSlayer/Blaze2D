@@ -120,7 +120,7 @@ public class Editor {
 
     public static void SetSelected(GameObject g) {
         selected = g;
-        SetInspected((Object) g);
+        SetInspected(g);
     }
 
     public static final Object GetSelectedAsset() {

@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
-    private static Map<Material, List<SpriteRenderer>> batch = new HashMap<Material, List<SpriteRenderer>>();
+    private static final Map<Material, List<SpriteRenderer>> batch = new HashMap<Material, List<SpriteRenderer>>();
     private static Mesh mesh;
     private static Matrix4x4 projection;
 

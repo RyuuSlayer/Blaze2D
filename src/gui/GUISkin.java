@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class GUISkin {
-    private static List<GUISkin> skins = new ArrayList<GUISkin>();
+    private static final List<GUISkin> skins = new ArrayList<GUISkin>();
     private static int i;
+    private final List<GUIStyle> styles = new ArrayList<GUIStyle>();
     public String name = "";
     public Texture texture;
-    private List<GUIStyle> styles = new ArrayList<GUIStyle>();
     private File f = null;
     private long lastModified;
 

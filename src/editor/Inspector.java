@@ -15,11 +15,11 @@ import java.util.List;
 import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_inputBox;
 
 public class Inspector {
-    private List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
+    private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
+    private final GUIStyle window;
     private int i = 0;
     private int offsetY = 0;
     private int scroll = 0;
-    private GUIStyle window;
 
     public Inspector() {
         window = Editor.skin.Get("Window");

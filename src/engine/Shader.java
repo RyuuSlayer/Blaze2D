@@ -15,12 +15,12 @@ import static org.lwjgl.opengl.GL20.*;
 
 public class Shader {
     //Static variables to handle all of our shaders
-    private static List<Shader> shaders = new ArrayList<Shader>();
+    private static final List<Shader> shaders = new ArrayList<Shader>();
     private static int i;
+    private final int program;
+    private final int vs;
+    private final int fs;
     public String name;
-    private int program;
-    private int vs;
-    private int fs;
 
     //Constructor that takes in the name of the shader
     public Shader(String fileName) {

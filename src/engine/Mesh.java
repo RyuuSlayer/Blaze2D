@@ -8,15 +8,13 @@ import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Mesh {
-    private static List<Mesh> meshList = new ArrayList<Mesh>();
-    private int v_id;
-    private int u_id;
-    private int vao;
+    private static final List<Mesh> meshList = new ArrayList<Mesh>();
+    private final int v_id;
+    private final int u_id;
+    private final int vao;
 
     //Creates a mesh using specified verts and uv's
     public Mesh(float[] vertices, float[] uvs) {
@@ -89,6 +87,5 @@ public class Mesh {
         //Delete the vertex array object and delete the vertices buffer
         GL30.glDeleteVertexArrays(vao);
         GL15.glDeleteBuffers(v_id);
-        ;
     }
 }

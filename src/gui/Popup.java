@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class Popup {
-    private Rect nameArea;
-    private List<String> list;
-    private Consumer<String> func;
+    private final Rect nameArea;
+    private final List<String> list;
+    private final Consumer<String> func;
+    private final Rect listArea;
+    private final GUIStyle box;
     private int i;
-    private Rect listArea;
-    private GUIStyle box;
     private Color prevColor;
 
     public Popup(Rect nameArea, List<String> list, Consumer<String> func) {

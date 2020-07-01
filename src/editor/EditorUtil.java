@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class EditorUtil {
-    private static List<LogicBehaviour> importedClasses = new ArrayList<LogicBehaviour>();
+    private static final List<LogicBehaviour> importedClasses = new ArrayList<LogicBehaviour>();
     private static int i;
 
     public static void ImportClass(String path) {

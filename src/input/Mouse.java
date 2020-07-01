@@ -14,13 +14,12 @@ import static org.lwjgl.glfw.GLFW.*;
 enum CursorImage {Pointer, Hand, HScroll, VScroll}
 
 public class Mouse extends GLFWMouseButtonCallback {
+    private static final byte[] buttons = new byte[8];
+    private static final byte[] buttonsDown = new byte[8];
+    private static final byte[] buttonsUp = new byte[8];
     private static byte anyButton = 0;
     private static byte anyButtonDown = 0;
     private static byte anyButtonUp = 0;
-    private static byte[] buttons = new byte[8];
-    private static byte[] buttonsDown = new byte[8];
-    private static byte[] buttonsUp = new byte[8];
-
     private static int i;
     private static long window;
     private static DoubleBuffer xBuffer;

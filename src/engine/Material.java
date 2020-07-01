@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class Material {
     //Static variables used for the materials list
-    private static List<Material> materials = new ArrayList<Material>();
+    private static final List<Material> materials = new ArrayList<Material>();
     private static int i;
     public String name;
     public Texture texture;
