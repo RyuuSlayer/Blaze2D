@@ -8,7 +8,7 @@ import java.util.List;
 import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_messageBox;
 
 public class Debug {
-    private static final List<String> log = new ArrayList<String>();
+    private static final List<String> log = new ArrayList<>();
     private static int i = 0;
 
     public static void Log(String message) {

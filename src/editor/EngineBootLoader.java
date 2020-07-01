@@ -69,15 +69,15 @@ public class EngineBootLoader {
 
         File file = new File(Editor.workspaceDirectory);
         File[] temp = file.listFiles(File::isDirectory);
-        List<String> dirs = new ArrayList<String>();
-        for (int i = 0; i < temp.length; i++) {
-            if (!temp[i].getName().equals("null")) dirs.add(temp[i].getName());
+        List<String> dirs = new ArrayList<>();
+        for (File value : temp) {
+            if (!value.getName().equals("null")) dirs.add(value.getName());
         }
         dirs.add("New Project");
         String[] output = new String[dirs.size()];
         output = dirs.toArray(output);
 
-        JComboBox<String> projectBox = new JComboBox<String>(output);
+        JComboBox<String> projectBox = new JComboBox<>(output);
         projectBox.setBounds(70, 240, 150, 25);
 
         JButton begin = new JButton("Begin");

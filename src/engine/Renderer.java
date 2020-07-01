@@ -11,7 +11,7 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
-    private static final Map<Material, List<SpriteRenderer>> batch = new HashMap<Material, List<SpriteRenderer>>();
+    private static final Map<Material, List<SpriteRenderer>> batch = new HashMap<>();
     private static Mesh mesh;
     private static Matrix4x4 projection;
 
@@ -36,7 +36,7 @@ public class Renderer {
         //If that material does not exist yet or we have no renderers for that material
         if (matRenderers == null) {
             //Create a new list of renderers and set it to the passed in material
-            matRenderers = new ArrayList<SpriteRenderer>();
+            matRenderers = new ArrayList<>();
             batch.put(r.sprite.material, matRenderers);
         }
         //And add the sprite renderer to the list

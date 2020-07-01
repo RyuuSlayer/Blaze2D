@@ -9,6 +9,7 @@ import gui.Sprite;
 import java.io.*;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -16,15 +17,15 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class AssetDatabase {
-    private static Class<AssetDatabase> clazz = AssetDatabase.class;
-    private static ClassLoader cl = clazz.getClassLoader();
-    private static List<String> textures = new ArrayList<String>();
-    private static List<String> fonts = new ArrayList<String>();
-    private static List<String> shaders = new ArrayList<String>();
-    private static List<String> materials = new ArrayList<String>();
-    private static List<String> sprites = new ArrayList<String>();
-    private static List<String> skins = new ArrayList<String>();
-    private static List<String> scripts = new ArrayList<String>();
+    private static final Class<AssetDatabase> clazz = AssetDatabase.class;
+    private static final ClassLoader cl = clazz.getClassLoader();
+    private static List<String> textures = new ArrayList<>();
+    private static List<String> fonts = new ArrayList<>();
+    private static List<String> shaders = new ArrayList<>();
+    private static List<String> materials = new ArrayList<>();
+    private static List<String> sprites = new ArrayList<>();
+    private static List<String> skins = new ArrayList<>();
+    private static List<String> scripts = new ArrayList<>();
 
     private static int i;
 
@@ -74,7 +75,7 @@ public class AssetDatabase {
     }
 
     private static List<String> ImportFromLocalDirectory(String path, int useExtension) {
-        List<String> paths = new ArrayList<String>();
+        List<String> paths = new ArrayList<>();
         InputStream in = cl.getResourceAsStream(path);
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
@@ -98,7 +99,7 @@ public class AssetDatabase {
     }
 
     private static List<String> ImportFromExternalDirectory(String path, int useExtension) {
-        List<String> paths = new ArrayList<String>();
+        List<String> paths = new ArrayList<>();
         File dir = new File(Editor.WorkingDirectory() + path);
         File[] files = dir.listFiles();
         for (i = 0; i < files.length; i++) {
@@ -110,13 +111,13 @@ public class AssetDatabase {
         return paths;
     }
 
-    private static void ImportFromJar(URL dirURL) throws UnsupportedEncodingException, IOException {
+    private static void ImportFromJar(URL dirURL) throws IOException {
         String me = clazz.getName().replace(".", "/") + ".class";
         dirURL = cl.getResource(me);
 
         if (dirURL.getProtocol().equals("jar")) {
             String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
-            JarFile jar = new JarFile(URLDecoder.decode(jarPath, "UTF-8"));
+            JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
             Enumeration<JarEntry> entries = jar.entries();
 
             while (entries.hasMoreElements()) {

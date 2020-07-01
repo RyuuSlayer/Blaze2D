@@ -17,10 +17,8 @@ import java.util.regex.Pattern;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Font {
-    private static final List<Font> fonts = new ArrayList<Font>();
+    private static final List<Font> fonts = new ArrayList<>();
     private final String name;
-    //Kind of like a library of all the characters glyphs in this font
-    private final Map<Character, Glyph> chars = new HashMap<Character, Glyph>();
     private int fontID;
     private BufferedImage bufferedImage;
     private Vector2 imageSize;
@@ -30,6 +28,9 @@ public class Font {
     private Texture texture;
     private float h;
 
+    //Kind of like a library of all the characters glyphs in this font
+    private final Map<Character, Glyph> chars = new HashMap<>();
+
     //Constructor to Create a font using a name in the fonts folder and font size
     public Font(String name, float size) {
         //Try to import a font from the fonts folder and set the size and store the awt font in a variable, if it fails, tell us why it failed
@@ -37,9 +38,7 @@ public class Font {
             try {
                 font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, Font.class.getResourceAsStream("/Font" + name + ".ttf")).deriveFont(size);
                 name = name.replaceFirst("/", "");
-            } catch (FontFormatException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (FontFormatException | IOException e) {
                 e.printStackTrace();
             }
         } else {
@@ -47,9 +46,7 @@ public class Font {
                 font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new File(name + ".ttf")).deriveFont(size);
                 String[] split = name.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
                 name = split[split.length - 1];
-            } catch (FontFormatException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (FontFormatException | IOException e) {
                 e.printStackTrace();
             }
         }

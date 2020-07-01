@@ -15,21 +15,24 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_inputBox;
 
 public class GUI {
-    private static final int boundTex = -1;
-    private static final List<GUIArea> areas = new ArrayList<GUIArea>();
     public static Color backgroundColor = Color.white;
     public static Color textColor = Color.white;
     public static Font font;
     public static GUISkin skin;
+
     private static Mesh mesh;
     private static Shader shader;
     private static Matrix4x4 ortho;
+
     private static int i;
     private static char[] c;
     private static float xTemp;
+    private static final int boundTex = -1;
     private static Color boundColor = Color.white;
     private static Popup popup;
+
     private static int area = 0;
+    private static final List<GUIArea> areas = new ArrayList<>();
 
     public static void Init() {
         //Generate mesh information that has inverted uv's
@@ -202,8 +205,8 @@ public class GUI {
     }
 
     //Draw a box and return the center rectangle
-    public static Rect Box(Rect r, String style) {
-        return Box(r, skin.Get(style));
+    public static void Box(Rect r, String style) {
+        Box(r, skin.Get(style));
     }
 
     public static Rect Box(Rect r, GUIStyle e) {

@@ -11,7 +11,7 @@ import java.util.List;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Mesh {
-    private static final List<Mesh> meshList = new ArrayList<Mesh>();
+    private static final List<Mesh> meshList = new ArrayList<>();
     private final int v_id;
     private final int u_id;
     private final int vao;
@@ -42,7 +42,7 @@ public class Mesh {
     //Static function to clean up all meshes
     public static void CleanAllMesh() {
         //For every mesh, call the local cleanup on it
-        for (int i = 0; i < meshList.size(); i++) meshList.get(i).CleanUp();
+        for (Mesh mesh : meshList) mesh.CleanUp();
     }
 
     public void Render() {

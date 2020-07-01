@@ -15,11 +15,11 @@ import java.util.List;
 import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_inputBox;
 
 public class Inspector {
-    private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
-    private final GUIStyle window;
+    private final List<BehaviourAttributes> a = new ArrayList<>();
     private int i = 0;
     private int offsetY = 0;
     private int scroll = 0;
+    private final GUIStyle window;
 
     public Inspector() {
         window = Editor.skin.Get("Window");
@@ -105,14 +105,10 @@ public class Inspector {
                         String p = s.get(ba.behaviour).toString();
                         String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
                         if (!p.equals(v)) s.set(ba.behaviour, v);
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
+                } catch (NoSuchFieldException | SecurityException e) {
                     e.printStackTrace();
                 }
             } else if (split[1].equals("float")) {
@@ -123,14 +119,10 @@ public class Inspector {
                         float fl = Float.parseFloat(p);
                         float v = GUI.FloatField(new Rect(0, f * 22 + padding, r.width, 22), split[0], fl, 100);
                         if (!p.equals(String.valueOf(v))) s.set(ba.behaviour, v);
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
+                } catch (NoSuchFieldException | SecurityException e) {
                     e.printStackTrace();
                 }
             } else if (split[1].equals("int")) {
@@ -146,14 +138,10 @@ public class Inspector {
                                 Debug.Log("Input is not in a number format! Rejecting value.");
                             }
                         }
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
+                } catch (NoSuchFieldException | SecurityException e) {
                     e.printStackTrace();
                 }
             } else if (split[1].equals("Vector2")) {
@@ -165,14 +153,10 @@ public class Inspector {
                         if (!p.equals(v)) {
                             s.set(ba.behaviour, v);
                         }
-                    } catch (IllegalArgumentException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
+                } catch (NoSuchFieldException | SecurityException e) {
                     e.printStackTrace();
                 }
             } else GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], "", 100);

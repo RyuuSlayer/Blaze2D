@@ -12,20 +12,20 @@ import java.util.UUID;
 
 public class GameObject {
     private static final GameObject master = new GameObject(false);
-    private static final List<GameObject> instances = new ArrayList<GameObject>();
+    private static final List<GameObject> instances = new ArrayList<>();
     private static int h;
-    private final Vector2 position = new Vector2(0, 0);
-    private final Vector2 scale = new Vector2(1, 1);
-    private final List<GameObject> children = new ArrayList<GameObject>();
-    private final List<LogicBehaviour> components = new ArrayList<LogicBehaviour>();
-    private final String id;
-    private final Matrix4x4 matrix = new Matrix4x4();
     public boolean enabled = true;
     public String tag = "Untagged";
     public String name = "New GameObject";
+    private final Vector2 position = new Vector2(0, 0);
+    private final Vector2 scale = new Vector2(1, 1);
     private float rotation = 0;
     private GameObject parent;
+    private final List<GameObject> children = new ArrayList<>();
+    private final List<LogicBehaviour> components = new ArrayList<>();
     private int inline = 0;
+    private final String id;
+    private final Matrix4x4 matrix = new Matrix4x4();
     private byte dirty = 1;
     private boolean expanded = false;
     private int i;

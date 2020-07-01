@@ -143,8 +143,6 @@ public class Editor {
             FileWriter writer = new FileWriter(f);
             p.store(writer, "Logic Configuration");
             writer.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -180,7 +178,7 @@ public class Editor {
         File f = new File(workingDirectory + "Scenes/" + sceneName + ".scene");
         FileWriter fw = new FileWriter(f);
 
-        List<GameObject> objectList = new ArrayList<GameObject>();
+        List<GameObject> objectList = new ArrayList<>();
 
         GameObject master = GameObject.Master();
         objectList.add(master);
@@ -189,7 +187,7 @@ public class Editor {
             List<GameObject> children = g.Children();
 
             if (children.size() > 0) {
-                for (int i = 0; i < children.size(); i++) objectList.add(0, children.get(i));
+                for (GameObject child : children) objectList.add(0, child);
             }
             if (g == master) {
                 objectList.remove(objectList.size() - 1);
@@ -199,7 +197,7 @@ public class Editor {
             WriteTransform(g, fw);
 
             List<LogicBehaviour> b = g.GetComponents();
-            for (int i = 0; i < b.size(); i++) WriteComponent(b.get(i), fw);
+            for (LogicBehaviour logicBehaviour : b) WriteComponent(logicBehaviour, fw);
             if (g.Parent() != master) fw.write("\t<P Name=\"" + g.Parent().name + "\">\n</G>\n");
             else fw.write("</G>\n");
             objectList.remove(g);
@@ -223,8 +221,7 @@ public class Editor {
 
         Field[] fields = c.getFields();
 
-        for (int i = 0; i < fields.length; i++) {
-            Field f = fields[i];
+        for (Field f : fields) {
             line = "\t\t<V " + f.getName() + "=\"";
 
             try {

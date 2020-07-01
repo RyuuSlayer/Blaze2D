@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 public class Sprite {
     //Static information used for all the sprites
-    private static final List<Sprite> sprites = new ArrayList<Sprite>();
+    private static final List<Sprite> sprites = new ArrayList<>();
     private static int i;
     public String name;
     public Material material;

@@ -15,11 +15,12 @@ import java.util.List;
 import java.util.Map;
 
 public class MenuBar {
-    private final GUIStyle box;
     private final GUIStyle play;
-    private final GUIStyle stop;
-    public Map<String, List<MenuItem>> menu = new LinkedHashMap<String, List<MenuItem>>();
+
+    private final GUIStyle box;
     private GUIStyle empty;
+    private final GUIStyle stop;
+    public Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
     private String selected;
     private Color prevColor;
 
@@ -39,7 +40,7 @@ public class MenuBar {
         List<MenuItem> menuItem = menu.get(parent);
 
         if (menuItem == null) {
-            menuItem = new ArrayList<MenuItem>();
+            menuItem = new ArrayList<>();
             menu.put(parent, menuItem);
         }
         menuItem.add(item);
@@ -63,8 +64,8 @@ public class MenuBar {
             if (selected == null) {
                 if (GUI.CenteredButton(m, nameRect, empty, box)) {
                     List<MenuItem> list = menu.get(m);
-                    List<String> v = new ArrayList<String>();
-                    for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
+                    List<String> v = new ArrayList<>();
+                    for (MenuItem menuItem : list) v.add(menuItem.name);
                     GUI.SetPopup(nameRect, v, this::Clicked);
                     selected = m;
                 }
@@ -73,8 +74,8 @@ public class MenuBar {
                 else {
                     if (GUI.CenteredButton(m, nameRect, empty, box)) {
                         List<MenuItem> list = menu.get(m);
-                        List<String> v = new ArrayList<String>();
-                        for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
+                        List<String> v = new ArrayList<>();
+                        for (MenuItem menuItem : list) v.add(menuItem.name);
                         GUI.SetPopup(nameRect, v, this::Clicked);
                         selected = m;
                     }

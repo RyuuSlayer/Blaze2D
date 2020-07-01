@@ -19,7 +19,7 @@ public class Hierarchy {
     }
 
     public void Render(Rect r) {
-        List<GameObject> loop = new ArrayList<GameObject>();
+        List<GameObject> loop = new ArrayList<>();
         int offset = 0;
         loop.add(GameObject.Master());
         while (loop.size() > 0) {
@@ -39,7 +39,7 @@ public class Hierarchy {
         }
         scroll = GUI.SetScrollView(offset, scroll);
 
-        List<GameObject> updateList = new ArrayList<GameObject>();
+        List<GameObject> updateList = new ArrayList<>();
         int offsetY = 0;
 
         updateList.add(GameObject.Master());
