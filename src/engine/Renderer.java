@@ -31,14 +31,10 @@ public class Renderer {
     //Add a sprite render to get rendered this frame
     public static void AddToRenderer(SpriteRenderer r) {
         //Get all the sprite renderers using the material of the passed in renderer
-        List<SpriteRenderer> matRenderers = batch.get(r.sprite.material);
+        List<SpriteRenderer> matRenderers = batch.computeIfAbsent(r.sprite.material, k -> new ArrayList<>());
 
         //If that material does not exist yet or we have no renderers for that material
-        if (matRenderers == null) {
-            //Create a new list of renderers and set it to the passed in material
-            matRenderers = new ArrayList<>();
-            batch.put(r.sprite.material, matRenderers);
-        }
+        //Create a new list of renderers and set it to the passed in material
         //And add the sprite renderer to the list
         matRenderers.add(r);
     }

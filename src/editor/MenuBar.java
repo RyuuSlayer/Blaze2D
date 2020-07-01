@@ -37,19 +37,15 @@ public class MenuBar {
     }
 
     public void Add(String parent, MenuItem item) {
-        List<MenuItem> menuItem = menu.get(parent);
+        List<MenuItem> menuItem = menu.computeIfAbsent(parent, k -> new ArrayList<>());
 
-        if (menuItem == null) {
-            menuItem = new ArrayList<>();
-            menu.put(parent, menuItem);
-        }
         menuItem.add(item);
     }
 
     public void Render() {
         float w = Application.Width();
         if (selected != null) {
-            if (GUI.HasPopup() == false) selected = null;
+            if (!GUI.HasPopup()) selected = null;
         }
 
         GUI.Box(new Rect(0, 0, w, 30), box);

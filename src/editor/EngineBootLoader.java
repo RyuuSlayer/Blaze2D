@@ -3,8 +3,6 @@ package editor;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -83,16 +81,13 @@ public class EngineBootLoader {
         JButton begin = new JButton("Begin");
         begin.setBounds(100, 276, 80, 25);
 
-        begin.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String c = e.getActionCommand();
+        begin.addActionListener(e -> {
+            String c = e.getActionCommand();
 
-                if (c.equals("Begin")) {
-                    String selectedString = (String) projectBox.getSelectedItem();
-                    if (selectedString.equals("New Project")) returnString = "My Project";
-                    else returnString = selectedString;
-                }
+            if (c.equals("Begin")) {
+                String selectedString = (String) projectBox.getSelectedItem();
+                if (selectedString.equals("New Project")) returnString = "My Project";
+                else returnString = selectedString;
             }
         });
         panel.add(projectBox);
