@@ -21,11 +21,11 @@ public class Texture {
     private static final List<Texture> textureInstances = new ArrayList<>();
     private static Texture tmp = null;
     private static int i = 0;
-    //Stored info about the texture
-    private String name = "";
     private final int id;
     private final int width;
     private final int height;
+    //Stored info about the texture
+    private String name = "";
 
     //Create a texture using a file name
     public Texture(String fileName) {

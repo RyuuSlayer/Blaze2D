@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 public class GUISkin {
     private static final List<GUISkin> skins = new ArrayList<>();
     private static int i;
+    private final List<GUIStyle> styles = new ArrayList<>();
     public String name = "";
     public Texture texture;
-    private final List<GUIStyle> styles = new ArrayList<>();
     private File f = null;
     private long lastModified;
 

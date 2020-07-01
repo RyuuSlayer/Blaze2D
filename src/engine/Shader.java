@@ -17,10 +17,10 @@ public class Shader {
     //Static variables to handle all of our shaders
     private static final List<Shader> shaders = new ArrayList<>();
     private static int i;
-    public String name;
     private final int program;
     private final int vs;
     private final int fs;
+    public String name;
 
     //Constructor that takes in the name of the shader
     public Shader(String fileName) {

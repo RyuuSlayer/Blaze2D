@@ -18,9 +18,9 @@ public class MenuBar {
     private final GUIStyle play;
 
     private final GUIStyle box;
-    private GUIStyle empty;
     private final GUIStyle stop;
     public Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
+    private GUIStyle empty;
     private String selected;
     private Color prevColor;
 

@@ -72,24 +72,24 @@ public class SceneManager {
 
     private static void SetVariable(LogicBehaviour b, String field, String input) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
         Field f = b.getClass().getField(field);
-        if (f == null) return;
 
         String[] splitName = f.getType().toString().split("\\.");
         String dataType = splitName[splitName.length - 1];
 
-        if (dataType.equals("String")) {
-            f.set(b, input);
-            return;
-        } else if (dataType.equals("int")) {
-            f.set(b, Integer.parseInt(input));
-            return;
-        } else if (dataType.equals("Vector2")) {
-            String[] split = input.split(" ");
-            f.set(b, new Vector2(Float.parseFloat(split[0]), Float.parseFloat(split[1])));
-            return;
-        } else if (dataType.equals("Sprite")) {
-            f.set(b, Sprite.Get(input));
-            return;
+        switch (dataType) {
+            case "String" -> {
+                f.set(b, input);
+            }
+            case "int" -> {
+                f.set(b, Integer.parseInt(input));
+            }
+            case "Vector2" -> {
+                String[] split = input.split(" ");
+                f.set(b, new Vector2(Float.parseFloat(split[0]), Float.parseFloat(split[1])));
+            }
+            case "Sprite" -> {
+                f.set(b, Sprite.Get(input));
+            }
         }
     }
 }

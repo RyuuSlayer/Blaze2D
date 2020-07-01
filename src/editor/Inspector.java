@@ -16,10 +16,10 @@ import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_inputBox;
 
 public class Inspector {
     private final List<BehaviourAttributes> a = new ArrayList<>();
+    private final GUIStyle window;
     private int i = 0;
     private int offsetY = 0;
     private int scroll = 0;
-    private final GUIStyle window;
 
     public Inspector() {
         window = Editor.skin.Get("Window");
@@ -57,31 +57,7 @@ public class Inspector {
 
                 LogicBehaviour l = selected.AddComponent(output);
                 if (l != null) SetAttributes(selected);
-				
-				/*
-				Class<?> cls;
-				try
-				{
-					cls = Class.forName("game." + output);
-					
-					try
-					{
-						try {selected.AddComponent((LogicBehaviour)cls.getConstructor().newInstance());}
-						catch (IllegalArgumentException e) {e.printStackTrace();}
-						catch (InvocationTargetException e) {e.printStackTrace();}
-						catch (NoSuchMethodException e) {e.printStackTrace();}
-						catch (SecurityException e) {e.printStackTrace();}
-						
-						SetAttributes(selected);
-					}
-					catch (InstantiationException | IllegalAccessException e){
-						tinyfd_messageBox("Could not add component!", "The component you are trying to add does not exist in the game package", "okcancel", "Error", true);
-					}
-				}
-				catch (ClassNotFoundException e)
-				{
-					tinyfd_messageBox("Could not add component!", "The component you are trying to add does not exist in the game package", "okcancel", "Error", true);
-				}*/
+
             }
             offsetY = 0;
         } else {
@@ -98,68 +74,76 @@ public class Inspector {
         for (int f = 0; f < fields.length; f++) {
             String[] split = fields[f].split(" ");
 
-            if (split[1].equals("String")) {
-                try {
-                    Field s = ba.c.getDeclaredField(split[0]);
+            switch (split[1]) {
+                case "String":
                     try {
-                        String p = s.get(ba.behaviour).toString();
-                        String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
-                        if (!p.equals(v)) s.set(ba.behaviour, v);
-                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        Field s = ba.c.getDeclaredField(split[0]);
+                        try {
+                            String p = s.get(ba.behaviour).toString();
+                            String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
+                            if (!p.equals(v)) s.set(ba.behaviour, v);
+                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (NoSuchFieldException | SecurityException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException | SecurityException e) {
-                    e.printStackTrace();
-                }
-            } else if (split[1].equals("float")) {
-                try {
-                    Field s = ba.c.getDeclaredField(split[0]);
+                    break;
+                case "float":
                     try {
-                        String p = s.get(ba.behaviour).toString();
-                        float fl = Float.parseFloat(p);
-                        float v = GUI.FloatField(new Rect(0, f * 22 + padding, r.width, 22), split[0], fl, 100);
-                        if (!p.equals(String.valueOf(v))) s.set(ba.behaviour, v);
-                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        Field s = ba.c.getDeclaredField(split[0]);
+                        try {
+                            String p = s.get(ba.behaviour).toString();
+                            float fl = Float.parseFloat(p);
+                            float v = GUI.FloatField(new Rect(0, f * 22 + padding, r.width, 22), split[0], fl, 100);
+                            if (!p.equals(String.valueOf(v))) s.set(ba.behaviour, v);
+                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    } catch (NoSuchFieldException | SecurityException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException | SecurityException e) {
-                    e.printStackTrace();
-                }
-            } else if (split[1].equals("int")) {
-                try {
-                    Field s = ba.c.getDeclaredField(split[0]);
+                    break;
+                case "int":
                     try {
-                        String p = s.get(ba.behaviour).toString();
-                        String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
-                        if (!p.equals(v)) {
-                            try {
-                                s.set(ba.behaviour, Integer.parseInt(v));
-                            } catch (NumberFormatException e) {
-                                Debug.Log("Input is not in a number format! Rejecting value.");
+                        Field s = ba.c.getDeclaredField(split[0]);
+                        try {
+                            String p = s.get(ba.behaviour).toString();
+                            String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
+                            if (!p.equals(v)) {
+                                try {
+                                    s.set(ba.behaviour, Integer.parseInt(v));
+                                } catch (NumberFormatException e) {
+                                    Debug.Log("Input is not in a number format! Rejecting value.");
+                                }
                             }
+                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                    } catch (NoSuchFieldException | SecurityException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException | SecurityException e) {
-                    e.printStackTrace();
-                }
-            } else if (split[1].equals("Vector2")) {
-                try {
-                    Field s = ba.c.getDeclaredField(split[0]);
+                    break;
+                case "Vector2":
                     try {
-                        Vector2 p = (Vector2) s.get(ba.behaviour);
-                        Vector2 v = GUI.VectorField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
-                        if (!p.equals(v)) {
-                            s.set(ba.behaviour, v);
+                        Field s = ba.c.getDeclaredField(split[0]);
+                        try {
+                            Vector2 p = (Vector2) s.get(ba.behaviour);
+                            Vector2 v = GUI.VectorField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
+                            if (!p.equals(v)) {
+                                s.set(ba.behaviour, v);
+                            }
+                        } catch (IllegalArgumentException | IllegalAccessException e) {
+                            e.printStackTrace();
                         }
-                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                    } catch (NoSuchFieldException | SecurityException e) {
                         e.printStackTrace();
                     }
-                } catch (NoSuchFieldException | SecurityException e) {
-                    e.printStackTrace();
-                }
-            } else GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], "", 100);
+                    break;
+                default:
+                    GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], "", 100);
+                    break;
+            }
             padding += 2;
         }
     }
@@ -172,11 +156,11 @@ public class Inspector {
             List<LogicBehaviour> l = ((GameObject) o).GetComponents();
             for (i = 0; i < l.size(); i++) {
                 BehaviourAttributes b = new BehaviourAttributes(o);
-                if (b != null) a.add(new BehaviourAttributes(l.get(i)));
+                a.add(new BehaviourAttributes(l.get(i)));
             }
             return;
         }
         BehaviourAttributes b = new BehaviourAttributes(o);
-        if (b != null) a.add(b);
+        a.add(b);
     }
 }
