@@ -5,9 +5,11 @@ import math.Vector2;
 
 public class SpriteRenderer extends LogicBehaviour {
     public Sprite sprite;
+
+    // Do not make this final, even if IntelliJ tells you to.
     public Vector2 anchor = new Vector2(0, 0);
 
-    //Set the uniforms of the gameobject and it's sprite
+    // Set the uniforms of the game object and it's sprite
     public void SetUniforms() {
         sprite.material.shader.SetUniform("anchor", anchor);
 

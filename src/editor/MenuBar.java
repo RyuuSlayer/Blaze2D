@@ -15,11 +15,10 @@ import java.util.List;
 import java.util.Map;
 
 public class MenuBar {
+    public final Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
     private final GUIStyle play;
-
     private final GUIStyle box;
     private final GUIStyle stop;
-    public final Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
     private GUIStyle empty;
     private String selected;
 

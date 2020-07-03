@@ -12,7 +12,6 @@ import java.util.List;
 
 public class ProjectPanel {
     private final GUIStyle box;
-    private final GUIStyle empty = null;
     private final Rect temp = new Rect(0, 0, 0, 0);
     private DataType selectedType = DataType.Texture;
     private int scroll1 = 0;
@@ -28,7 +27,7 @@ public class ProjectPanel {
         for (int i = 0; i < values.length; i++) {
             temp.Set(0, i * 26, r.width, 26);
             if (!values[i].equals(selectedType)) {
-                if (GUI.Button(values[i].name() + "s", temp, empty, empty)) selectedType = values[i];
+                if (GUI.Button(values[i].name() + "s", temp, null, (GUIStyle) null)) selectedType = values[i];
             } else {
                 GUI.Button(values[i].name() + "s", temp, box, box);
                 //Rect s = GUI.Box(temp, box);
@@ -62,9 +61,9 @@ public class ProjectPanel {
                             }
                             Editor.SetSelectedAsset(fonts.get(i));
                         }
-                    } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), empty, empty))
+                    } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                         Editor.SetSelectedAsset(fonts.get(i));
-                } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), empty, empty))
+                } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                     Editor.SetSelectedAsset(fonts.get(i));
             }
         } else if (selectedType == DataType.Material) {
@@ -86,9 +85,9 @@ public class ProjectPanel {
                             }
                             Editor.SetSelectedAsset(materials.get(i));
                         }
-                    } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                    } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                         Editor.SetSelectedAsset(materials.get(i));
-                } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                     Editor.SetSelectedAsset(materials.get(i));
             }
         } else if (selectedType == DataType.Shader) {
@@ -110,9 +109,9 @@ public class ProjectPanel {
                             }
                             Editor.SetSelectedAsset(shaders.get(i));
                         }
-                    } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                    } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                         Editor.SetSelectedAsset(shaders.get(i));
-                } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                     Editor.SetSelectedAsset(shaders.get(i));
             }
         } else if (selectedType == DataType.Skin) {
@@ -134,9 +133,9 @@ public class ProjectPanel {
                             }
                             Editor.SetSelectedAsset(skins.get(i));
                         }
-                    } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                    } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                         Editor.SetSelectedAsset(skins.get(i));
-                } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                     Editor.SetSelectedAsset(skins.get(i));
             }
         } else if (selectedType == DataType.Sprite) {
@@ -158,9 +157,9 @@ public class ProjectPanel {
                             }
                             Editor.SetSelectedAsset(sprites.get(i));
                         }
-                    } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                    } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                         Editor.SetSelectedAsset(sprites.get(i));
-                } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), empty, empty))
+                } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                     Editor.SetSelectedAsset(sprites.get(i));
             }
         } else if (selectedType == DataType.Texture) {
@@ -182,9 +181,9 @@ public class ProjectPanel {
                             }
                             Editor.SetSelectedAsset(textures.get(i));
                         }
-                    } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), empty, empty))
+                    } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                         Editor.SetSelectedAsset(textures.get(i));
-                } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), empty, empty))
+                } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
                     Editor.SetSelectedAsset(textures.get(i));
             }
         }

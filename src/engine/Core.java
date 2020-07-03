@@ -16,13 +16,13 @@ public class Core {
         Editor.InitConfig();
         EngineBootLoader.Init();
 
-        //Create the window
+        // Create the window
         long window = Application.Init();
         Color clear = Color.black;
 
         AssetDatabase.LoadAllResources();
 
-        //Initialize the GUI
+        // Initialize the GUI
         GUI.Init();
         Editor.Init();
         Renderer.Init();
@@ -33,7 +33,7 @@ public class Core {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //While the application should not be closed
+        // While the application should not be closed
         while (!glfwWindowShouldClose(window)) {
             //At the start, poll events
             Mouse.Reset();
@@ -60,15 +60,15 @@ public class Core {
                 GUI.Unbind();
             }
 
-            //At the very end, swap the buffers
+            // At the very end, swap the buffers
             glfwSwapBuffers(window);
         }
-        //Cleanup the memory
+        // Cleanup the memory
         Texture.CleanUp();
         Mesh.CleanAllMesh();
         EditorUtil.CleanUp();
 
-        //Destroy the window
+        // Destroy the window
         glfwTerminate();
     }
 }

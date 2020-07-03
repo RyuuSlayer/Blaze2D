@@ -3,8 +3,8 @@ package engine;
 import java.util.concurrent.TimeUnit;
 
 public class Time {
+    public static final float timeScale = 1;
     private static final long second = 1000000000L;
-    public static float timeScale = 1;
     private static float time;
     private static float deltaTime;
     private static float unscaledDelta;

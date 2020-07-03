@@ -4,11 +4,11 @@ import engine.Rect;
 import engine.Texture;
 
 public class GUIStyle {
-    public String name;
+    public final String name;
+    public final Rect uv;
+    public final Rect paddingUV;
     public Rect offset;
     public Rect padding;
-    public Rect uv;
-    public Rect paddingUV;
 
     //Constructor to create a style
     public GUIStyle(String name, Texture t, Rect offset, Rect padding) {
