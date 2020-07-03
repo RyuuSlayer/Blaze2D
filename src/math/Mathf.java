@@ -7,9 +7,8 @@ public class Mathf {
         if (val < min) return min;
 
         //If the value is greater than maximum, return maximum
-        if (val > max) return max;
+        return Math.min(val, max);
 
         //Else, return the value
-        return val;
     }
 }

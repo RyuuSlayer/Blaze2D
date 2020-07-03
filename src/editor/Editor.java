@@ -165,8 +165,6 @@ public class Editor {
         new File(workingDirectory + "Scenes/").mkdir();
         new File(workingDirectory + "Scripts/").mkdir();
 
-        if (newProject) return;
-
         //Put opening of project stuff here
     }
 

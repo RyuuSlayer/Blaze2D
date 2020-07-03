@@ -17,7 +17,7 @@ import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_inputBox;
 public class GUI {
     private static final int boundTex = -1;
     private static final List<GUIArea> areas = new ArrayList<>();
-    public static Color backgroundColor = Color.white;
+    public final static Color backgroundColor = Color.white;
     public static Color textColor = Color.white;
     public static Font font;
     public static GUISkin skin;

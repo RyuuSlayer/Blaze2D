@@ -19,7 +19,7 @@ public class MenuBar {
 
     private final GUIStyle box;
     private final GUIStyle stop;
-    public Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
+    public final Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
     private GUIStyle empty;
     private String selected;
 

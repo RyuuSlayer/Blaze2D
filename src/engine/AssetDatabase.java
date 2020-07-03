@@ -126,8 +126,7 @@ public class AssetDatabase {
 
             while (entries.hasMoreElements()) {
                 String name = entries.nextElement().getName();
-                if (name.endsWith("/")) continue;
-                else if (name.startsWith("Textures")) {
+                if (name.startsWith("Textures")) {
                     textures.add(name.split("/")[1]);
                 } else if (name.startsWith("Font")) {
                     fonts.add(name.split("/")[1].split("\\.")[0]);
