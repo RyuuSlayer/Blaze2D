@@ -9,7 +9,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,7 +39,7 @@ public class EditorUtil {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
         try {
-            Files.write(srcPath, reader.lines().collect(Collectors.joining(seperator)).getBytes(StandardCharsets.UTF_8));
+            Files.writeString(srcPath, reader.lines().collect(Collectors.joining(seperator)));
         } catch (IOException e) {
             e.printStackTrace();
         }

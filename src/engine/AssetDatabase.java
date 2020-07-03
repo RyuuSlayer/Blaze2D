@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -44,12 +45,13 @@ public class AssetDatabase {
 
     private static void InitResourcePaths() {
         URL dirURL = cl.getResource("engine");
+        assert dirURL != null;
         String protocol = dirURL.getProtocol();
 
-        if (dirURL != null && protocol.equals("file")) ImportFromDirectory();
+        if (protocol.equals("file")) ImportFromDirectory();
         else {
             try {
-                ImportFromJar(dirURL);
+                ImportFromJar();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -77,6 +79,7 @@ public class AssetDatabase {
     private static List<String> ImportFromLocalDirectory(String path, int useExtension) {
         List<String> paths = new ArrayList<>();
         InputStream in = cl.getResourceAsStream(path);
+        assert in != null;
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
 
@@ -102,7 +105,7 @@ public class AssetDatabase {
         List<String> paths = new ArrayList<>();
         File dir = new File(Editor.WorkingDirectory() + path);
         File[] files = dir.listFiles();
-        for (i = 0; i < files.length; i++) {
+        for (i = 0; i < Objects.requireNonNull(files).length; i++) {
             String aPath = files[i].getAbsolutePath();
             if (path.endsWith("/")) continue;
             if (useExtension == 0) aPath = aPath.split("\\.")[0];
@@ -111,10 +114,11 @@ public class AssetDatabase {
         return paths;
     }
 
-    private static void ImportFromJar(URL dirURL) throws IOException {
+    private static void ImportFromJar() throws IOException {
         String me = clazz.getName().replace(".", "/") + ".class";
-        dirURL = cl.getResource(me);
+        URL dirURL = cl.getResource(me);
 
+        assert dirURL != null;
         if (dirURL.getProtocol().equals("jar")) {
             String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
             JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));

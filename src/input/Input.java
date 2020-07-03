@@ -14,9 +14,9 @@ public class Input extends GLFWKeyCallback {
     private static byte anyKey = 0;
     private static byte anyKeyDown = 0;
     private static byte anyKeyUp = 0;
-    private static int i;
 
     public static void Reset() {
+        int i;
         for (i = 0; i < keysDown.length; i++) keysDown[i] = 0;
         for (i = 0; i < keysUp.length; i++) keysUp[i] = 0;
         anyKey = 0;

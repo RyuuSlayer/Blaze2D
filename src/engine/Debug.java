@@ -9,7 +9,6 @@ import static org.lwjgl.util.tinyfd.TinyFileDialogs.tinyfd_messageBox;
 
 public class Debug {
     private static final List<String> log = new ArrayList<>();
-    private static int i = 0;
 
     public static void Log(String message) {
         AddMessage(message);
@@ -21,9 +20,10 @@ public class Debug {
     }
 
     public static String Log() {
-        String ret = "";
-        for (i = 0; i < log.size(); i++) ret += (log.get(i) + "\n");
-        return ret;
+        StringBuilder ret = new StringBuilder();
+        int i = 0;
+        for (i = 0; i < log.size(); i++) ret.append(log.get(i)).append("\n");
+        return ret.toString();
     }
 
     public static String LastEntry() {

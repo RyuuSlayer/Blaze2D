@@ -155,7 +155,6 @@ public class Inspector {
         if (o instanceof GameObject) {
             List<LogicBehaviour> l = ((GameObject) o).GetComponents();
             for (i = 0; i < l.size(); i++) {
-                BehaviourAttributes b = new BehaviourAttributes(o);
                 a.add(new BehaviourAttributes(l.get(i)));
             }
             return;

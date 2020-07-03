@@ -23,10 +23,6 @@ public class GUI {
     public static GUISkin skin;
     private static Mesh mesh;
     private static Shader shader;
-    private static Matrix4x4 ortho;
-    private static int i;
-    private static char[] c;
-    private static float xTemp;
     private static Color boundColor = Color.white;
     private static Popup popup;
     private static int area = 0;
@@ -55,7 +51,7 @@ public class GUI {
         glDisable(GL_DEPTH_TEST);
         shader.Bind();
         shader.SetUniform("matColor", backgroundColor);
-        ortho = Matrix4x4.Ortho(0, Application.Width(), Application.Height(), 0, -1, 1);
+        Matrix4x4 ortho = Matrix4x4.Ortho(0, Application.Width(), Application.Height(), 0, -1, 1);
         shader.SetUniform("projection", ortho);
         mesh.Bind();
     }
@@ -266,12 +262,13 @@ public class GUI {
     public static void Label(String text, float x, float y) {
         //Bind the font image, get our font characters and set the text starting position
         Map<Character, Glyph> chars = font.GetCharacters();
-        xTemp = x;
+        float xTemp = x;
 
         //Convert the text to an array of characters, set the color uniform set our color bind variable
-        c = text.toCharArray();
+        char[] c = text.toCharArray();
 
         //For all the characters in the text
+        int i;
         for (i = 0; i < c.length; i++) {
             //Get the glyph information for this character
             Glyph r = chars.get(c[i]);

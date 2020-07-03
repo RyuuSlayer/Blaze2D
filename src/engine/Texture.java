@@ -19,7 +19,6 @@ import static org.lwjgl.stb.STBImage.*;
 public class Texture {
     //Temp, iterator and list of textures variables
     private static final List<Texture> textureInstances = new ArrayList<>();
-    private static Texture tmp = null;
     private static int i = 0;
     private final int id;
     private final int width;
@@ -93,7 +92,7 @@ public class Texture {
         //For every texture in our list of textures
         for (i = 0; i < textureInstances.size(); i++) {
             //If the name starts with the texture name were wanting, return that texture
-            tmp = textureInstances.get(i);
+            Texture tmp = textureInstances.get(i);
             if (tmp.name.startsWith(textureName)) return tmp;
         }
         //If the specified texture can't be found, return null

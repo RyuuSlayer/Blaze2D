@@ -5,17 +5,13 @@ import java.util.concurrent.TimeUnit;
 public class Time {
     private static final long second = 1000000000L;
     public static float timeScale = 1;
-    private static long rawTime;
     private static float time;
-    private static double rawDelta;
     private static float deltaTime;
     private static float unscaledDelta;
     private static int frameRate;
 
     private static long startTime;
     private static long lastFrameTime;
-    private static long frameStartTime;
-    private static long framePassedTime;
     private static double unprocessedTime;
     private static int currentFrameRate;
 
@@ -42,14 +38,13 @@ public class Time {
 
 
     static void Process() {
-        rawTime = System.nanoTime();
+        long rawTime = System.nanoTime();
         time = (float) (TimeUnit.MILLISECONDS.convert(rawTime - startTime, TimeUnit.NANOSECONDS));
 
-        frameStartTime = rawTime;
-        framePassedTime = frameStartTime - lastFrameTime;
-        lastFrameTime = frameStartTime;
+        long framePassedTime = rawTime - lastFrameTime;
+        lastFrameTime = rawTime;
 
-        rawDelta = framePassedTime / (double) second;
+        double rawDelta = framePassedTime / (double) second;
         if (rawDelta > 0.01f) {
             deltaTime = (float) (0.01 * timeScale);
             unscaledDelta = 0.01f;

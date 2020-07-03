@@ -28,6 +28,7 @@ public class EngineBootLoader {
             if (frame == null) break;
         }
 
+        assert frame != null;
         frame.dispose();
         Editor.OpenProject(returnString);
     }

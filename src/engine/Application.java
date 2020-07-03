@@ -18,8 +18,6 @@ public class Application {
     private static Rect r;
     private static byte minimized = 0;
 
-    private static GLFWWindowSizeCallback windowSizeCallback;
-
     //Initialization function
     public static long Init() {
         //If glfw cannot be initialized
@@ -43,7 +41,7 @@ public class Application {
         glfwSetMouseButtonCallback(window, new Mouse());
         glfwSetKeyCallback(window, new Input());
 
-        windowSizeCallback = GLFWWindowSizeCallback.create(Application::OnWindowResized);
+        GLFWWindowSizeCallback windowSizeCallback = GLFWWindowSizeCallback.create(Application::OnWindowResized);
         glfwSetWindowSizeCallback(window, windowSizeCallback);
 
         //Return the window

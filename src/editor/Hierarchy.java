@@ -10,8 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hierarchy {
-    private Rect clickRect;
-    private int i;
     private int scroll;
 
     public Hierarchy() {
@@ -22,6 +20,7 @@ public class Hierarchy {
         List<GameObject> loop = new ArrayList<>();
         int offset = 0;
         loop.add(GameObject.Master());
+        int i;
         while (loop.size() > 0) {
             GameObject g = loop.get(0);
             List<GameObject> children = g.Children();
@@ -56,7 +55,7 @@ public class Hierarchy {
             }
 
             float inline = (g.Inline()) * 16;
-            clickRect = new Rect(0, offsetY, r.width, 20);
+            Rect clickRect = new Rect(0, offsetY, r.width, 20);
 
             GameObject selected = Editor.GetSelected();
             if (selected != null) {

@@ -15,7 +15,6 @@ public class Popup {
     private final Rect listArea;
     private final GUIStyle box;
     private int i;
-    private Color prevColor;
 
     public Popup(Rect nameArea, List<String> list, Consumer<String> func) {
         this.nameArea = nameArea;
@@ -38,7 +37,7 @@ public class Popup {
         Vector2 mousePos = Mouse.Position();
         if (!listArea.Contains(mousePos) && !nameArea.Contains(mousePos)) return null;
         Rect drawArea = GUI.Box(listArea, box);
-        prevColor = GUI.textColor;
+        Color prevColor = GUI.textColor;
         GUI.textColor = Color.white;
         for (i = 0; i < list.size(); i++) {
             if (GUI.CenteredButton(list.get(i), new Rect(drawArea.x, drawArea.y + (28 * i), drawArea.width, 28), null, box)) {

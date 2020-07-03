@@ -13,7 +13,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class Renderer {
     private static final Map<Material, List<SpriteRenderer>> batch = new HashMap<>();
     private static Mesh mesh;
-    private static Matrix4x4 projection;
 
     private static FBO fbo;
 
@@ -53,7 +52,7 @@ public class Renderer {
         float halfH = h * 0.5f;
 
         //And create a projection matrix that is zeroed in the center of the screen with a flipped y direction
-        projection = Matrix4x4.Ortho(-halfW, halfW, halfH, -halfH, -1, 1);
+        Matrix4x4 projection = Matrix4x4.Ortho(-halfW, halfW, halfH, -halfH, -1, 1);
 
         //Bind the mesh
         mesh.Bind();

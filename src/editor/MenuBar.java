@@ -22,7 +22,6 @@ public class MenuBar {
     public Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
     private GUIStyle empty;
     private String selected;
-    private Color prevColor;
 
     public MenuBar() {
         box = Editor.skin.Get("Box");
@@ -50,7 +49,7 @@ public class MenuBar {
 
         GUI.Box(new Rect(0, 0, w, 30), box);
 
-        prevColor = GUI.textColor;
+        Color prevColor = GUI.textColor;
         GUI.textColor = Color.white;
         float offset = 0;
         float index = 0;

@@ -15,7 +15,6 @@ public class ProjectPanel {
     private final GUIStyle empty = null;
     private final Rect temp = new Rect(0, 0, 0, 0);
     private DataType selectedType = DataType.Texture;
-    private int i;
     private int scroll1 = 0;
     private int scroll2 = 0;
 
@@ -43,6 +42,7 @@ public class ProjectPanel {
     public void RenderAssets(Rect r) {
         Object selected = Editor.GetSelectedAsset();
 
+        int i;
         if (selectedType == DataType.Font) {
             List<Font> fonts = Font.Fonts();
             scroll2 = GUI.SetScrollView(fonts.size() * 26, scroll2);

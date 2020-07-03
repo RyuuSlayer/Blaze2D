@@ -58,6 +58,7 @@ public class Editor {
 
     public static void Init() {
         skin = GUISkin.GetSkin("DefaultGUI");
+        assert skin != null;
         arrowDown = skin.Get("ArrowDown");
         arrowRight = skin.Get("ArrowRight");
         window = skin.Get("Window");
@@ -68,7 +69,7 @@ public class Editor {
         m = new MenuBar();
     }
 
-    public static final boolean IsPlaying() {
+    public static boolean IsPlaying() {
         return playing == 1;
     }
 
@@ -105,7 +106,7 @@ public class Editor {
         GUI.Unbind();
     }
 
-    public static final Object GetInspected() {
+    public static Object GetInspected() {
         return inspected;
     }
 
@@ -114,7 +115,7 @@ public class Editor {
         if (o != null) i.SetAttributes(o);
     }
 
-    public static final GameObject GetSelected() {
+    public static GameObject GetSelected() {
         return selected;
     }
 
@@ -123,7 +124,7 @@ public class Editor {
         SetInspected(g);
     }
 
-    public static final Object GetSelectedAsset() {
+    public static Object GetSelectedAsset() {
         return selectedAsset;
     }
 
@@ -153,7 +154,7 @@ public class Editor {
         workingDirectory = workspaceDirectory + name + "/";
 
         File projDir = new File(workingDirectory);
-        Boolean newProject = projDir.mkdir();
+        boolean newProject = projDir.mkdir();
 
         new File(workingDirectory + "Font/").mkdir();
         new File(workingDirectory + "Materials/").mkdir();
@@ -166,11 +167,10 @@ public class Editor {
 
         if (newProject) return;
 
-
         //Put opening of project stuff here
     }
 
-    public static final String WorkingDirectory() {
+    public static String WorkingDirectory() {
         return workingDirectory;
     }
 
@@ -239,15 +239,15 @@ public class Editor {
         }
     }
 
-    public static final Hierarchy hierarchy() {
+    public static Hierarchy hierarchy() {
         return h;
     }
 
-    public static final Inspector inspector() {
+    public static Inspector inspector() {
         return i;
     }
 
-    public static final ProjectPanel projectPanel() {
+    public static ProjectPanel projectPanel() {
         return p;
     }
 }

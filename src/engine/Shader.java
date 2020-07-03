@@ -16,10 +16,7 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
     //Static variables to handle all of our shaders
     private static final List<Shader> shaders = new ArrayList<>();
-    private static int i;
     private final int program;
-    private final int vs;
-    private final int fs;
     public String name;
 
     //Constructor that takes in the name of the shader
@@ -29,7 +26,7 @@ public class Shader {
         String[] shader = CreateShader(fileName);
 
         //Creates and stores the vertex shader. Then compiles it and checks for errors
-        vs = glCreateShader(GL_VERTEX_SHADER);
+        int vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, shader[0]);
         glCompileShader(vs);
         if (glGetShaderi(vs, GL_COMPILE_STATUS) != 1) {
@@ -38,7 +35,7 @@ public class Shader {
         }
 
         //Creates and stores the fragment shader. Then Compiles it and checks for errors
-        fs = glCreateShader(GL_FRAGMENT_SHADER);
+        int fs = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fs, shader[1]);
         glCompileShader(fs);
         if (glGetShaderi(fs, GL_COMPILE_STATUS) != 1) {
@@ -75,6 +72,7 @@ public class Shader {
     //Get a shader by name
     public static Shader Find(String name) {
         //For all the shaders
+        int i;
         for (i = 0; i < shaders.size(); i++) {
             //If we have came across the shader were looking for, return it
             if (shaders.get(i).name.equals(name)) return shaders.get(i);

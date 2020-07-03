@@ -20,7 +20,6 @@ public class Mouse extends GLFWMouseButtonCallback {
     private static byte anyButton = 0;
     private static byte anyButtonDown = 0;
     private static byte anyButtonUp = 0;
-    private static int i;
     private static long window;
     private static DoubleBuffer xBuffer;
     private static DoubleBuffer yBuffer;
@@ -44,6 +43,7 @@ public class Mouse extends GLFWMouseButtonCallback {
     }
 
     public static void Reset() {
+        int i;
         for (i = 0; i < buttonsDown.length; i++) buttonsDown[i] = 0;
         for (i = 0; i < buttonsUp.length; i++) buttonsUp[i] = 0;
         anyButton = 0;
