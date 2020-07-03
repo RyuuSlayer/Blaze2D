@@ -63,7 +63,7 @@ public class Font {
         GenerateFont();
     }
 
-    public static final List<Font> Fonts() {
+    public static List<Font> Fonts() {
         return fonts;
     }
 

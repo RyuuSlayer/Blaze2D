@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 public class SceneManager {
     private static String currentScene = "";
 
-    public static final String CurrentScene() {
+    public static String CurrentScene() {
         return currentScene;
     }
 
@@ -24,7 +24,7 @@ public class SceneManager {
         try {
             fr = new FileReader(Editor.WorkingDirectory() + "/Scenes/" + name + ".scene");
         } catch (FileNotFoundException e) {
-            Debug.Log("Scene " + name + " wasnt loaded because it could not be found");
+            Debug.Log("Scene " + name + " was not loaded because it could not be found");
             return;
         }
 
@@ -41,15 +41,21 @@ public class SceneManager {
                 String[] split = line.split("\"");
 
                 if (line.startsWith("<G")) g = CreateObject(split);
-                else if (line.startsWith("<C")) b = g.AddComponent(split[1]);
-                else if (line.startsWith("<V")) {
+                else if (line.startsWith("<C")) {
+                    assert g != null;
+                    b = g.AddComponent(split[1]);
+                } else if (line.startsWith("<V")) {
                     String[] sep = line.split("<V ")[1].split("=");
                     try {
+                        assert b != null;
                         SetVariable(b, sep[0], sep[1].split("\"")[1]);
                     } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
                         Debug.Log("Could not set " + sep[0]);
                     }
-                } else if (line.startsWith("<P")) g.Parent(GameObject.Find(split[1]));
+                } else if (line.startsWith("<P")) {
+                    assert g != null;
+                    g.Parent(GameObject.Find(split[1]));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,19 +83,13 @@ public class SceneManager {
         String dataType = splitName[splitName.length - 1];
 
         switch (dataType) {
-            case "String" -> {
-                f.set(b, input);
-            }
-            case "int" -> {
-                f.set(b, Integer.parseInt(input));
-            }
+            case "String" -> f.set(b, input);
+            case "int" -> f.set(b, Integer.parseInt(input));
             case "Vector2" -> {
                 String[] split = input.split(" ");
                 f.set(b, new Vector2(Float.parseFloat(split[0]), Float.parseFloat(split[1])));
             }
-            case "Sprite" -> {
-                f.set(b, Sprite.Get(input));
-            }
+            case "Sprite" -> f.set(b, Sprite.Get(input));
         }
     }
 }

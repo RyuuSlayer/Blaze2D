@@ -55,7 +55,7 @@ public class Mouse extends GLFWMouseButtonCallback {
         doubleClicked = 0;
     }
 
-    public static final boolean MultiClicked() {
+    public static boolean MultiClicked() {
         return doubleClicked == 1;
     }
 

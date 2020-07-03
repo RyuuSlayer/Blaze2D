@@ -88,7 +88,7 @@ public class Material {
         }
     }
 
-    public static final List<Material> Materials() {
+    public static List<Material> Materials() {
         return materials;
     }
 
