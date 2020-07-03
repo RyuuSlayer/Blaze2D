@@ -21,7 +21,7 @@ public class Debug {
 
     public static String Log() {
         StringBuilder ret = new StringBuilder();
-        int i = 0;
+        int i;
         for (i = 0; i < log.size(); i++) ret.append(log.get(i)).append("\n");
         return ret.toString();
     }

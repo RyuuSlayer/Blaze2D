@@ -69,6 +69,7 @@ public class EngineBootLoader {
         File file = new File(Editor.workspaceDirectory);
         File[] temp = file.listFiles(File::isDirectory);
         List<String> dirs = new ArrayList<>();
+        assert temp != null;
         for (File value : temp) {
             if (!value.getName().equals("null")) dirs.add(value.getName());
         }
@@ -87,6 +88,7 @@ public class EngineBootLoader {
 
             if (c.equals("Begin")) {
                 String selectedString = (String) projectBox.getSelectedItem();
+                assert selectedString != null;
                 if (selectedString.equals("New Project")) returnString = "My Project";
                 else returnString = selectedString;
             }

@@ -12,9 +12,9 @@ public class Color {
     public static final Color yellow = new Color(1, 1, 0);
     public static final Color cyan = new Color(0, 1, 1);
     public static final Color magenta = new Color(1, 0, 1);
-    public float r = 1;
-    public float g = 1;
-    public float b = 1;
+    public final float r;
+    public final float g;
+    public final float b;
     public float a = 1;
 
     //Color constructor with alpha

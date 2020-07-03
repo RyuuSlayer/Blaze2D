@@ -39,7 +39,7 @@ public class Texture {
 
             InputStream is = Texture.class.getResourceAsStream("/Textures/" + name);
             byte[] bytes = new byte[8000];
-            int curByte = 0;
+            int curByte;
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
             try {
