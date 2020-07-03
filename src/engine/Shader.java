@@ -82,7 +82,7 @@ public class Shader {
         return null;
     }
 
-    public static final List<Shader> Shaders() {
+    public static List<Shader> Shaders() {
         return shaders;
     }
 

@@ -81,7 +81,7 @@ public class Sprite {
         }
     }
 
-    public static final List<Sprite> Sprites() {
+    public static List<Sprite> Sprites() {
         return sprites;
     }
 

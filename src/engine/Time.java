@@ -24,19 +24,19 @@ public class Time {
         startTime = lastFrameTime;
     }
 
-    public static final float GetTime() {
+    public static float GetTime() {
         return time;
     }
 
-    public static final float DeltaTime() {
+    public static float DeltaTime() {
         return deltaTime;
     }
 
-    public static final float UnscaledDelta() {
+    public static float UnscaledDelta() {
         return unscaledDelta;
     }
 
-    public static final int FrameRate() {
+    public static int FrameRate() {
         return frameRate;
     }
 

@@ -6,9 +6,9 @@ import engine.LogicBehaviour;
 import java.lang.reflect.Field;
 
 public class BehaviourAttributes {
-    public Object behaviour;
-    public Class<?> c;
-    public String[] fields;
+    final public Object behaviour;
+    final public Class<?> c;
+    final public String[] fields;
 
     public int height;
 
