@@ -1,7 +1,10 @@
 package engine;
 
+import gui.GUISkin;
+import gui.Sprite;
 import input.Input;
 import input.Mouse;
+import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -44,8 +47,21 @@ public class Application {
         GLFWWindowSizeCallback windowSizeCallback = GLFWWindowSizeCallback.create(Application::OnWindowResized);
         glfwSetWindowSizeCallback(window, windowSizeCallback);
 
+        GLFWWindowFocusCallback windowFocusCallback = GLFWWindowFocusCallback.create(Application::OnWindowChangedFocus);
+        glfwSetWindowFocusCallback(window, windowFocusCallback);
+
         //Return the window
         return window;
+    }
+
+    private static void OnWindowChangedFocus(long win, boolean focused) {
+        if (focused) {
+            Sprite.RefreshAll();
+            GUISkin.RefreshAll();
+            Material.RefreshAll();
+            Texture.RefreshAll();
+            Shader.RefreshAll();
+        }
     }
 
     public static void OnWindowResized(long win, int w, int h) {

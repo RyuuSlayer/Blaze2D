@@ -16,8 +16,13 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
     //Static variables to handle all of our shaders
     private static final List<Shader> shaders = new ArrayList<>();
-    private final int program;
+    private static int i;
     public String name;
+    private int program;
+    private int vs;
+    private int fs;
+    private File f = null;
+    private long lastModified;
 
     //Constructor that takes in the name of the shader
     public Shader(String fileName) {
@@ -26,7 +31,7 @@ public class Shader {
         String[] shader = CreateShader(fileName);
 
         //Creates and stores the vertex shader. Then compiles it and checks for errors
-        int vs = glCreateShader(GL_VERTEX_SHADER);
+        vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, shader[0]);
         glCompileShader(vs);
         if (glGetShaderi(vs, GL_COMPILE_STATUS) != 1) {
@@ -35,7 +40,7 @@ public class Shader {
         }
 
         //Creates and stores the fragment shader. Then Compiles it and checks for errors
-        int fs = glCreateShader(GL_FRAGMENT_SHADER);
+        fs = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fs, shader[1]);
         glCompileShader(fs);
         if (glGetShaderi(fs, GL_COMPILE_STATUS) != 1) {
@@ -72,7 +77,6 @@ public class Shader {
     //Get a shader by name
     public static Shader Find(String name) {
         //For all the shaders
-        int i;
         for (i = 0; i < shaders.size(); i++) {
             //If we have came across the shader were looking for, return it
             if (shaders.get(i).name.equals(name)) return shaders.get(i);
@@ -80,6 +84,12 @@ public class Shader {
 
         //If we didn't find a shader by that name, return null
         return null;
+    }
+
+    public static void RefreshAll() {
+        for (i = 0; i < shaders.size(); i++) {
+            shaders.get(i).Refresh();
+        }
     }
 
     public static List<Shader> Shaders() {
@@ -99,7 +109,9 @@ public class Shader {
                 br = new BufferedReader(isr);
                 name = fileName.replaceFirst("/", "");
             } else {
-                br = new BufferedReader(new FileReader(new File(fileName + ".Shader")));
+                f = new File(fileName + ".Shader");
+                lastModified = f.lastModified();
+                br = new BufferedReader(new FileReader(f));
                 String[] split = fileName.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
                 name = split[split.length - 1];
             }
@@ -123,6 +135,56 @@ public class Shader {
 
         //Then return the stringbuilder
         return sb.toString().split("ENDVERTEX");
+    }
+
+    private void Refresh() {
+        if (f == null) return;
+        if (f.lastModified() == lastModified) return;
+        lastModified = f.lastModified();
+
+        glDeleteProgram(program);
+        program = glCreateProgram();
+        String[] shader = CreateShader(f.getAbsolutePath().split("\\.")[0]);
+
+        //Creates and stores the vertex shader. Then compiles it and checks for errors
+        vs = glCreateShader(GL_VERTEX_SHADER);
+        glShaderSource(vs, shader[0]);
+        glCompileShader(vs);
+        if (glGetShaderi(vs, GL_COMPILE_STATUS) != 1) {
+            System.err.println(glGetShaderInfoLog(vs));
+            System.exit(1);
+        }
+
+        //Creates and stores the fragment shader. Then Compiles it and checks for errors
+        fs = glCreateShader(GL_FRAGMENT_SHADER);
+        glShaderSource(fs, shader[1]);
+        glCompileShader(fs);
+        if (glGetShaderi(fs, GL_COMPILE_STATUS) != 1) {
+            System.err.println(glGetShaderInfoLog(fs));
+            System.exit(1);
+        }
+
+        //Attach both the fragment and vertex shaders to the program
+        glAttachShader(program, vs);
+        glAttachShader(program, fs);
+
+        //Binds the location of verts and uvs to the program
+        glBindAttribLocation(program, 0, "vertices");
+        glBindAttribLocation(program, 1, "uv");
+
+        //Link the program and check for errors
+        glLinkProgram(program);
+        if (glGetProgrami(program, GL_LINK_STATUS) != 1) {
+            System.err.println(glGetProgramInfoLog(program));
+            System.exit(1);
+        }
+
+        //Validate the program and check for errors
+        glValidateProgram(program);
+        if (glGetProgrami(program, GL_VALIDATE_STATUS) != 1) {
+            System.err.println(glGetProgramInfoLog(program));
+            System.exit(1);
+        }
     }
 
     //Set a vector2 uniform using the name of the uniform and its 2 values

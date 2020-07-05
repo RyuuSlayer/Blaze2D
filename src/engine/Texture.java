@@ -3,6 +3,7 @@ package engine;
 import org.lwjgl.BufferUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
@@ -21,17 +22,22 @@ public class Texture {
     private static final List<Texture> textureInstances = new ArrayList<>();
     private static int i = 0;
     private final int id;
-    private final int width;
-    private final int height;
-    //Stored info about the texture
+    // Stored info about the texture
     private String name = "";
+    private int width;
+    private int height;
+    private File f = null;
+    private long lastModified;
+    private IntBuffer w;
+    private IntBuffer h;
+    private IntBuffer c;
 
     // Create a texture using a file name
     public Texture(String fileName) {
-        //Create and store width, height and channels int buffers;
-        IntBuffer width = BufferUtils.createIntBuffer(1);
-        IntBuffer height = BufferUtils.createIntBuffer(1);
-        IntBuffer channels = BufferUtils.createIntBuffer(1);
+        // Create and store width, height and channels int buffers;
+        w = BufferUtils.createIntBuffer(1);
+        h = BufferUtils.createIntBuffer(1);
+        c = BufferUtils.createIntBuffer(1);
 
         ByteBuffer data;
         if (fileName.startsWith("/")) {
@@ -52,17 +58,20 @@ public class Texture {
             ByteBuffer buffer = BufferUtils.createByteBuffer(bytes.length);
             buffer.put(bytes);
             buffer.flip();
-            data = stbi_load_from_memory(buffer, width, height, channels, 4);
+            data = stbi_load_from_memory(buffer, w, h, c, 4);
         } else {
             String[] split = fileName.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
             name = split[split.length - 1];
-            data = stbi_load(fileName, width, height, channels, 4);
+            data = stbi_load(fileName, w, h, c, 4);
+
+            f = new File(fileName);
+            lastModified = f.lastModified();
         }
 
         // Generate the texture id and set the size of the texture
         id = glGenTextures();
-        this.width = width.get();
-        this.height = height.get();
+        this.width = w.get();
+        this.height = h.get();
 
         // Bind the texture
         glBindTexture(GL_TEXTURE_2D, id);
@@ -100,6 +109,12 @@ public class Texture {
         return null;
     }
 
+    public static void RefreshAll() {
+        for (i = 0; i < textureInstances.size(); i++) {
+            textureInstances.get(i).Refresh();
+        }
+    }
+
     // Loop through all the textures and delete them when the application closes
     public static void CleanUp() {
         for (i = 0; i < textureInstances.size(); i++) glDeleteTextures(textureInstances.get(i).ID());
@@ -124,6 +139,31 @@ public class Texture {
     // Unbind the texture
     public void Unbind() {
         glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public void Refresh() {
+        if (f == null) return;
+        if (f.lastModified() == lastModified) return;
+        lastModified = f.lastModified();
+
+        w = BufferUtils.createIntBuffer(1);
+        h = BufferUtils.createIntBuffer(1);
+        c = BufferUtils.createIntBuffer(1);
+
+        ByteBuffer data = stbi_load(f.getAbsolutePath(), w, h, c, 4);
+        this.width = w.get();
+        this.height = h.get();
+
+        glBindTexture(GL_TEXTURE_2D, id);
+
+        // Set the min and mag filter texture parameters to nearest
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        // Set the image data into the texture using rgba then free the image data
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        assert data != null;
+        stbi_image_free(data);
     }
 
     public int Width() {
