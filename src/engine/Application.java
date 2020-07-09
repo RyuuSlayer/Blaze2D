@@ -13,7 +13,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
 public class Application {
-    //Window specific variables
+    // Window specific variables
     public static String name = "Blaze2D | Alpha Build";
     private static int width = 1200;
     private static int height = 600;
@@ -21,23 +21,23 @@ public class Application {
     private static Rect r;
     private static byte minimized = 0;
 
-    //Initialization function
+    // Initialization function
     public static long Init() {
-        //If glfw cannot be initialized
+        // If glfw cannot be initialized
         if (!glfwInit()) {
-            //Print an error to the console and close the application
+            // Print an error to the console and close the application
             System.err.println("GLFW Failed to Initialize");
             System.exit(1);
         }
 
         r = new Rect(0, 0, width, height);
 
-        //Create the window, show it and make the context current
+        // Create the window, show it and make the context current
         window = glfwCreateWindow(width, height, name, 0, 0);
         glfwShowWindow(window);
         glfwMakeContextCurrent(window);
 
-        //Create capabilities and set the background color
+        // Create capabilities and set the background color
         GL.createCapabilities();
         glClearColor(0, 0, 0, 1);
 
@@ -50,7 +50,7 @@ public class Application {
         GLFWWindowFocusCallback windowFocusCallback = GLFWWindowFocusCallback.create(Application::OnWindowChangedFocus);
         glfwSetWindowFocusCallback(window, windowFocusCallback);
 
-        //Return the window
+        // Return the window
         return window;
     }
 
