@@ -35,14 +35,14 @@ public class Core {
 
         // While the application should not be closed
         while (!glfwWindowShouldClose(window)) {
-            //At the start, poll events
+            // At the start, poll events
             Mouse.Reset();
             Input.Reset();
             glfwPollEvents();
             Time.Process();
 
             if (!Application.IsMinimized()) {
-                //Before drawing, clear what's been drawn previously and set the background color
+                // Before drawing, clear what's been drawn previously and set the background color
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 Editor.Render();

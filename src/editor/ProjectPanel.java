@@ -8,6 +8,7 @@ import input.Mouse;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectPanel {
@@ -30,15 +31,64 @@ public class ProjectPanel {
                 if (GUI.Button(values[i].name() + "s", temp, null, (GUIStyle) null)) selectedType = values[i];
             } else {
                 GUI.Button(values[i].name() + "s", temp, box, box);
-                //Rect s = GUI.Box(temp, box);
-                //GUI.BeginArea(s);
-                //GUI.Label(values[i].name() + "s", 0, 0);
-                //GUI.EndArea();
+                // Rect s = GUI.Box(temp, box);
+                // GUI.BeginArea(s);
+                // GUI.Label(values[i].name() + "s", 0, 0);
+                // GUI.EndArea();
+            }
+        }
+    }
+
+    public void Popup(String s) {
+        if (s == null) return;
+
+        if (s.equals("New Asset")) {
+            if (selectedType == DataType.Shader) {
+                try {
+                    Shader.Create("New Shader");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Debug.Log("Cannot duplicate default shader asset!");
+                }
+            }
+            if (selectedType == DataType.Material) {
+                try {
+                    Material.Create("New Material");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Debug.Log("Cannot duplicate default material asset!");
+                }
+            }
+            if (selectedType == DataType.Skin) {
+                try {
+                    GUISkin.Create("New Skin");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Debug.Log("Cannot duplicate default skin asset!");
+                }
+            }
+            if (selectedType == DataType.Sprite) {
+                try {
+                    Sprite.Create("New Sprite");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Debug.Log("Cannot duplicate default sprite asset!");
+                }
             }
         }
     }
 
     public void RenderAssets(Rect r) {
+        if (r.Contains(Mouse.Position())) {
+            if (Mouse.GetButtonDown(1)) {
+                List<String> v = new ArrayList<>();
+                if (selectedType != DataType.Font && selectedType != DataType.Texture && selectedType != DataType.Scene) {
+                    v.add("New Asset");
+                    GUI.SetPopup(new Rect(Mouse.Position().x - 10, Mouse.Position().y - 10, 10, 10), v, this::Popup);
+                }
+            }
+        }
+
         Object selected = Editor.GetSelectedAsset();
 
         int i;

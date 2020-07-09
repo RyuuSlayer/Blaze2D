@@ -245,9 +245,16 @@ public class GameObject {
     public void RemoveChild(int v) {
         if (v >= children.size()) return;
         GameObject g = children.get(v);
-        g.Parent(master);
+        //g.Parent(master);
         children.remove(v);
         g.inline = 0;
+    }
+
+    public void Destroy() {
+        Parent(null);
+        for (i = 0; i < children.size(); i++) instances.remove(children.get(i));
+        children.clear();
+        master.children.remove(this);
     }
 
     public void Update() {

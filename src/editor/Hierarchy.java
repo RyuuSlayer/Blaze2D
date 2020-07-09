@@ -4,6 +4,7 @@ package editor;
 import engine.GameObject;
 import engine.Rect;
 import gui.GUI;
+import input.Input;
 import input.Mouse;
 
 import java.util.ArrayList;
@@ -59,7 +60,15 @@ public class Hierarchy {
 
             GameObject selected = Editor.GetSelected();
             if (selected != null) {
-                if (g == selected) GUI.Box(clickRect, "Box");
+                if (g == selected) {
+                    GUI.Box(clickRect, "Box");
+                    if (Input.GetKeyDown(261) || Input.GetKeyDown(259)) {
+                        Editor.SetSelected(null);
+                        children.clear();
+                        g.Destroy();
+                        return;
+                    }
+                }
             }
 
             if (children.size() > 0) {
