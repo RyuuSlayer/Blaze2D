@@ -14,10 +14,9 @@ import java.util.function.Consumer;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GUI {
-    public final static Color backgroundColor = Color.white;
-    private static final int boundTex = -1;
     private static final List<GUIArea> areas = new ArrayList<>();
-    public static Color textColor = Color.white;
+	public static Color backgroundColor = Color.white;
+	public static Color textColor = Color.white;
     public static Font font;
     public static GUISkin skin;
     private static Mesh mesh;
@@ -27,26 +26,26 @@ public class GUI {
     private static int area = 0;
 
     public static void Init() {
-        // Generate mesh information that has inverted uv's
+		//Generate mesh information that has inverted uv's
         float[] meshData = new float[]{0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1};
 
-        // Create a mesh using the mesh data we created
+		//Create a mesh using the mesh data we created
         mesh = new Mesh(meshData, meshData);
 
-        // Set the shader, skin and font we will be using
+		//Set the shader, skin and font we will be using
         shader = Shader.Find("DefaultShader");
         skin = GUISkin.GetSkin("DefaultGUI");
         font = new Font(new java.awt.Font("TimesRoman", java.awt.Font.PLAIN, 16));
     }
 
-    // Prepare the gui for rendering
+	//Prepare the gui for rendering
     public static void Prepare() {
-        // Clear the areas, and the screen area and set the current area to the screen size
+		//Clear the areas, and the screen area and set the current area to the screen size
         areas.clear();
         areas.add(new GUIArea(Application.GetRect()));
         area = 0;
 
-        // Disable depth, pass create and pass in the ortho matrix and bg color and bind the mesh
+		//Disable depth, pass create and pass in the ortho matrix and bg color and bind the mesh
         glDisable(GL_DEPTH_TEST);
         shader.Bind();
         shader.SetUniform("matColor", backgroundColor);
@@ -67,29 +66,29 @@ public class GUI {
         if (popup != null) popup = popup.Draw();
     }
 
-    // Create a vector field with a name and box
+	//Create a vector field with a name and box
     public static Vector2 VectorField(Rect r, String name, Vector2 v, float padding) {
-        // Display the name of the field in an area so it wont be too long
+		//Display the name of the field in an area so it wont be too long
         BeginArea(new Rect(r.x, r.y, padding, r.height));
         Label(name, 0, 0);
         EndArea();
 
-        // Get a quarter of the total render area and render a float field for x and y at those locations
+		//Get a quarter of the total render area and render a float field for x and y at those locations
         float half = (r.width - padding) / 2.0f;
         float x = FloatField(new Rect(r.x + padding, r.y, half, r.height), "x", v.x, 10);
         float y = FloatField(new Rect(r.x + padding + half, r.y, half, r.height), "y", v.y, 10);
 
-        // And return the new vector
+		//And return the new vector
         return new Vector2(x, y);
     }
 
 
-    // Create a float field with a name and box
+	//Create a float field with a name and box
     public static float FloatField(Rect r, String name, float v, float padding) {
-        // Get the return value of the text field
+		//Get the return value of the text field
         String ret = GUI.TextField(r, name, String.valueOf(v), padding);
 
-        // Try to cast it to a float
+		//Try to cast it to a float
         float f = v;
         try {
             f = Float.parseFloat(ret);
@@ -97,191 +96,194 @@ public class GUI {
             Debug.Log("Input is not in a number format! Rejecting value.");
         }
 
-        // And return whatever value we end up with
+		//And return whatever value we end up with
         return f;
     }
 
-    // Create a text field with a name and box
+	//Create a text field with a name and box
     public static String TextField(Rect r, String name, String v, float padding) {
-        //Display the name of the field in an area so it wont be too long
-        BeginArea(new Rect(r.x, r.y, padding, r.height));
-        Label(name, 0, 0);
-        EndArea();
+		//Display the name of the field in an area so it wont be too long
+		BeginArea(new Rect(r.x, r.y, padding, r.height));
+		Label(name, 0, 0);
+		EndArea();
 
-        // If we click on the input box
-        // This is temporary, will change in later episodes
-        if (Button(v, new Rect(r.x + padding, r.y, r.width - padding, r.height), "Box", "Box")) {
-            // Show an input box and give us a return value
-            String s = Dialog.InputDialog("Changing " + name + "!", v);
-            if (s != null) return s.replaceAll("\\n", "").replaceAll("\\r", "").replaceAll("\\t", "");
-        }
-        // And return the value we end up with
-        return v;
-    }
+		//If we click on the input box
+		//This is temporary, will change in later episodes
+		if (Button(v, new Rect(r.x + padding, r.y, r.width - padding, r.height), "Box", "Box")) {
+			//Show an input box and give us a return value
+			String s = Dialog.InputDialog("Changing " + name + "!", v);
+			if (s != null) return s.replaceAll("\\n", "").replaceAll("\\r", "").replaceAll("\\t", "");
+		}
+		//And return the value we end up with
+		return v;
+	}
 
-    // Button function using string values
+	//Button function using string values
     public static boolean Button(String text, Rect r, String normalStyle, String hoverStyle) {
-        // Return the return value from the other button function using the styles acquired from the strings passed in
+		//Return the return value from the other button function using the styles aquired from the strings passed in
         return Button(text, r, skin.Get(normalStyle), skin.Get(hoverStyle));
     }
 
-    // Button function using style variables
+	//Button function using style variables
     public static boolean Button(String text, Rect r, GUIStyle normalStyle, GUIStyle hoverStyle) {
         GUIArea a = areas.get(area);
         Rect rf = r.AddPosition(a.area);
         rf.y -= a.Scroll();
 
-        // If the button contains the mouse position
+		//If the button contains the mouse position
         if (rf.Contains(Mouse.Position())) {
-            // Draw the hover box style
+			//Draw the hover box style
             Rect p = Box(r, hoverStyle);
 
-            // If the box fails, draw the text at the start of the rect, else, draw it at the start of the center of the style
+			//If the box fails, draw the text at the start of the rect, else, draw it at the start of the center of the style
             if (p != null) Label(text, p.x, p.y);
             else Label(text, r.x, r.y);
 
-            // If we left clicked, return true
+			//If we left clicked, return true
             return Mouse.GetButtonDown(0);
         } else {
-            // If the button doesn't contain the mouse, draw the normal box style
+			//If the button doesn't contain the mouse, draw the normal box style
             Rect p = Box(r, normalStyle);
 
-            // If the box fails, draw the text at the start of the rect, else, draw it at the start of the center of the style
-            if (p != null) Label(text, p.x, p.y);
-            else Label(text, r.x, r.y);
-        }
+			//If the box fails, draw the text at the start of the rect, else, draw it at the start of the center of the style
+			if (p != null) Label(text, p.x, p.y);
+			else Label(text, r.x, r.y);
+		}
 
-        // If mouse position is not inside the rect and the mouse was not clicked, return false
-        return false;
-    }
+		//If mouse position is not inside the rect and the mouse was not clicked, return false
+		return false;
+	}
 
-    // Button function using style variables
-    public static boolean CenteredButton(String text, Rect r, GUIStyle normalStyle, GUIStyle hoverStyle) {
-        GUIArea a = areas.get(area);
-        Rect rf = r.AddPosition(a.area);
-        rf.y -= a.Scroll();
+	public static boolean CenteredButton(String text, Rect r, String normalStyle, String hoverStyle) {
+		return CenteredButton(text, r, skin.Get(normalStyle), skin.Get(hoverStyle));
+	}
 
-        float x = rf.x + ((rf.width / 2f) - ((float) font.StringWidth(text) / 2f));
-        float y = rf.y + ((rf.height / 2f) - (font.FontHeight() / 2f));
+	public static boolean CenteredButton(String text, Rect r, GUIStyle normalStyle, GUIStyle hoverStyle) {
+		GUIArea a = areas.get(area);
+		Rect rf = r.AddPosition(a.area);
+		rf.y -= a.Scroll();
 
-        // If the button contains the mouse position
-        if (rf.Contains(Mouse.Position())) {
-            // Draw the hover box style
-            Box(r, hoverStyle);
-            Label(text, x, y);
+		float x = r.x + ((r.width / 2f) - ((float) font.StringWidth(text) / 2f));
+		float y = r.y + ((r.height / 2f) - (font.FontHeight() / 2f));
 
-            // If we left clicked, return true
-            return Mouse.GetButtonDown(0);
-        } else {
-            // If the button doesn't contain the mouse, draw the normal box style
+		//If the button contains the mouse position
+		if (rf.Contains(Mouse.Position())) {
+			//Draw the hover box style
+			Box(r, hoverStyle);
+			Label(text, x, y);
+
+			//If we left clicked, return true
+			return Mouse.GetButtonDown(0);
+		} else {
+			//If the button doesn't contain the mouse, draw the normal box style
             Box(r, normalStyle);
             Label(text, x, y);
         }
 
-        // If mouse position is not inside the rect and the mouse was not clicked, return false
+		//If mouse position is not inside the rect and the mouse was not clicked, return false
         return false;
     }
 
-    // Create a check box toggle
+	//Create a check box toggle
     public static boolean Toggle(boolean b, float x, float y, GUIStyle on, GUIStyle off) {
-        // Set the style based on whether it's true or false
+		//Set the style based on whether it's true or false
         GUIStyle s;
         if (b) s = on;
         else s = off;
 
-        // If we click on it, return the opposite value
+		//If we click on it, return the opposite value
         if (GUI.Button("", new Rect(x, y, 15, 15), s, s)) return !b;
 
-        // Else, return the same value we had
+		//Else, return the same value we had
         return b;
     }
 
-    // Draw a box and return the center rectangle
+	//Draw a box and return the center rectangle
     public static void Box(Rect r, String style) {
         Box(r, skin.Get(style));
     }
 
     public static Rect Box(Rect r, GUIStyle e) {
-        // If there is no style, return null because it needs a style to return the center of it
+		//If there is no style, return null because it needs a style to return the center of it
         if (e == null) return null;
 
-        // Cache a short variable for the texture, just so we only have to type a character anytime we use it
+		//Cache a short variable for the texture, just so we only have to type a character anytime we use it
         Texture t = skin.texture;
 
-        // Get the top left corner of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the top left corner of the box using corresponding padding values and draw it using a texture drawing method
         Rect tl = new Rect(r.x, r.y, e.padding.x, e.padding.y);
         Rect tlu = new Rect(e.uv.x, e.uv.y, e.paddingUV.x, e.paddingUV.y);
         DrawTextureWithTexCoords(t, tl, tlu);
 
-        // Get the top right corner of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the top right corner of the box using corresponding padding values and draw it using a texture drawing method
         Rect tr = new Rect((r.x + r.width) - e.padding.width, r.y, e.padding.width, e.padding.y);
         Rect tru = new Rect((e.uv.x + e.uv.width) - e.paddingUV.width, e.uv.y, e.paddingUV.width, e.paddingUV.y);
         DrawTextureWithTexCoords(t, tr, tru);
 
-        // Get the bottom left corner of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the bottom left corner of the box using corresponding padding values and draw it using a texture drawing method
         Rect bl = new Rect(r.x, (r.y + r.height) - e.padding.height, e.padding.x, e.padding.height);
         Rect blu = new Rect(e.uv.x, (e.uv.y + e.uv.height) - e.paddingUV.height, e.paddingUV.x, e.paddingUV.height);
         DrawTextureWithTexCoords(t, bl, blu);
 
-        // Get the bottom right corner of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the bottom right corner of the box using corresponding padding values and draw it using a texture drawing method
         Rect br = new Rect(tr.x, bl.y, e.padding.width, e.padding.height);
         Rect bru = new Rect(tru.x, blu.y, e.paddingUV.width, e.paddingUV.height);
         DrawTextureWithTexCoords(t, br, bru);
 
-        // Get the left side of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the left side of the box using corresponding padding values and draw it using a texture drawing method
         Rect l = new Rect(r.x, r.y + e.padding.y, e.padding.x, r.height - (e.padding.y + e.padding.height));
         Rect lu = new Rect(e.uv.x, e.uv.y + e.paddingUV.y, e.paddingUV.x, e.uv.height - (e.paddingUV.y + e.paddingUV.height));
         DrawTextureWithTexCoords(t, l, lu);
 
-        // Get the right side of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the right side of the box using corresponding padding values and draw it using a texture drawing method
         Rect ri = new Rect(tr.x, r.y + e.padding.y, e.padding.width, l.height);
         Rect ru = new Rect(tru.x, lu.y, e.paddingUV.width, lu.height);
         DrawTextureWithTexCoords(t, ri, ru);
 
-        // Get the top of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the top of the box using corresponding padding values and draw it using a texture drawing method
         Rect ti = new Rect(r.x + e.padding.x, r.y, r.width - (e.padding.x + e.padding.width), e.padding.y);
         Rect tu = new Rect(e.uv.x + e.paddingUV.x, e.uv.y, e.uv.width - (e.paddingUV.x + e.paddingUV.width), e.paddingUV.y);
         DrawTextureWithTexCoords(t, ti, tu);
 
-        // Get the bottom of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the bottom of the box using corresponding padding values and draw it using a texture drawing method
         Rect b = new Rect(ti.x, bl.y, ti.width, e.padding.height);
         Rect bu = new Rect(tu.x, blu.y, tu.width, e.paddingUV.height);
         DrawTextureWithTexCoords(t, b, bu);
 
-        // Get the center of the box using corresponding padding values and draw it using a texture drawing method
+		//Get the center of the box using corresponding padding values and draw it using a texture drawing method
         Rect c = new Rect(ti.x, l.y, ti.width, l.height);
         Rect cu = new Rect(tu.x, lu.y, tu.width, lu.height);
         DrawTextureWithTexCoords(t, c, cu);
 
-        // Return the center rectangle
+		//Return the center rectangle
         return c;
     }
 
-    // A standard text label
+	//A standard text label
     public static void Label(String text, float x, float y) {
-        // Bind the font image, get our font characters and set the text starting position
+		//Bind the font image, get our font characters and set the text starting position
         Map<Character, Glyph> chars = font.GetCharacters();
         float xTemp = x;
 
-        // Convert the text to an array of characters, set the color uniform set our color bind variable
+		//Convert the text to an array of characters, set the color uniform set our color bind variable
         char[] c = text.toCharArray();
 
-        // For all the characters in the text
+		//For all the characters in the text
         int i;
         for (i = 0; i < c.length; i++) {
-            // Get the glyph information for this character
+			//Get the glyph information for this character
             Glyph r = chars.get(c[i]);
 
             if (r != null) {
                 DrawTextureWithTexCoords(font.GetTexture(), new Rect(xTemp, y, r.scaleX, r.scaleY), new Rect(r.x, r.y, r.w, r.h), textColor);
 
-                // And offset our x placement for the next character
+				//And offset our x placement for the next character
                 xTemp += r.scaleX;
             }
         }
     }
 
-    // Draw a full sized texture of a given scale at a given position
+	//Draw a full sized texture of a given scale at a given position
     public static void DrawTexture(Texture tex, Rect r) {
         DrawTextureWithTexCoords(tex, r, new Rect(0, 0, 1, 1));
     }
@@ -290,43 +292,44 @@ public class GUI {
         DrawTextureWithTexCoords(tex, drawRect, uv, backgroundColor);
     }
 
-    // Draw a texture of a given scale at a given position with a given uv coordinate
+	//Draw a texture of a given scale at a given position with a given uv coordinate
     public static void DrawTextureWithTexCoords(Texture tex, Rect drawRect, Rect uv, Color c) {
-        // If we have an area, get the intersection between this rect and the current rect
-        // if(area == null) return;
-        // Rect r = area.GetIntersection(new Rect(drawRect.x + area.x, drawRect.y + area.y, drawRect.width, drawRect.height));
-        GUIArea a = areas.get(area);
-        if (a.area == null) return;
-        Rect r = a.area.GetIntersection(new Rect(drawRect.x + a.area.x, (drawRect.y + a.area.y) - a.Scroll(), drawRect.width, drawRect.height));
+		//If we have an area, get the intersection between this rect and the current rect
+		//if(area == null) return;
+		//Rect r = area.GetIntersection(new Rect(drawRect.x + area.x, drawRect.y + area.y, drawRect.width, drawRect.height));
+		GUIArea a = areas.get(area);
+		if (a.area == null) return;
+		Rect r = a.area.GetIntersection(new Rect(drawRect.x + a.area.x, (drawRect.y + a.area.y) - a.Scroll(), drawRect.width, drawRect.height));
 
-        // If the rect isn't visible, return
-        if (r == null) return;
+		//If the rect isn't visible, return
+		if (r == null) return;
 
-        // Calculate the x and y positions and uv offset by cropping it out
-        float x = uv.x + ((((r.x - drawRect.x) - a.area.x) / drawRect.width) * uv.width);
-        float y = uv.y + ((((r.y - drawRect.y) - (a.area.y - a.Scroll())) / drawRect.height) * uv.height);
-        Rect u = new Rect(x, y, (r.width / drawRect.width) * uv.width, (r.height / drawRect.height) * uv.height);
+		//Calculate the x and y positions and uv offset by cropping it out
+		float x = uv.x + ((((r.x - drawRect.x) - a.area.x) / drawRect.width) * uv.width);
+		float y = uv.y + ((((r.y - drawRect.y) - (a.area.y - a.Scroll())) / drawRect.height) * uv.height);
+		Rect u = new Rect(x, y, (r.width / drawRect.width) * uv.width, (r.height / drawRect.height) * uv.height);
 
-        // Bind the texture
-        if (tex.ID() != boundTex) glBindTexture(GL_TEXTURE_2D, tex.ID());
+		//Bind the texture
+		int boundTex = -1;
+		if (tex.ID() != boundTex) glBindTexture(GL_TEXTURE_2D, tex.ID());
 
-        // Set the uv, postion, scale and color variables in the shader and render the mesh
-        shader.SetUniform("offset", u.x, u.y, u.width, u.height);
-        shader.SetUniform("pixelScale", r.width, r.height);
-        shader.SetUniform("screenPos", r.x, r.y);
+		//Set the uv, postion, scale and color variables in the shader and render the mesh
+		shader.SetUniform("offset", u.x, u.y, u.width, u.height);
+		shader.SetUniform("pixelScale", r.width, r.height);
+		shader.SetUniform("screenPos", r.x, r.y);
 
-        // If the color we passed in is not the same as the color that is bound
-        if (!boundColor.Compare(c)) {
-            // Set the color uniform and tell our color binding variable that we are using this color
+		//If the color we passed in is not the same as the color that is bound
+		if (!boundColor.Compare(c)) {
+			//Set the color uniform and tell our color binding variable that we are using this color
             shader.SetUniform("matColor", c);
             boundColor = c;
         }
 
-        // Then render the mesh
+		//Then render the mesh
         mesh.Render();
     }
 
-    // Draw a window gui element
+	//Draw a window gui element
     public static void Window(Rect r, String title, Consumer<Rect> f, String style) {
         Window(r, title, f, skin.Get(style));
     }
@@ -334,22 +337,22 @@ public class GUI {
     public static void Window(Rect r, String title, Consumer<Rect> f, GUIStyle style) {
         Rect center = r;
 
-        // If we have a style
+		//If we have a style
         if (style != null) {
-            // Draw the style, place a label on the top of it and begin a drawing area in the center
+			//Draw the style, place a label on the top of it and begin a drawing area in the center
             center = Box(r, style);
             Label(title, r.x + style.padding.x, r.y + 4);
             BeginArea(center);
         } else {
-            // If we don't have a style, draw a label and begin a drawing area using the passed in value
+			//If we don't have a style, draw a label and begin a drawing area using the passed in value
             Label(title, r.x, r.y);
             BeginArea(r);
         }
 
-        // Call the callback function and pass in the index of this window
+		//Call the callback function and pass in the index of this window
         f.accept(center);
 
-        // End the drawing area
+		//End the drawing area
         EndArea();
     }
 
@@ -359,7 +362,7 @@ public class GUI {
         return a.Scroll(offset);
     }
 
-    // Begin and end a drawing area
+	//Begin and end a drawing area
     public static void BeginArea(Rect r) {
         GUIArea a = areas.get(area);
         areas.add(new GUIArea(a.area.GetIntersection(new Rect(a.area.x + r.x, (a.area.y + r.y) - a.Scroll(), r.width, r.height))));
@@ -372,7 +375,7 @@ public class GUI {
         area = areas.size() - 1;
     }
 
-    // Unbind the mesh
+	//Unbind the mesh
     public static void Unbind() {
         mesh.Unbind();
         shader.Unbind();

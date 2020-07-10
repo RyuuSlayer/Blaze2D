@@ -30,12 +30,12 @@ public class ProjectPanel {
             if (!values[i].equals(selectedType)) {
                 if (GUI.Button(values[i].name() + "s", temp, null, (GUIStyle) null)) selectedType = values[i];
             } else {
-                GUI.Button(values[i].name() + "s", temp, box, box);
-                // Rect s = GUI.Box(temp, box);
-                // GUI.BeginArea(s);
-                // GUI.Label(values[i].name() + "s", 0, 0);
-                // GUI.EndArea();
-            }
+				GUI.Button(values[i].name() + "s", temp, box, box);
+				//Rect s = GUI.Box(temp, box);
+				//GUI.BeginArea(s);
+				//GUI.Label(values[i].name() + "s", 0, 0);
+				//GUI.EndArea();
+			}
         }
     }
 
@@ -71,23 +71,23 @@ public class ProjectPanel {
                 try {
                     Sprite.Create("New Sprite");
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    Debug.Log("Cannot duplicate default sprite asset!");
+					e.printStackTrace();
+					Debug.Log("Cannot duplicate default skin asset!");
                 }
             }
         }
     }
 
-    public void RenderAssets(Rect r) {
-        if (r.Contains(Mouse.Position())) {
-            if (Mouse.GetButtonDown(1)) {
-                List<String> v = new ArrayList<>();
-                if (selectedType != DataType.Font && selectedType != DataType.Texture && selectedType != DataType.Scene) {
-                    v.add("New Asset");
-                    GUI.SetPopup(new Rect(Mouse.Position().x - 10, Mouse.Position().y - 10, 10, 10), v, this::Popup);
-                }
-            }
-        }
+	public void RenderAssets(Rect r) throws CloneNotSupportedException {
+		if (r.Contains(Mouse.Position())) {
+			if (Mouse.GetButtonDown(1)) {
+				List<String> v = new ArrayList<>();
+				if (selectedType != DataType.Font && selectedType != DataType.Texture && selectedType != DataType.Scene) {
+					v.add("New Asset");
+					GUI.SetPopup(new Rect(Mouse.Position().x - 10, Mouse.Position().y - 10, 10, 10), v, this::Popup);
+				}
+			}
+		}
 
         Object selected = Editor.GetSelectedAsset();
 
@@ -109,36 +109,37 @@ public class ProjectPanel {
                                     }
                                 }
                             }
-                            Editor.SetSelectedAsset(fonts.get(i));
+							Editor.SetSelectedAsset(fonts.get(i).clone());
                         }
                     } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                        Editor.SetSelectedAsset(fonts.get(i));
+						Editor.SetSelectedAsset(fonts.get(i).clone());
                 } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                    Editor.SetSelectedAsset(fonts.get(i));
+					Editor.SetSelectedAsset(fonts.get(i).clone());
             }
         } else if (selectedType == DataType.Material) {
-            List<Material> materials = Material.Materials();
+			Material select = (Material) selected;
+			List<Material> materials = Material.Materials();
             scroll2 = GUI.SetScrollView(materials.size() * 26, scroll2);
             for (i = 0; i < materials.size(); i++) {
                 if (selected != null) {
-                    if (materials.get(i).equals(selected)) {
-                        if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), box, box)) {
-                            if (Mouse.MultiClicked()) {
-                                File f = new File(Editor.WorkingDirectory() + "Materials/" + materials.get(i).name + ".Material");
-                                if (f.exists()) {
-                                    try {
-                                        Desktop.getDesktop().open(f);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
+					if (materials.get(i).name.equals(select.name)) {
+						if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), box, box)) {
+							if (Mouse.MultiClicked()) {
+								File f = new File(Editor.WorkingDirectory() + "Materials/" + materials.get(i).name + ".Material");
+								if (f.exists()) {
+									try {
+										Desktop.getDesktop().open(f);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+								}
                             }
-                            Editor.SetSelectedAsset(materials.get(i));
+							Editor.SetSelectedAsset(materials.get(i).clone());
                         }
                     } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                        Editor.SetSelectedAsset(materials.get(i));
+						Editor.SetSelectedAsset(materials.get(i).clone());
                 } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                    Editor.SetSelectedAsset(materials.get(i));
+					Editor.SetSelectedAsset(materials.get(i).clone());
             }
         } else if (selectedType == DataType.Shader) {
             List<Shader> shaders = Shader.Shaders();
@@ -157,12 +158,12 @@ public class ProjectPanel {
                                     }
                                 }
                             }
-                            Editor.SetSelectedAsset(shaders.get(i));
+							Editor.SetSelectedAsset(shaders.get(i).clone());
                         }
                     } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                        Editor.SetSelectedAsset(shaders.get(i));
+						Editor.SetSelectedAsset(shaders.get(i).clone());
                 } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                    Editor.SetSelectedAsset(shaders.get(i));
+					Editor.SetSelectedAsset(shaders.get(i).clone());
             }
         } else if (selectedType == DataType.Skin) {
             List<GUISkin> skins = GUISkin.Skins();
@@ -181,12 +182,12 @@ public class ProjectPanel {
                                     }
                                 }
                             }
-                            Editor.SetSelectedAsset(skins.get(i));
+							Editor.SetSelectedAsset(skins.get(i).clone());
                         }
                     } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                        Editor.SetSelectedAsset(skins.get(i));
+						Editor.SetSelectedAsset(skins.get(i).clone());
                 } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                    Editor.SetSelectedAsset(skins.get(i));
+					Editor.SetSelectedAsset(skins.get(i).clone());
             }
         } else if (selectedType == DataType.Sprite) {
             List<Sprite> sprites = Sprite.Sprites();
@@ -205,12 +206,12 @@ public class ProjectPanel {
                                     }
                                 }
                             }
-                            Editor.SetSelectedAsset(sprites.get(i));
+							Editor.SetSelectedAsset(sprites.get(i).clone());
                         }
                     } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                        Editor.SetSelectedAsset(sprites.get(i));
+						Editor.SetSelectedAsset(sprites.get(i).clone());
                 } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                    Editor.SetSelectedAsset(sprites.get(i));
+					Editor.SetSelectedAsset(sprites.get(i).clone());
             }
         } else if (selectedType == DataType.Texture) {
             List<Texture> textures = Texture.GetTextures();
@@ -229,12 +230,12 @@ public class ProjectPanel {
                                     }
                                 }
                             }
-                            Editor.SetSelectedAsset(textures.get(i));
+							Editor.SetSelectedAsset(textures.get(i).clone());
                         }
                     } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                        Editor.SetSelectedAsset(textures.get(i));
+						Editor.SetSelectedAsset(textures.get(i).clone());
                 } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-                    Editor.SetSelectedAsset(textures.get(i));
+					Editor.SetSelectedAsset(textures.get(i).clone());
             }
         }
     }

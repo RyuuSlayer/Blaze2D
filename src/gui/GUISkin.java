@@ -10,22 +10,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class GUISkin {
-    private static final List<GUISkin> skins = new ArrayList<>();
-    private static int i;
-    private final List<GUIStyle> styles = new ArrayList<>();
-    public String name = "";
-    public Texture texture;
-    private File f = null;
-    private long lastModified;
+public class GUISkin implements Cloneable {
+	private static final List<GUISkin> skins = new ArrayList<>();
+	private static int i;
+	private final List<GUIStyle> styles = new ArrayList<>();
+	public String name = "";
+	public Texture texture;
+	private File f = null;
+	private long lastModified;
 
-    // Import a skin by name
-    public GUISkin(String name) {
-        // Create a buffered reader variable
+	//Import a skin by name
+	public GUISkin(String name) {
+		//Create a buffered reader variable
         BufferedReader br;
 
         try {
-            // Set the buffered reader by passing in the file reader for the path of the skin in the folder
+			//Set the buffered reader by passing in the file reader for the path of the skin in the folder
             if (name.startsWith("/")) {
                 InputStreamReader isr = new InputStreamReader(GUISkin.class.getResourceAsStream("/Skins" + name + ".Skin"));
                 br = new BufferedReader(isr);
@@ -38,30 +38,30 @@ public class GUISkin {
                 this.name = split[split.length - 1];
             }
 
-            // Find the texture for this skin
+			//Find the texture for this skin
             texture = Texture.Find(br.readLine().split(" ")[1]);
 
-            // Read the line and store it, while the line isn't null
+			//Read the line and store it, while the line isn't null
             String line = br.readLine();
             while (line != null) {
-                // If the line starts with the Name
+				//If the line starts with the Name
                 if (line.startsWith("Name:")) {
-                    // Get the values we need from the following to lines
+					//Get the values we need from the following to lines
                     String[] o = br.readLine().split(" ")[1].split(",");
                     String[] p = br.readLine().split(" ")[1].split(",");
 
-                    // Then set the offset and padding values that we acquired above
+					//Then set the offset and padding values that we acquired above
                     Rect offset = new Rect(Float.parseFloat(o[0]), Float.parseFloat(o[1]), Float.parseFloat(o[2]), Float.parseFloat(o[3]));
                     Rect padding = new Rect(Float.parseFloat(p[0]), Float.parseFloat(p[1]), Float.parseFloat(p[2]), Float.parseFloat(p[3]));
 
-                    // Then create the style using the name and information we stored and add it to the list of styles
+					//Then create the style using the name and information we stored and add it to the list of styles
                     GUIStyle style = new GUIStyle(line.split(" ")[1], texture, offset, padding);
                     styles.add(style);
                 }
-                // Then go on to the next line
+				//Then go on to the next line
                 line = br.readLine();
             }
-            // And close the buffered reader
+			//And close the buffered reader
             br.close();
         } catch (IOException e) {
             e.printStackTrace();
@@ -75,13 +75,13 @@ public class GUISkin {
     }
 
     public static GUISkin GetSkin(String name) {
-        // For all the styles
+		//For all the styles
         for (i = 0; i < skins.size(); i++) {
-            // If we have came across the style were looking for, return it
+			//If we have came across the style were looking for, return it
             if (skins.get(i).name.equals(name)) return skins.get(i);
         }
 
-        // If we didn't find a style by that name, return null
+		//If we didn't find a style by that name, return null
         return null;
     }
 
@@ -109,15 +109,15 @@ public class GUISkin {
         new GUISkin(dest.getAbsolutePath().split("\\.")[0]);
     }
 
-    // Get a guistyle by name
+	//Get a guistyle by name
     public GUIStyle Get(String name) {
-        // For all the styles
+		//For all the styles
         for (i = 0; i < styles.size(); i++) {
-            // If we have came across the style were looking for, return it
+			//If we have came across the style were looking for, return it
             if (styles.get(i).name.equals(name)) return styles.get(i);
         }
 
-        // If we didn't find a style by that name, return null
+		//If we didn't find a style by that name, return null
         return null;
     }
 
@@ -132,23 +132,23 @@ public class GUISkin {
 
         BufferedReader br = new BufferedReader(new FileReader(f));
 
-        // Find the texture for this skin
+		//Find the texture for this skin
         texture = Texture.Find(br.readLine().split(" ")[1]);
 
-        // Read the line and store it, while the line isn't null
+		//Read the line and store it, while the line isn't null
         String line = br.readLine();
         while (line != null) {
-            // If the line starts with the Name
+			//If the line starts with the Name
             if (line.startsWith("Name:")) {
-                // Get the values we need from the following to lines
+				//Get the values we need from the following to lines
                 String[] o = br.readLine().split(" ")[1].split(",");
                 String[] p = br.readLine().split(" ")[1].split(",");
 
-                // Then set the offset and padding values that we acquired above
+				//Then set the offset and padding values that we acquired above
                 Rect offset = new Rect(Float.parseFloat(o[0]), Float.parseFloat(o[1]), Float.parseFloat(o[2]), Float.parseFloat(o[3]));
                 Rect padding = new Rect(Float.parseFloat(p[0]), Float.parseFloat(p[1]), Float.parseFloat(p[2]), Float.parseFloat(p[3]));
 
-                // Then create the style using the name and information we stored and add it to the list of styles
+				//Then create the style using the name and information we stored and add it to the list of styles
                 String styleName = line.split(" ")[1];
                 GUIStyle style = Get(styleName);
 
@@ -156,14 +156,19 @@ public class GUISkin {
                     style.offset = offset;
                     style.padding = padding;
                 } else {
-                    style = new GUIStyle(line.split(" ")[1], texture, offset, padding);
-                    styles.add(style);
-                }
-            }
-            // Then go on to the next line
-            line = br.readLine();
-        }
-        // And close the buffered reader
-        br.close();
-    }
+					style = new GUIStyle(line.split(" ")[1], texture, offset, padding);
+					styles.add(style);
+				}
+			}
+			//Then go on to the next line
+			line = br.readLine();
+		}
+		//And close the buffered reader
+		br.close();
+	}
+
+	@Override
+	public GUISkin clone() throws CloneNotSupportedException {
+		return (GUISkin) super.clone();
+	}
 }

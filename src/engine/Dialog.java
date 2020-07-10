@@ -2,6 +2,7 @@ package engine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 
 public class Dialog {
     private static String returnValue;
@@ -20,10 +21,21 @@ public class Dialog {
         returnValue = defaultValue;
         JTextField field = new JTextField(defaultValue);
         field.setBounds(5, 5, 275, 25);
+        AbstractAction action = new AbstractAction() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                returnValue = field.getText();
+                finished = 1;
+            }
+        };
+
+        field.addActionListener(action);
         pane.add(field);
 
         JButton ok = new JButton("OK");
-        ok.setBounds(24, 34, 80, 24);
+        ok.setBounds(115, 34, 80, 24);
 
         ok.addActionListener(e -> {
             returnValue = field.getText();
@@ -47,8 +59,8 @@ public class Dialog {
         while (finished != 1) {
             try {
                 Thread.sleep(1);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
             }
             if (!frame.isDisplayable()) break;
         }

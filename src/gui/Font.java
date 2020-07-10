@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Font {
+public class Font implements Cloneable {
     private static final List<Font> fonts = new ArrayList<>();
     private final String name;
     //Kind of like a library of all the characters glyphs in this font
@@ -171,6 +171,11 @@ public class Font {
 
         //Then return the buffer
         return byteBuffer;
+    }
+
+    @Override
+    public Font clone() throws CloneNotSupportedException {
+        return (Font) super.clone();
     }
 
     //Standard getters

@@ -99,7 +99,13 @@ public class Editor {
             GUI.Window(new Rect(0, 30, 400, Application.Height() - 260), "Hierarchy", h::Render, window);
             GUI.Window(new Rect(Application.Width() - 400, 30, 400, Application.Height() - 260), "Inspector", i::Render, window);
             GUI.Window(new Rect(0, Application.Height() - 230, 400, 200), "Asset Types", p::RenderTypes, window);
-            GUI.Window(new Rect(400, Application.Height() - 230, Application.Width() - 400, 200), "Assets", p::RenderAssets, window);
+            GUI.Window(new Rect(400, Application.Height() - 230, Application.Width() - 400, 200), "Assets", t -> {
+                try {
+                    p.RenderAssets(t);
+                } catch (CloneNotSupportedException e) {
+                    e.printStackTrace();
+                }
+            }, window);
         }
 
         //Unbind the gui
@@ -164,6 +170,9 @@ public class Editor {
         new File(workingDirectory + "Textures/").mkdir();
         new File(workingDirectory + "Scenes/").mkdir();
         new File(workingDirectory + "Scripts/").mkdir();
+
+        if (newProject) return;
+
 
         //Put opening of project stuff here
     }

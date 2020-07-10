@@ -63,6 +63,9 @@ public class Inspector {
         } else {
             i = 0;
             GUI.Window(new Rect(0, offsetY, r.width, a.get(0).height + (window.padding.y + window.padding.height)), a.get(0).behaviour.getClass().getSimpleName(), this::DrawVariables, window);
+            if (GUI.CenteredButton("Save", new Rect(0, offsetY + (a.get(0).height + (window.padding.y + window.padding.height)) + 2, r.width, 26), "Button", "ButtonHover")) {
+
+            }
         }
     }
 

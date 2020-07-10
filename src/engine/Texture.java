@@ -17,24 +17,24 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.stb.STBImage.*;
 
-public class Texture {
-    // Temp, iterator and list of textures variables
-    private static final List<Texture> textureInstances = new ArrayList<>();
-    private static int i = 0;
-    private final int id;
-    // Stored info about the texture
-    private String name = "";
-    private int width;
-    private int height;
-    private File f = null;
-    private long lastModified;
-    private IntBuffer w;
+public class Texture implements Cloneable {
+	//Temp, iterator and list of textures variables
+	private static final List<Texture> textureInstances = new ArrayList<>();
+	private static int i = 0;
+	private final int id;
+	//Stored info about the texture
+	private String name = "";
+	private int width;
+	private int height;
+	private File f = null;
+	private long lastModified;
+	private IntBuffer w;
     private IntBuffer h;
     private IntBuffer c;
 
-    // Create a texture using a file name
+	//Create a texture using a file name
     public Texture(String fileName) {
-        // Create and store width, height and channels int buffers;
+		//Create and store width, height and channels int buffers;
         w = BufferUtils.createIntBuffer(1);
         h = BufferUtils.createIntBuffer(1);
         c = BufferUtils.createIntBuffer(1);
@@ -68,28 +68,28 @@ public class Texture {
             lastModified = f.lastModified();
         }
 
-        // Generate the texture id and set the size of the texture
+		//Generate the texture id and set the size of the texture
         id = glGenTextures();
         this.width = w.get();
         this.height = h.get();
 
-        // Bind the texture
+		//Bind the texture
         glBindTexture(GL_TEXTURE_2D, id);
 
-        // Set the min and mag filter texture parameters to nearest
+		//Set the min and mag filter texture parameters to nearest
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        // Set the image data into the texture using rgba then free the image data
+		//Set the image data into the texture using rgba then free the image data
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         assert data != null;
         stbi_image_free(data);
 
-        // Add the texture to our list of textures
+		//Add the texture to our list of textures
         textureInstances.add(this);
     }
 
-    // Create a texture with a pregenerated id
+	//Create a texture with a pregenerated id
     public Texture(int id, int width, int height) {
         //Set the information to info passed in
         this.id = id;
@@ -97,7 +97,7 @@ public class Texture {
         this.height = height;
     }
 
-    // Find a texture with a given name
+	//Find a texture with a given name
     public static Texture Find(String textureName) {
         //For every texture in our list of textures
         for (i = 0; i < textureInstances.size(); i++) {
@@ -105,7 +105,7 @@ public class Texture {
             Texture tmp = textureInstances.get(i);
             if (tmp.name.startsWith(textureName)) return tmp;
         }
-        // If the specified texture can't be found, return null
+		//If the specified texture can't be found, return null
         return null;
     }
 
@@ -115,28 +115,28 @@ public class Texture {
         }
     }
 
-    // Loop through all the textures and delete them when the application closes
+	//Loop through all the textures and delete them when the application closes
     public static void CleanUp() {
         for (i = 0; i < textureInstances.size(); i++) glDeleteTextures(textureInstances.get(i).ID());
     }
 
-    // Getter methods for texture list, width and length of the texture
+	//Getter methods for texture list, width and length of the texture
     public static List<Texture> GetTextures() {
         return textureInstances;
     }
 
-    // Return the id of this texture
+	//Return the id of this texture
     public int ID() {
         return id;
     }
 
     public void Bind() {
-        // Bind this texture into texture position 0
+		//Bind this texture into texture position 0
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, id);
     }
 
-    // Unbind the texture
+	//Unbind the texture
     public void Unbind() {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
@@ -156,25 +156,30 @@ public class Texture {
 
         glBindTexture(GL_TEXTURE_2D, id);
 
-        // Set the min and mag filter texture parameters to nearest
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		//Set the min and mag filter texture parameters to nearest
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        // Set the image data into the texture using rgba then free the image data
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-        assert data != null;
-        stbi_image_free(data);
-    }
+		//Set the image data into the texture using rgba then free the image data
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+		assert data != null;
+		stbi_image_free(data);
+	}
 
-    public int Width() {
-        return width;
-    }
+	@Override
+	public Texture clone() throws CloneNotSupportedException {
+		return (Texture) super.clone();
+	}
 
-    public int Height() {
-        return height;
-    }
+	public int Width() {
+		return width;
+	}
 
-    public final String Name() {
+	public int Height() {
+		return height;
+	}
+
+	public final String Name() {
         return name;
     }
 }
