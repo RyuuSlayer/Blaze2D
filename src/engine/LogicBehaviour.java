@@ -1,12 +1,12 @@
 package engine;
 
-public abstract class LogicBehaviour {
-    private final String name;
+public abstract class LogicBehaviour extends Object {
     public boolean enabled = true;
+
     protected GameObject gameObject;
 
     public LogicBehaviour() {
-        name = getClass().getSimpleName();
+        Name(getClass().getSimpleName());
     }
 
     public void Init(GameObject g) {
@@ -31,9 +31,5 @@ public abstract class LogicBehaviour {
 
     public final GameObject gameObject() {
         return gameObject;
-    }
-
-    public String Name() {
-        return name;
     }
 }

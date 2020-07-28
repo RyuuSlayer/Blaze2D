@@ -3,7 +3,9 @@ package editor;
 
 import engine.GameObject;
 import engine.Rect;
+import engine.SpriteRenderer;
 import gui.GUI;
+import gui.Sprite;
 import input.Input;
 import input.Mouse;
 
@@ -11,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Hierarchy {
+    private Rect clickRect;
+    private int i;
     private int scroll;
 
     public Hierarchy() {
@@ -21,7 +25,6 @@ public class Hierarchy {
         List<GameObject> loop = new ArrayList<>();
         int offset = 0;
         loop.add(GameObject.Master());
-        int i;
         while (loop.size() > 0) {
             GameObject g = loop.get(0);
             List<GameObject> children = g.Children();
@@ -39,6 +42,7 @@ public class Hierarchy {
         }
         scroll = GUI.SetScrollView(offset, scroll);
 
+        byte dropped = 0;
         List<GameObject> updateList = new ArrayList<>();
         int offsetY = 0;
 
@@ -56,7 +60,7 @@ public class Hierarchy {
             }
 
             float inline = (g.Inline()) * 16;
-            Rect clickRect = new Rect(0, offsetY, r.width, 20);
+            clickRect = new Rect(0, offsetY, r.width, 20);
 
             GameObject selected = Editor.GetSelected();
             if (selected != null) {
@@ -64,8 +68,9 @@ public class Hierarchy {
                     GUI.Box(clickRect, "Box");
                     if (Input.GetKeyDown(261) || Input.GetKeyDown(259)) {
                         Editor.SetSelected(null);
-                        children.clear();
+                        children.clear(); //Put this after g.destroy
                         g.Destroy();
+
                         return;
                     }
                 }
@@ -73,17 +78,47 @@ public class Hierarchy {
 
             if (children.size() > 0) {
                 g.Expand(GUI.Toggle(g.Expanded(), inline, offsetY + 2, Editor.arrowDown, Editor.arrowRight));
-                GUI.Label(g.name, inline + 15, offsetY);
-            } else GUI.Label(g.name, inline, offsetY);
+                GUI.Label(g.Name(), inline + 15, offsetY);
+            } else GUI.Label(g.Name(), inline, offsetY);
 
             clickRect.Set(0, (r.y + offsetY) - scroll, r.width, 20);
 
             if (clickRect.Contains(Mouse.Position())) {
-                if (Mouse.GetButtonDown(0)) Editor.SetSelected(g);
+                if (Mouse.GetButtonUp(0)) Editor.SetSelected(g);
+                else if (Mouse.GetButtonDown(0)) Editor.SetDraggableObject(g);
+                if (dropped == 0) dropped = CheckDrop(g);
+                if (dropped == 1) return;
             }
 
             offsetY += 20;
             updateList.remove(g);
         }
+
+        if (r.Contains(Mouse.Position()) && dropped == 0) {
+            CheckDrop(null);
+        }
+    }
+
+    private byte CheckDrop(GameObject parent) {
+        if (Mouse.GetButtonUp(0)) {
+            engine.Object dragged = Editor.DraggedObject();
+            if (dragged != null) {
+                if (dragged instanceof Sprite) {
+                    Sprite s = (Sprite) dragged;
+                    GameObject go = new GameObject(dragged.Name());
+                    SpriteRenderer sr = new SpriteRenderer();
+                    sr.sprite = s;
+                    go.AddComponent(sr);
+                    go.Parent(parent);
+                    return 1;
+                } else if (dragged instanceof GameObject) {
+                    GameObject g = (GameObject) dragged;
+                    if (g == parent) return 1;
+                    g.Parent(parent);
+                    return 1;
+                }
+            }
+        }
+        return 0;
     }
 }

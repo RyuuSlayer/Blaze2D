@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 public class MenuBar {
-    public final Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
     private final GUIStyle play;
+
     private final GUIStyle box;
-    private final GUIStyle stop;
     private GUIStyle empty;
+    private final GUIStyle stop;
+    public Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
     private String selected;
+    private Color prevColor;
 
     public MenuBar() {
         box = Editor.skin.Get("Box");
@@ -35,8 +37,12 @@ public class MenuBar {
     }
 
     public void Add(String parent, MenuItem item) {
-        List<MenuItem> menuItem = menu.computeIfAbsent(parent, k -> new ArrayList<>());
+        List<MenuItem> menuItem = menu.get(parent);
 
+        if (menuItem == null) {
+            menuItem = new ArrayList<MenuItem>();
+            menu.put(parent, menuItem);
+        }
         menuItem.add(item);
     }
 
@@ -48,7 +54,7 @@ public class MenuBar {
 
         GUI.Box(new Rect(0, 0, w, 30), box);
 
-        Color prevColor = GUI.textColor;
+        prevColor = GUI.textColor;
         GUI.textColor = Color.white;
         float offset = 0;
         float index = 0;

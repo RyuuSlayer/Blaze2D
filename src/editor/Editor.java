@@ -5,9 +5,11 @@ import gui.GUI;
 import gui.GUISkin;
 import gui.GUIStyle;
 import gui.Sprite;
+import input.Mouse;
 import math.Vector2;
 
 import java.io.*;
+import java.lang.Object;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ public class Editor {
     public static GUIStyle arrowDown;
     public static GUIStyle arrowRight;
     public static GUIStyle window;
+    public static Rect sceneArea = new Rect(0, 0, 0, 0);
+    public static Vector2 cameraPosition = new Vector2();
     private static byte configInit = 0;
     private static String workingDirectory = "";
 
@@ -27,10 +31,15 @@ public class Editor {
     private static Inspector i;
     private static ProjectPanel p;
     private static MenuBar m;
+    private static engine.Object draggedObject;
     private static GameObject selected;
-    private static Object selectedAsset;
-    private static Object inspected;
+    private static engine.Object selectedAsset;
+    private static engine.Object inspected;
     private static byte playing = 0;
+    private static byte draggingScene = 0;
+    private static Vector2 startDragPoint = new Vector2();
+    private static Vector2 startCameraDragPoint = cameraPosition;
+    private static int a;
 
     public static void InitConfig() {
         if (configInit == 1) return;
@@ -58,7 +67,6 @@ public class Editor {
 
     public static void Init() {
         skin = GUISkin.GetSkin("DefaultGUI");
-        assert skin != null;
         arrowDown = skin.Get("ArrowDown");
         arrowRight = skin.Get("ArrowRight");
         window = skin.Get("Window");
@@ -69,7 +77,7 @@ public class Editor {
         m = new MenuBar();
     }
 
-    public static boolean IsPlaying() {
+    public static final boolean IsPlaying() {
         return playing == 1;
     }
 
@@ -96,6 +104,36 @@ public class Editor {
         m.Render();
 
         if (playing == 0) {
+            sceneArea.Set(400, 30, Application.Width() - 800, Application.Height() - 260);
+            if (sceneArea.Contains(Mouse.Position())) {
+                if (Mouse.GetButtonDown(2)) {
+                    startDragPoint = Mouse.Position();
+                    startCameraDragPoint = cameraPosition;
+                    draggingScene = 1;
+                } else if (Mouse.GetButtonDown(0)) {
+                    List<GameObject> l = GameObject.Instances();
+
+                    Vector2 halfScreen = new Vector2(Application.Width() * 0.5f, Application.Height() * 0.5f);
+                    Vector2 mousePos = Mouse.Position().Sub(halfScreen).Add(new Vector2(cameraPosition.x, -cameraPosition.y));
+
+                    for (a = 0; a < l.size(); a++) {
+                        GameObject g = l.get(a);
+                        SpriteRenderer sr = (SpriteRenderer) g.GetComponent("SpriteRenderer");
+                        if (sr != null) {
+                            if (sr.Contains(new Vector2(mousePos.x, -mousePos.y))) {
+                                SetSelected(g);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            if (draggingScene == 1) {
+                Vector2 dragDistance = startDragPoint.Sub(Mouse.Position());
+                cameraPosition = startCameraDragPoint.Add(dragDistance.x, -dragDistance.y);
+                if (Mouse.GetButtonUp(2)) draggingScene = 0;
+            }
+
             GUI.Window(new Rect(0, 30, 400, Application.Height() - 260), "Hierarchy", h::Render, window);
             GUI.Window(new Rect(Application.Width() - 400, 30, 400, Application.Height() - 260), "Inspector", i::Render, window);
             GUI.Window(new Rect(0, Application.Height() - 230, 400, 200), "Asset Types", p::RenderTypes, window);
@@ -106,22 +144,33 @@ public class Editor {
                     e.printStackTrace();
                 }
             }, window);
+
+            if (Mouse.GetButtonUp(0)) draggedObject = null;
+            else if (draggedObject != null) GUI.Label(draggedObject.Name(), Mouse.Position());
         }
 
         //Unbind the gui
         GUI.Unbind();
     }
 
-    public static Object GetInspected() {
+    public static final engine.Object DraggedObject() {
+        return draggedObject;
+    }
+
+    public static void SetDraggableObject(engine.Object draggable) {
+        draggedObject = draggable;
+    }
+
+    public static final Object GetInspected() {
         return inspected;
     }
 
-    private static void SetInspected(Object o) {
+    private static void SetInspected(engine.Object o) {
         inspected = o;
         if (o != null) i.SetAttributes(o);
     }
 
-    public static GameObject GetSelected() {
+    public static final GameObject GetSelected() {
         return selected;
     }
 
@@ -130,11 +179,11 @@ public class Editor {
         SetInspected(g);
     }
 
-    public static Object GetSelectedAsset() {
+    public static final engine.Object GetSelectedAsset() {
         return selectedAsset;
     }
 
-    public static void SetSelectedAsset(Object o) {
+    public static void SetSelectedAsset(engine.Object o) {
         selectedAsset = o;
         SetInspected(o);
     }
@@ -160,7 +209,7 @@ public class Editor {
         workingDirectory = workspaceDirectory + name + "/";
 
         File projDir = new File(workingDirectory);
-        boolean newProject = projDir.mkdir();
+        Boolean newProject = projDir.mkdir();
 
         new File(workingDirectory + "Font/").mkdir();
         new File(workingDirectory + "Materials/").mkdir();
@@ -177,7 +226,7 @@ public class Editor {
         //Put opening of project stuff here
     }
 
-    public static String WorkingDirectory() {
+    public static final String WorkingDirectory() {
         return workingDirectory;
     }
 
@@ -205,7 +254,7 @@ public class Editor {
 
             List<LogicBehaviour> b = g.GetComponents();
             for (LogicBehaviour logicBehaviour : b) WriteComponent(logicBehaviour, fw);
-            if (g.Parent() != master) fw.write("\t<P Name=\"" + g.Parent().name + "\">\n</G>\n");
+            if (g.Parent() != master) fw.write("\t<P Name=\"" + g.Parent().Name() + "\">\n</G>\n");
             else fw.write("</G>\n");
             objectList.remove(g);
         }
@@ -214,9 +263,9 @@ public class Editor {
     }
 
     private static void WriteTransform(GameObject g, FileWriter fw) throws IOException {
-        String line = "<G Name=\"" + g.name + "\" ";
-        line += "Position=\"" + g.Position().x + " " + g.Position().x + "\" ";
-        line += "Scale=\"" + g.Scale().x + " " + g.Scale().x + "\" ";
+        String line = "<G Name=\"" + g.Name() + "\" ";
+        line += "Position=\"" + g.Position().x + " " + g.Position().y + "\" ";
+        line += "Scale=\"" + g.Scale().x + " " + g.Scale().y + "\" ";
         line += "Rotation=\"" + g.Rotation() + "\">\n";
         fw.write(line);
     }
@@ -236,8 +285,8 @@ public class Editor {
                 if (t[t.length - 1].equals("Vector2")) {
                     Vector2 v = (Vector2) f.get(b);
                     line += v.x + " " + v.y;
-                } else if (t[t.length - 1].equals("Sprite")) line += ((Sprite) f.get(b)).name;
-                else line += f.get(b).toString();
+                } else if (t[t.length - 1].equals("Sprite")) line += ((Sprite) f.get(b)).Name();
+                else if (f.get(b) != null) line += f.get(b).toString();
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();
             }
@@ -246,15 +295,15 @@ public class Editor {
         }
     }
 
-    public static Hierarchy hierarchy() {
+    public static final Hierarchy hierarchy() {
         return h;
     }
 
-    public static Inspector inspector() {
+    public static final Inspector inspector() {
         return i;
     }
 
-    public static ProjectPanel projectPanel() {
+    public static final ProjectPanel projectPanel() {
         return p;
     }
 }

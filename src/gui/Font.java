@@ -16,11 +16,8 @@ import java.util.regex.Pattern;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Font implements Cloneable {
+public class Font extends engine.Object implements Cloneable {
     private static final List<Font> fonts = new ArrayList<>();
-    private final String name;
-    //Kind of like a library of all the characters glyphs in this font
-    private final Map<Character, Glyph> chars = new HashMap<>();
     private int fontID;
     private BufferedImage bufferedImage;
     private Vector2 imageSize;
@@ -29,6 +26,9 @@ public class Font implements Cloneable {
     private int i;
     private Texture texture;
     private float h;
+
+    //Kind of like a library of all the characters glyphs in this font
+    private final Map<Character, Glyph> chars = new HashMap<>();
 
     //Constructor to Create a font using a name in the fonts folder and font size
     public Font(String name, float size) {
@@ -49,7 +49,7 @@ public class Font implements Cloneable {
                 e.printStackTrace();
             }
         }
-        this.name = name;
+        Name(name);
 
         //Call to generate the font image
         GenerateFont();
@@ -59,16 +59,12 @@ public class Font implements Cloneable {
     public Font(java.awt.Font font) {
         //Set the font and generate the texture
         this.font = font;
-        this.name = font.getFontName();
+        Name(font.getFontName());
         GenerateFont();
     }
 
-    public static List<Font> Fonts() {
+    public static final List<Font> Fonts() {
         return fonts;
-    }
-
-    public final String Name() {
-        return name;
     }
 
     //Generate the texture font

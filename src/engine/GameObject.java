@@ -2,6 +2,7 @@ package engine;
 
 import editor.Editor;
 import editor.EditorUtil;
+import math.Mathf;
 import math.Matrix4x4;
 import math.Vector2;
 
@@ -10,22 +11,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class GameObject {
+public class GameObject extends engine.Object {//Variables need to be after object creation and behaviour creation
     private static final GameObject master = new GameObject(false);
     private static final List<GameObject> instances = new ArrayList<>();
     private static int h;
-    private final Vector2 position = new Vector2(0, 0);
-    private final Vector2 scale = new Vector2(1, 1);
-    private final List<GameObject> children = new ArrayList<>();
-    private final List<LogicBehaviour> components = new ArrayList<>();
-    private final String id;
-    private final Matrix4x4 matrix = new Matrix4x4();
+    private static final Matrix4x4 temp = new Matrix4x4();
+    private static int j;
     public boolean enabled = true;
     public String tag = "Untagged";
-    public String name = "New GameObject";
+    private final Vector2 position = new Vector2(0, 0);
+    //New
+    private final Vector2 localPosition = new Vector2();
     private float rotation = 0;
+    private final List<GameObject> children = new ArrayList<>();
+    private final List<LogicBehaviour> components = new ArrayList<>();
+    private final Matrix4x4 matrix = new Matrix4x4();
     private GameObject parent;
+    private Vector2 scale = new Vector2(1, 1);
+    private Vector2 localScale = new Vector2();
     private int inline = 0;
+    private float localRotation = 0;
+    private String id;
+    private int layer = 0;
     private byte dirty = 1;
     private boolean expanded = false;
     private int i;
@@ -37,16 +44,20 @@ public class GameObject {
             expanded = true;
             return;
         }
-
+        Name("New GameObject");
         instances.add(this);
         Parent(master);
     }
 
     public GameObject(String name) {
         id = UUID.randomUUID().toString();
-        this.name = name;
+        Name(name);
         instances.add(this);
         Parent(master);
+    }
+
+    public static void Recalculate() {
+        for (int i = 0; i < master.children.size(); i++) master.children.get(i).RecalculateGlobalTransformations();
     }
 
     public static GameObject Master() {
@@ -58,10 +69,22 @@ public class GameObject {
         master.children.clear();
     }
 
+    public static final List<GameObject> Instances() {
+        return instances;
+    }
+
+    public static GameObject FindObjectByID(String s) {
+        for (j = 0; j < instances.size(); j++) {
+            GameObject g = instances.get(j);
+            if (g.id.equals(s)) return g;
+        }
+        return null;
+    }
+
     public static GameObject Find(String s) {
-        for (h = 0; h < instances.size(); h++) {
-            GameObject g = instances.get(h);
-            if (g.name.equals(s)) return g;
+        for (j = 0; j < instances.size(); j++) {
+            GameObject g = instances.get(j);
+            if (g.Name().equals(s)) return g;
         }
         return null;
     }
@@ -80,15 +103,22 @@ public class GameObject {
         }
     }
 
+    public final int GetLayer() {
+        return layer;
+    }
+
+    public void SetLayer(int l) {
+        layer = (int) Mathf.Clamp((float) layer, 0, Renderer.LayerCount() - 1);
+    }
+
     public final boolean isDirty() {
         return dirty == 1;
     }
 
-    public void UpdateMatrix() {
-        matrix.SetTransformation(position, rotation);
-    }
-
+    //Get rid of update matrix because Matrix() already updates it if it's dirty when retrieved
     public final Matrix4x4 Matrix() {
+        if (dirty == 1) matrix.SetTransformation(position, rotation, scale);
+        dirty = 0;
         return matrix;
     }
 
@@ -97,14 +127,25 @@ public class GameObject {
     }
 
     public void Position(Vector2 v) {
-        position.Set(v);
-        dirty = 1;
+        Position(v.x, v.y);
     }
 
     public void Position(float x, float y) {
-        position.x = x;
-        position.y = y;
-        dirty = 1;
+        position.Set(x, y);
+        RecalculateLocalTransformation();
+    }
+
+    public final Vector2 LocalPosition() {
+        return localPosition;
+    }
+
+    public void LocalPosition(Vector2 v) {
+        LocalPosition(v.x, v.y);
+    }
+
+    public void LocalPosition(float x, float y) {
+        localPosition.Set(x, y);
+        RecalculateGlobalTransformations();
     }
 
     public final Vector2 Scale() {
@@ -112,12 +153,25 @@ public class GameObject {
     }
 
     public void Scale(Vector2 v) {
-        scale.Set(v);
+        Scale(v.x, v.y);
     }
 
     public void Scale(float x, float y) {
-        scale.x = x;
-        scale.y = y;
+        scale.Set(x, y);
+        RecalculateLocalTransformation();
+    }
+
+    public final Vector2 LocalScale() {
+        return localScale;
+    }
+
+    public void LocalScale(Vector2 v) {
+        LocalScale(v.x, v.y);
+    }
+
+    public void LocalScale(float x, float y) {
+        localScale.Set(x, y);
+        RecalculateGlobalTransformations();
     }
 
     public final float Rotation() {
@@ -125,8 +179,38 @@ public class GameObject {
     }
 
     public void Rotation(float v) {
-        rotation = v;
+        rotation = Mathf.Wrap(v, 0, 360);
+        RecalculateLocalTransformation();
+    }
+
+    public final float LocalRotation() {
+        return localRotation;
+    }
+
+    public void LocalRotation(float v) {
+        localRotation = Mathf.Wrap(v, 0, 360);
+        RecalculateGlobalTransformations();
+    }
+
+    private void RecalculateLocalTransformation() {
         dirty = 1;
+        localScale = scale.Div(parent.scale);
+        localRotation = Mathf.Wrap(rotation - parent.rotation, 0, 360);
+        temp.SetTransformation(null, -parent.rotation, new Vector2(1, 1).Div(parent.scale));
+        localPosition.Set(temp.TransformPoint(position.Sub(parent.position)));
+
+        for (GameObject child : children) child.RecalculateGlobalTransformations();
+    }
+
+    private void RecalculateGlobalTransformations() {
+        dirty = 1;
+        scale = parent.scale.Mul(localScale);
+        rotation = Mathf.Wrap(parent.rotation + localRotation, 0, 360);
+        position.Set(parent.Matrix().TransformPoint(localPosition));
+
+        for (GameObject child : children) {
+            child.RecalculateGlobalTransformations();
+        }
     }
 
     public GameObject Parent() {
@@ -143,6 +227,7 @@ public class GameObject {
         parent = g;
         parent.children.add(this);
         SetInline(parent.inline + 1);
+        RecalculateLocalTransformation();
     }
 
     public final List<LogicBehaviour> GetComponents() {
@@ -150,8 +235,8 @@ public class GameObject {
     }
 
     public LogicBehaviour GetComponent(String s) {
-        for (i = 0; i < components.size(); i++) {
-            LogicBehaviour b = components.get(i);
+        for (j = 0; j < components.size(); j++) {
+            LogicBehaviour b = components.get(j);
             if (b.Name().equals(s)) return b;
         }
         return null;
@@ -208,7 +293,11 @@ public class GameObject {
         return null;
     }
 
-    public String ID() {
+    void Id(String value) {
+        id = value;
+    }
+
+    public final String ID() {
         return id;
     }
 
@@ -252,14 +341,15 @@ public class GameObject {
 
     public void Destroy() {
         Parent(null);
-        for (i = 0; i < children.size(); i++) instances.remove(children.get(i));
+        for (i = 0; i < children.size(); i++) children.get(i).Destroy();
+        instances.remove(this);
+
         children.clear();
         master.children.remove(this);
     }
 
     public void Update() {
-        for (i = 0; i < components.size(); i++) {
-            LogicBehaviour component = components.get(i);
+        for (LogicBehaviour component : components) {
             component.Update();
         }
     }
@@ -267,7 +357,10 @@ public class GameObject {
     public void PrepareToRender() {
         for (i = 0; i < components.size(); i++) {
             LogicBehaviour component = components.get(i);
-            if (component.Name().equals("SpriteRenderer")) Renderer.AddToRenderer((SpriteRenderer) component);
+            if (component.Name().equals("SpriteRenderer")) {
+                SpriteRenderer sr = (SpriteRenderer) component;
+                if (sr.sprite != null) Renderer.AddToRenderer(sr);
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Debug {
     private static final List<String> log = new ArrayList<>();
-    public static int i = 0;
+    private static int i = 0;
 
     public static void Log(String message) {
         AddMessage(message);
@@ -31,7 +31,6 @@ public class Debug {
 
     public static void Draw() {
         if (GUI.Button(Debug.LastEntry(), new Rect(0, Application.Height() - 30, Application.Width(), 30), "Button", "ButtonHover")) {
-            for (i = 0; i < 50; i++) Log("This is kind of like a test, but you get the gist... because it's long");
             Dialog.MessageDialog("Debug Window", Log());
         }
     }

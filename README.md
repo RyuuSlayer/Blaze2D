@@ -5,3 +5,6 @@ To compile the engine use LWJGL3 and put it into a lib folder next so src and re
 
 You will need OpenGL, OpenAL, GLFW and Vulkan Libs.
 I recommend using atleast Java JDK 15.
+
+New feature changelog:
+- implemented .ogg reading.

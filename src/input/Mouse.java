@@ -14,12 +14,14 @@ import static org.lwjgl.glfw.GLFW.*;
 enum CursorImage {Pointer, Hand, HScroll, VScroll}
 
 public class Mouse extends GLFWMouseButtonCallback {
-    private static final byte[] buttons = new byte[8];
-    private static final byte[] buttonsDown = new byte[8];
-    private static final byte[] buttonsUp = new byte[8];
     private static byte anyButton = 0;
     private static byte anyButtonDown = 0;
     private static byte anyButtonUp = 0;
+    private static final byte[] buttons = new byte[8];
+    private static final byte[] buttonsDown = new byte[8];
+    private static final byte[] buttonsUp = new byte[8];
+
+    private static int i;
     private static long window;
     private static DoubleBuffer xBuffer;
     private static DoubleBuffer yBuffer;
@@ -43,7 +45,6 @@ public class Mouse extends GLFWMouseButtonCallback {
     }
 
     public static void Reset() {
-        int i;
         for (i = 0; i < buttonsDown.length; i++) buttonsDown[i] = 0;
         for (i = 0; i < buttonsUp.length; i++) buttonsUp[i] = 0;
         anyButton = 0;
@@ -55,7 +56,7 @@ public class Mouse extends GLFWMouseButtonCallback {
         doubleClicked = 0;
     }
 
-    public static boolean MultiClicked() {
+    public static final boolean MultiClicked() {
         return doubleClicked == 1;
     }
 

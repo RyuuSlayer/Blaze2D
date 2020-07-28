@@ -15,11 +15,10 @@ import java.util.regex.Pattern;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class Shader implements Cloneable {
+public class Shader extends engine.Object {
     //Static variables to handle all of our shaders
     private static final List<Shader> shaders = new ArrayList<>();
     private static int i;
-    public String name;
     private int program;
     private int vs;
     private int fs;
@@ -81,7 +80,7 @@ public class Shader implements Cloneable {
         //For all the shaders
         for (i = 0; i < shaders.size(); i++) {
             //If we have came across the shader were looking for, return it
-            if (shaders.get(i).name.equals(name)) return shaders.get(i);
+            if (shaders.get(i).Name().equals(name)) return shaders.get(i);
         }
 
         //If we didn't find a shader by that name, return null
@@ -94,7 +93,7 @@ public class Shader implements Cloneable {
         }
     }
 
-    public static List<Shader> Shaders() {
+    public static final List<Shader> Shaders() {
         return shaders;
     }
 
@@ -123,13 +122,13 @@ public class Shader implements Cloneable {
             if (fileName.startsWith("/")) {
                 InputStreamReader isr = new InputStreamReader(Shader.class.getResourceAsStream("/Shaders" + fileName + ".Shader"));
                 br = new BufferedReader(isr);
-                name = fileName.replaceFirst("/", "");
+                Name(fileName.replaceFirst("/", ""));
             } else {
                 f = new File(fileName + ".Shader");
                 lastModified = f.lastModified();
                 br = new BufferedReader(new FileReader(f));
                 String[] split = fileName.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
-                name = split[split.length - 1];
+                Name(split[split.length - 1]);
             }
 
             //Create a line for reading
@@ -236,11 +235,6 @@ public class Shader implements Cloneable {
         m.GetBuffer(buffer);
         if (location != -1) glUniformMatrix4fv(location, false, buffer);
         buffer.flip();
-    }
-
-    @Override
-    public Shader clone() throws CloneNotSupportedException {
-        return (Shader) super.clone();
     }
 
     public void Bind() {

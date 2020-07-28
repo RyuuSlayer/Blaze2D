@@ -45,13 +45,12 @@ public class AssetDatabase {
 
     private static void InitResourcePaths() {
         URL dirURL = cl.getResource("engine");
-        assert dirURL != null;
         String protocol = dirURL.getProtocol();
 
         if (protocol.equals("file")) ImportFromDirectory();
         else {
             try {
-                ImportFromJar();
+                ImportFromJar(dirURL);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -79,7 +78,7 @@ public class AssetDatabase {
     private static List<String> ImportFromLocalDirectory(String path, int useExtension) {
         List<String> paths = new ArrayList<>();
         InputStream in = cl.getResourceAsStream(path);
-        assert in != null;
+        if (in == null) return paths;
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
         String line;
 
@@ -114,11 +113,10 @@ public class AssetDatabase {
         return paths;
     }
 
-    private static void ImportFromJar() throws IOException {
+    private static void ImportFromJar(URL dirURL) throws IOException {
         String me = clazz.getName().replace(".", "/") + ".class";
-        URL dirURL = cl.getResource(me);
+        dirURL = cl.getResource(me);
 
-        assert dirURL != null;
         if (dirURL.getProtocol().equals("jar")) {
             String jarPath = dirURL.getPath().substring(5, dirURL.getPath().indexOf("!"));
             JarFile jar = new JarFile(URLDecoder.decode(jarPath, StandardCharsets.UTF_8));
@@ -126,7 +124,8 @@ public class AssetDatabase {
 
             while (entries.hasMoreElements()) {
                 String name = entries.nextElement().getName();
-                if (name.startsWith("Textures")) {
+                if (name.endsWith("/")) continue;
+                else if (name.startsWith("Textures")) {
                     textures.add(name.split("/")[1]);
                 } else if (name.startsWith("Font")) {
                     fonts.add(name.split("/")[1].split("\\.")[0]);

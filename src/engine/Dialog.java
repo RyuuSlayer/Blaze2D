@@ -3,6 +3,7 @@ package engine;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Dialog {
     private static String returnValue;
@@ -30,25 +31,30 @@ public class Dialog {
                 finished = 1;
             }
         };
-
         field.addActionListener(action);
         pane.add(field);
 
         JButton ok = new JButton("OK");
         ok.setBounds(115, 34, 80, 24);
 
-        ok.addActionListener(e -> {
-            returnValue = field.getText();
-            finished = 1;
+        ok.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                returnValue = field.getText();
+                finished = 1;
+            }
         });
         pane.add(ok);
 
         JButton cancel = new JButton("CANCEL");
         cancel.setBounds(198, 34, 80, 24);
 
-        cancel.addActionListener(e -> {
-            returnValue = null;
-            finished = 1;
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                returnValue = null;
+                finished = 1;
+            }
         });
         pane.add(cancel);
 
@@ -62,7 +68,8 @@ public class Dialog {
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }
-            if (!frame.isDisplayable()) break;
+            if (frame == null) break;
+            else if (!frame.isDisplayable()) break;
         }
 
         frame.dispose();

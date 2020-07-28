@@ -62,16 +62,25 @@ public class Matrix4x4 {
         buffer.flip();
     }
 
-    public void SetTransformation(Vector2 p, float r) {
+    public void SetTransformation(Vector2 p, float r, Vector2 s) {
         float radians = (float) Math.toRadians(r);
         float cos = (float) Math.cos(radians);
         float sin = (float) Math.sin(radians);
 
-        m[0][0] = cos;
-        m[0][1] = sin;
-        m[0][3] = p.x;
-        m[1][0] = -sin;
-        m[1][1] = cos;
-        m[1][3] = p.y;
+        m[0][0] = cos * s.x;
+        m[0][1] = sin * s.y;
+        m[1][0] = -sin * s.x;
+        m[1][1] = cos * s.y;
+        if (p != null) {
+            m[0][3] = p.x;
+            m[1][3] = p.y;
+        }
+    }
+
+    public Vector2 TransformPoint(Vector2 v) {
+        Vector2 p = new Vector2();
+        p.x = m[0][3] + (m[0][0] * v.x + -m[1][0] * v.y);
+        p.y = m[1][3] + (-m[0][1] * v.x + m[1][1] * v.y);
+        return p;
     }
 }

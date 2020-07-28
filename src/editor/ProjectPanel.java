@@ -13,10 +13,13 @@ import java.util.List;
 
 public class ProjectPanel {
     private final GUIStyle box;
+    private final GUIStyle empty = null;
     private final Rect temp = new Rect(0, 0, 0, 0);
     private DataType selectedType = DataType.Texture;
+    private int i;
     private int scroll1 = 0;
     private int scroll2 = 0;
+    private engine.Object selected;
 
     public ProjectPanel() {
         box = Editor.skin.Get("Box");
@@ -28,14 +31,14 @@ public class ProjectPanel {
         for (int i = 0; i < values.length; i++) {
             temp.Set(0, i * 26, r.width, 26);
             if (!values[i].equals(selectedType)) {
-                if (GUI.Button(values[i].name() + "s", temp, null, (GUIStyle) null)) selectedType = values[i];
+                if (GUI.Button(values[i].name() + "s", temp, empty, empty)) selectedType = values[i];
             } else {
-				GUI.Button(values[i].name() + "s", temp, box, box);
-				//Rect s = GUI.Box(temp, box);
-				//GUI.BeginArea(s);
-				//GUI.Label(values[i].name() + "s", 0, 0);
-				//GUI.EndArea();
-			}
+                GUI.Button(values[i].name() + "s", temp, box, box);
+                //Rect s = GUI.Box(temp, box);
+                //GUI.BeginArea(s);
+                //GUI.Label(values[i].name() + "s", 0, 0);
+                //GUI.EndArea();
+            }
         }
     }
 
@@ -71,171 +74,88 @@ public class ProjectPanel {
                 try {
                     Sprite.Create("New Sprite");
                 } catch (IOException e) {
-					e.printStackTrace();
-					Debug.Log("Cannot duplicate default skin asset!");
+                    e.printStackTrace();
+                    Debug.Log("Cannot duplicate default skin asset!");
                 }
             }
         }
     }
 
-	public void RenderAssets(Rect r) throws CloneNotSupportedException {
-		if (r.Contains(Mouse.Position())) {
-			if (Mouse.GetButtonDown(1)) {
-				List<String> v = new ArrayList<>();
-				if (selectedType != DataType.Font && selectedType != DataType.Texture && selectedType != DataType.Scene) {
-					v.add("New Asset");
-					GUI.SetPopup(new Rect(Mouse.Position().x - 10, Mouse.Position().y - 10, 10, 10), v, this::Popup);
-				}
-			}
-		}
+    private void RenderAssetType(Rect r, engine.Object asset, String folder, String ext, byte containsMouse) throws CloneNotSupportedException {
+        if (selected != null) {
+            if (asset.equals(selected)) {
+                if (GUI.Button(asset.Name(), r, box, box)) {
+                    if (Mouse.MultiClicked()) {
+                        File f = new File(Editor.WorkingDirectory() + folder + asset.Name() + ext);
+                        if (f.exists()) {
+                            try {
+                                Desktop.getDesktop().open(f);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    Editor.SetSelectedAsset(asset.clone());
+                }
+            } else if (GUI.Button(asset.Name(), r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+        } else if (GUI.Button(asset.Name(), r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+        if (GUI.checkDrag == 1 && containsMouse == 1) {
+            GUI.checkDrag = 0;
+            Editor.SetDraggableObject(asset);
+        }
+    }
 
-        Object selected = Editor.GetSelectedAsset();
+    public void RenderAssets(Rect r) throws CloneNotSupportedException {
+        Byte containsMouse = 0;
 
-        int i;
+        if (r.Contains(Mouse.Position())) {
+            containsMouse = 1;
+            if (Mouse.GetButtonDown(1)) {
+                List<String> v = new ArrayList<String>();
+                if (selectedType != DataType.Font && selectedType != DataType.Texture && selectedType != DataType.Scene) {
+                    v.add("New Asset");
+                    GUI.SetPopup(new Rect(Mouse.Position().x - 10, Mouse.Position().y - 10, 10, 10), v, this::Popup);
+                }
+            }
+        }
+
+        selected = Editor.GetSelectedAsset();
+
         if (selectedType == DataType.Font) {
             List<Font> fonts = Font.Fonts();
             scroll2 = GUI.SetScrollView(fonts.size() * 26, scroll2);
             for (i = 0; i < fonts.size(); i++) {
-                if (selected != null) {
-                    if (fonts.get(i).equals(selected)) {
-                        if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), box, box)) {
-                            if (Mouse.MultiClicked()) {
-                                File f = new File(Editor.WorkingDirectory() + "Font/" + fonts.get(i).Name() + ".ttf");
-                                if (f.exists()) {
-                                    try {
-                                        Desktop.getDesktop().open(f);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-							Editor.SetSelectedAsset(fonts.get(i).clone());
-                        }
-                    } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-						Editor.SetSelectedAsset(fonts.get(i).clone());
-                } else if (GUI.Button(fonts.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-					Editor.SetSelectedAsset(fonts.get(i).clone());
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), fonts.get(i), "Font/", ".ttf", containsMouse);
             }
         } else if (selectedType == DataType.Material) {
-			Material select = (Material) selected;
-			List<Material> materials = Material.Materials();
+            List<Material> materials = Material.Materials();
             scroll2 = GUI.SetScrollView(materials.size() * 26, scroll2);
             for (i = 0; i < materials.size(); i++) {
-                if (selected != null) {
-					if (materials.get(i).name.equals(select.name)) {
-						if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), box, box)) {
-							if (Mouse.MultiClicked()) {
-								File f = new File(Editor.WorkingDirectory() + "Materials/" + materials.get(i).name + ".Material");
-								if (f.exists()) {
-									try {
-										Desktop.getDesktop().open(f);
-									} catch (IOException e) {
-										e.printStackTrace();
-									}
-								}
-                            }
-							Editor.SetSelectedAsset(materials.get(i).clone());
-                        }
-                    } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-						Editor.SetSelectedAsset(materials.get(i).clone());
-                } else if (GUI.Button(materials.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-					Editor.SetSelectedAsset(materials.get(i).clone());
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), materials.get(i), "Materials/", ".Material", containsMouse);
             }
         } else if (selectedType == DataType.Shader) {
             List<Shader> shaders = Shader.Shaders();
             scroll2 = GUI.SetScrollView(shaders.size() * 26, scroll2);
             for (i = 0; i < shaders.size(); i++) {
-                if (selected != null) {
-                    if (shaders.get(i).equals(selected)) {
-                        if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), box, box)) {
-                            if (Mouse.MultiClicked()) {
-                                File f = new File(Editor.WorkingDirectory() + "Shaders/" + shaders.get(i).name + ".Shader");
-                                if (f.exists()) {
-                                    try {
-                                        Desktop.getDesktop().open(f);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-							Editor.SetSelectedAsset(shaders.get(i).clone());
-                        }
-                    } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-						Editor.SetSelectedAsset(shaders.get(i).clone());
-                } else if (GUI.Button(shaders.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-					Editor.SetSelectedAsset(shaders.get(i).clone());
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), shaders.get(i), "Shaders/", ".Shader", containsMouse);
             }
         } else if (selectedType == DataType.Skin) {
             List<GUISkin> skins = GUISkin.Skins();
             scroll2 = GUI.SetScrollView(skins.size() * 26, scroll2);
             for (i = 0; i < skins.size(); i++) {
-                if (selected != null) {
-                    if (skins.get(i).equals(selected)) {
-                        if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), box, box)) {
-                            if (Mouse.MultiClicked()) {
-                                File f = new File(Editor.WorkingDirectory() + "Skins/" + skins.get(i).name + ".Skin");
-                                if (f.exists()) {
-                                    try {
-                                        Desktop.getDesktop().open(f);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-							Editor.SetSelectedAsset(skins.get(i).clone());
-                        }
-                    } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-						Editor.SetSelectedAsset(skins.get(i).clone());
-                } else if (GUI.Button(skins.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-					Editor.SetSelectedAsset(skins.get(i).clone());
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), skins.get(i), "Skins/", ".Skin", containsMouse);
             }
         } else if (selectedType == DataType.Sprite) {
             List<Sprite> sprites = Sprite.Sprites();
             scroll2 = GUI.SetScrollView(sprites.size() * 26, scroll2);
             for (i = 0; i < sprites.size(); i++) {
-                if (selected != null) {
-                    if (sprites.get(i).equals(selected)) {
-                        if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), box, box)) {
-                            if (Mouse.MultiClicked()) {
-                                File f = new File(Editor.WorkingDirectory() + "Sprites/" + sprites.get(i).name + ".Sprite");
-                                if (f.exists()) {
-                                    try {
-                                        Desktop.getDesktop().open(f);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-							Editor.SetSelectedAsset(sprites.get(i).clone());
-                        }
-                    } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-						Editor.SetSelectedAsset(sprites.get(i).clone());
-                } else if (GUI.Button(sprites.get(i).name, new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-					Editor.SetSelectedAsset(sprites.get(i).clone());
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), sprites.get(i), "Sprites/", ".Sprite", containsMouse);
             }
         } else if (selectedType == DataType.Texture) {
             List<Texture> textures = Texture.GetTextures();
             scroll2 = GUI.SetScrollView(textures.size() * 26, scroll2);
             for (i = 0; i < textures.size(); i++) {
-                if (selected != null) {
-                    if (textures.get(i).equals(selected)) {
-                        if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), box, box)) {
-                            if (Mouse.MultiClicked()) {
-                                File f = new File(Editor.WorkingDirectory() + "Textures/" + textures.get(i).Name());
-                                if (f.exists()) {
-                                    try {
-                                        Desktop.getDesktop().open(f);
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                }
-                            }
-							Editor.SetSelectedAsset(textures.get(i).clone());
-                        }
-                    } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-						Editor.SetSelectedAsset(textures.get(i).clone());
-                } else if (GUI.Button(textures.get(i).Name(), new Rect(0, i * 26, r.width, 26), null, (GUIStyle) null))
-					Editor.SetSelectedAsset(textures.get(i).clone());
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), textures.get(i), "Textures/", "", containsMouse);
             }
         }
     }

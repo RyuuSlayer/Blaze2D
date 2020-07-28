@@ -3,6 +3,8 @@ package editor;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -28,13 +30,12 @@ public class EngineBootLoader {
             if (frame == null) break;
         }
 
-        assert frame != null;
         frame.dispose();
         Editor.OpenProject(returnString);
     }
 
     private static void CreateWindow() {
-        frame = new JFrame("Logic Bootloader");
+        frame = new JFrame("Blaze2D Bootloader");
         frame.pack();
 
         frame.setSize(300, 350);
@@ -53,7 +54,7 @@ public class EngineBootLoader {
     }
 
     private static void CreatePanel() throws IOException {
-        final BufferedImage image = ImageIO.read(EngineBootLoader.class.getResourceAsStream("/Textures/BootLoad.png"));
+        BufferedImage image = ImageIO.read(EngineBootLoader.class.getResourceAsStream("/Textures/BootLoad.png"));
 
         JPanel panel = new JPanel() {
             private static final long serialVersionUID = 1L;
@@ -69,7 +70,6 @@ public class EngineBootLoader {
         File file = new File(Editor.workspaceDirectory);
         File[] temp = file.listFiles(File::isDirectory);
         List<String> dirs = new ArrayList<>();
-        assert temp != null;
         for (File value : temp) {
             if (!value.getName().equals("null")) dirs.add(value.getName());
         }
@@ -83,14 +83,16 @@ public class EngineBootLoader {
         JButton begin = new JButton("Begin");
         begin.setBounds(100, 276, 80, 25);
 
-        begin.addActionListener(e -> {
-            String c = e.getActionCommand();
+        begin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String c = e.getActionCommand();
 
-            if (c.equals("Begin")) {
-                String selectedString = (String) projectBox.getSelectedItem();
-                assert selectedString != null;
-                if (selectedString.equals("New Project")) returnString = "My Project";
-                else returnString = selectedString;
+                if (c.equals("Begin")) {
+                    String selectedString = (String) projectBox.getSelectedItem();
+                    if (selectedString.equals("New Project")) returnString = "My Project";
+                    else returnString = selectedString;
+                }
             }
         });
         panel.add(projectBox);

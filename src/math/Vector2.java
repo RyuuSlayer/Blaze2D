@@ -4,6 +4,11 @@ public class Vector2 {
     public float x;
     public float y;
 
+    public Vector2() {
+        x = 0;
+        y = 0;
+    }
+
     public Vector2(Vector2 v) {
         x = v.x;
         y = v.y;
@@ -70,5 +75,13 @@ public class Vector2 {
 
     public Vector2 Div(float x, float y) {
         return new Vector2(this.x / x, this.y / y);
+    }
+
+    public Vector2 Neg() {
+        return new Vector2(-x, -y);
+    }
+
+    public String ToString() {
+        return "(" + x + ", " + y + ")";
     }
 }

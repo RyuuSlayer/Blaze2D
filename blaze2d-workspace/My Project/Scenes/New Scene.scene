@@ -1,0 +1,31 @@
+<G Name="Brick" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
+	<C Name"engine.SpriteRenderer">
+		<V sprite="Brick">
+		<V anchor="0.0 0.0">
+		<V enabled="true">
+</G>
+<G Name="Scene" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
+	<C Name"engine.SpriteRenderer">
+		<V sprite="Brick">
+		<V anchor="0.5 0.5">
+		<V enabled="true">
+</G>
+<G Name="Brick" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
+	<C Name"engine.SpriteRenderer">
+		<V sprite="Brick">
+		<V anchor="0.0 0.0">
+		<V enabled="true">
+	<P Name="Scene">
+</G>
+<G Name="Camera" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
+	<C Name"engine.Camera">
+		<V shader="">
+		<V renderLayer="0">
+		<V enabled="true">
+</G>
+<G Name="Sprite" Position="40.0 40.0" Scale="2.0 2.0" Rotation="0.0">
+	<C Name"engine.SpriteRenderer">
+		<V sprite="Brick">
+		<V anchor="0.0 0.0">
+		<V enabled="true">
+</G>

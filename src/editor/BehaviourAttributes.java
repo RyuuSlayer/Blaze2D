@@ -1,14 +1,13 @@
 package editor;
 
-
 import engine.LogicBehaviour;
 
 import java.lang.reflect.Field;
 
 public class BehaviourAttributes {
-    final public Object behaviour;
-    final public Class<?> c;
-    final public String[] fields;
+    public Object behaviour;
+    public Class<?> c;
+    public String[] fields;
 
     public int height;
 

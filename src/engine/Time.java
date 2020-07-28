@@ -3,15 +3,19 @@ package engine;
 import java.util.concurrent.TimeUnit;
 
 public class Time {
-    public static final float timeScale = 1;
     private static final long second = 1000000000L;
+    public static float timeScale = 1;
+    private static long rawTime;
     private static float time;
+    private static double rawDelta;
     private static float deltaTime;
     private static float unscaledDelta;
     private static int frameRate;
 
     private static long startTime;
     private static long lastFrameTime;
+    private static long frameStartTime;
+    private static long framePassedTime;
     private static double unprocessedTime;
     private static int currentFrameRate;
 
@@ -20,31 +24,32 @@ public class Time {
         startTime = lastFrameTime;
     }
 
-    public static float GetTime() {
+    public static final float GetTime() {
         return time;
     }
 
-    public static float DeltaTime() {
+    public static final float DeltaTime() {
         return deltaTime;
     }
 
-    public static float UnscaledDelta() {
+    public static final float UnscaledDelta() {
         return unscaledDelta;
     }
 
-    public static int FrameRate() {
+    public static final int FrameRate() {
         return frameRate;
     }
 
 
     static void Process() {
-        long rawTime = System.nanoTime();
+        rawTime = System.nanoTime();
         time = (float) (TimeUnit.MILLISECONDS.convert(rawTime - startTime, TimeUnit.NANOSECONDS));
 
-        long framePassedTime = rawTime - lastFrameTime;
-        lastFrameTime = rawTime;
+        frameStartTime = rawTime;
+        framePassedTime = frameStartTime - lastFrameTime;
+        lastFrameTime = frameStartTime;
 
-        double rawDelta = framePassedTime / (double) second;
+        rawDelta = framePassedTime / (double) second;
         if (rawDelta > 0.01f) {
             deltaTime = (float) (0.01 * timeScale);
             unscaledDelta = 0.01f;

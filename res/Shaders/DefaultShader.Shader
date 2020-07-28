@@ -11,12 +11,13 @@ uniform mat4 projection;
 uniform vec4 offset;
 uniform vec2 pixelScale;
 uniform vec2 screenPos;
+uniform vec2 camPos;
 
 void main()
 {
 	color = matColor;
 	
-	gl_Position = projection * vec4((position * pixelScale) + screenPos, 0, 1);
+	gl_Position = projection * (vec4((position * pixelScale) + screenPos, 0, 1) - vec4(camPos, 0, 0));
 	uvCoords = (textureCoords * offset.zw) + offset.xy;
 }
 
