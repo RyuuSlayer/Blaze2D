@@ -7,6 +7,7 @@ import gui.GUIStyle;
 import gui.Sprite;
 import input.Mouse;
 import math.Vector2;
+import sound.AudioClip;
 
 import java.io.*;
 import java.lang.Object;
@@ -85,6 +86,7 @@ public class Editor {
         if (shouldPlay) {
             try {
                 SaveScene(SceneManager.CurrentScene());
+                GameObject.StartAll();
                 playing = 1;
             } catch (IOException e) {
                 Debug.Log("Could not save current scene. Play mode could not be started!");
@@ -197,8 +199,10 @@ public class Editor {
             p.setProperty("Version", editorVersion);
 
             FileWriter writer = new FileWriter(f);
-            p.store(writer, "Logic Configuration");
+            p.store(writer, "Blaze Configuration");
             writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -234,7 +238,7 @@ public class Editor {
         File f = new File(workingDirectory + "Scenes/" + sceneName + ".scene");
         FileWriter fw = new FileWriter(f);
 
-        List<GameObject> objectList = new ArrayList<>();
+        List<GameObject> objectList = new ArrayList<GameObject>();
 
         GameObject master = GameObject.Master();
         objectList.add(master);
@@ -243,7 +247,7 @@ public class Editor {
             List<GameObject> children = g.Children();
 
             if (children.size() > 0) {
-                for (GameObject child : children) objectList.add(0, child);
+                for (int i = 0; i < children.size(); i++) objectList.add(0, children.get(i));
             }
             if (g == master) {
                 objectList.remove(objectList.size() - 1);
@@ -253,7 +257,7 @@ public class Editor {
             WriteTransform(g, fw);
 
             List<LogicBehaviour> b = g.GetComponents();
-            for (LogicBehaviour logicBehaviour : b) WriteComponent(logicBehaviour, fw);
+            for (int i = 0; i < b.size(); i++) WriteComponent(b.get(i), fw);
             if (g.Parent() != master) fw.write("\t<P Name=\"" + g.Parent().Name() + "\">\n</G>\n");
             else fw.write("</G>\n");
             objectList.remove(g);
@@ -277,7 +281,8 @@ public class Editor {
 
         Field[] fields = c.getFields();
 
-        for (Field f : fields) {
+        for (int i = 0; i < fields.length; i++) {
+            Field f = fields[i];
             line = "\t\t<V " + f.getName() + "=\"";
 
             try {
@@ -286,6 +291,7 @@ public class Editor {
                     Vector2 v = (Vector2) f.get(b);
                     line += v.x + " " + v.y;
                 } else if (t[t.length - 1].equals("Sprite")) line += ((Sprite) f.get(b)).Name();
+                else if (t[t.length - 1].equals("AudioClip")) line += ((AudioClip) f.get(b)).Name();
                 else if (f.get(b) != null) line += f.get(b).toString();
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 e.printStackTrace();

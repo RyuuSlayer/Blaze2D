@@ -5,6 +5,7 @@ import editor.EditorUtil;
 import gui.Font;
 import gui.GUISkin;
 import gui.Sprite;
+import sound.AudioClip;
 
 import java.io.*;
 import java.net.URL;
@@ -13,20 +14,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class AssetDatabase {
     private static final Class<AssetDatabase> clazz = AssetDatabase.class;
     private static final ClassLoader cl = clazz.getClassLoader();
-    private static List<String> textures = new ArrayList<>();
-    private static List<String> fonts = new ArrayList<>();
-    private static List<String> shaders = new ArrayList<>();
-    private static List<String> materials = new ArrayList<>();
-    private static List<String> sprites = new ArrayList<>();
-    private static List<String> skins = new ArrayList<>();
-    private static List<String> scripts = new ArrayList<>();
+    private static List<String> textures = new ArrayList<String>();
+    private static List<String> fonts = new ArrayList<String>();
+    private static List<String> shaders = new ArrayList<String>();
+    private static List<String> materials = new ArrayList<String>();
+    private static List<String> sprites = new ArrayList<String>();
+    private static List<String> skins = new ArrayList<String>();
+    private static List<String> audio = new ArrayList<String>();
+    private static List<String> scripts = new ArrayList<String>();
 
     private static int i;
 
@@ -39,6 +40,7 @@ public class AssetDatabase {
         for (i = 0; i < materials.size(); i++) new Material(materials.get(i));
         for (i = 0; i < sprites.size(); i++) new Sprite(sprites.get(i));
         for (i = 0; i < skins.size(); i++) new GUISkin(skins.get(i));
+        for (i = 0; i < audio.size(); i++) new AudioClip(audio.get(i));
 
         for (i = 0; i < scripts.size(); i++) EditorUtil.ImportClass(scripts.get(i));
     }
@@ -47,7 +49,7 @@ public class AssetDatabase {
         URL dirURL = cl.getResource("engine");
         String protocol = dirURL.getProtocol();
 
-        if (protocol.equals("file")) ImportFromDirectory();
+        if (dirURL != null && protocol.equals("file")) ImportFromDirectory();
         else {
             try {
                 ImportFromJar(dirURL);
@@ -64,6 +66,7 @@ public class AssetDatabase {
         materials = ImportFromLocalDirectory("Materials", 0);
         sprites = ImportFromLocalDirectory("Sprites", 0);
         skins = ImportFromLocalDirectory("Skins", 0);
+        audio = ImportFromLocalDirectory("Audio", 1);
 
         scripts = ImportFromExternalDirectory("Scripts", 1);
 
@@ -73,10 +76,11 @@ public class AssetDatabase {
         materials.addAll(ImportFromExternalDirectory("Materials", 0));
         sprites.addAll(ImportFromExternalDirectory("Sprites", 0));
         skins.addAll(ImportFromExternalDirectory("Skins", 0));
+        audio.addAll(ImportFromExternalDirectory("Audio", 1));
     }
 
     private static List<String> ImportFromLocalDirectory(String path, int useExtension) {
-        List<String> paths = new ArrayList<>();
+        List<String> paths = new ArrayList<String>();
         InputStream in = cl.getResourceAsStream(path);
         if (in == null) return paths;
         BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -101,10 +105,10 @@ public class AssetDatabase {
     }
 
     private static List<String> ImportFromExternalDirectory(String path, int useExtension) {
-        List<String> paths = new ArrayList<>();
+        List<String> paths = new ArrayList<String>();
         File dir = new File(Editor.WorkingDirectory() + path);
         File[] files = dir.listFiles();
-        for (i = 0; i < Objects.requireNonNull(files).length; i++) {
+        for (i = 0; i < files.length; i++) {
             String aPath = files[i].getAbsolutePath();
             if (path.endsWith("/")) continue;
             if (useExtension == 0) aPath = aPath.split("\\.")[0];
@@ -137,6 +141,8 @@ public class AssetDatabase {
                     sprites.add(name.split("/")[1].split("\\.")[0]);
                 } else if (name.startsWith("Skins")) {
                     skins.add(name.split("/")[1].split("\\.")[0]);
+                } else if (name.startsWith("Audio")) {
+                    audio.add(name.split("/")[1].split("\\.")[0]);
                 }
             }
             jar.close();

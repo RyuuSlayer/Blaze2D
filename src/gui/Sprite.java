@@ -7,12 +7,11 @@ import engine.Rect;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Sprite extends engine.Object {
     //Static information used for all the sprites
-    private static final List<Sprite> sprites = new ArrayList<>();
+    private static final List<Sprite> sprites = new ArrayList<Sprite>();
     private static int i;
     public Material material;
     public Rect offset;
@@ -87,7 +86,7 @@ public class Sprite extends engine.Object {
     }
 
     public static void Create(String name) throws IOException {
-        File src = Objects.requireNonNull(Get("Default")).f;
+        File src = Get("Default").f;
         File dest = new File(Editor.WorkingDirectory() + "Sprites/" + name + ".Sprite");
 
         try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {

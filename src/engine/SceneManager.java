@@ -3,6 +3,8 @@ package engine;
 import editor.Editor;
 import gui.Sprite;
 import math.Vector2;
+import sound.AudioClip;
+import sound.AudioSource;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -30,6 +32,7 @@ public class SceneManager {
 
         Camera.Clear();
         GameObject.Clear();
+        AudioSource.CleanUp();
         BufferedReader br = new BufferedReader(fr);
         String line;
 
@@ -86,12 +89,18 @@ public class SceneManager {
         } else if (dataType.equals("int")) {
             f.set(b, Integer.parseInt(input));
             return;
+        } else if (dataType.equals("boolean")) {
+            f.set(b, Boolean.valueOf(input));
+            return;
         } else if (dataType.equals("Vector2")) {
             String[] split = input.split(" ");
             f.set(b, new Vector2(Float.parseFloat(split[0]), Float.parseFloat(split[1])));
             return;
         } else if (dataType.equals("Sprite")) {
             f.set(b, Sprite.Get(input));
+            return;
+        } else if (dataType.equals("AudioClip")) {
+            f.set(b, AudioClip.Find(input));
             return;
         }
     }

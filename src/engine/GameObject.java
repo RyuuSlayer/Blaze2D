@@ -13,25 +13,25 @@ import java.util.UUID;
 
 public class GameObject extends engine.Object {//Variables need to be after object creation and behaviour creation
     private static final GameObject master = new GameObject(false);
-    private static final List<GameObject> instances = new ArrayList<>();
+    private static final List<GameObject> instances = new ArrayList<GameObject>();
     private static int h;
-    private static final Matrix4x4 temp = new Matrix4x4();
     private static int j;
+    private static final Matrix4x4 temp = new Matrix4x4();
     public boolean enabled = true;
     public String tag = "Untagged";
     private final Vector2 position = new Vector2(0, 0);
+    private final List<GameObject> children = new ArrayList<GameObject>();
+    private final List<LogicBehaviour> components = new ArrayList<LogicBehaviour>();
     //New
     private final Vector2 localPosition = new Vector2();
-    private float rotation = 0;
-    private final List<GameObject> children = new ArrayList<>();
-    private final List<LogicBehaviour> components = new ArrayList<>();
-    private final Matrix4x4 matrix = new Matrix4x4();
-    private GameObject parent;
-    private Vector2 scale = new Vector2(1, 1);
     private Vector2 localScale = new Vector2();
-    private int inline = 0;
     private float localRotation = 0;
+    private final Matrix4x4 matrix = new Matrix4x4();
+    private Vector2 scale = new Vector2(1, 1);
+    private float rotation = 0;
+    private GameObject parent;
     private String id;
+    private int inline = 0;
     private int layer = 0;
     private byte dirty = 1;
     private boolean expanded = false;
@@ -87,6 +87,13 @@ public class GameObject extends engine.Object {//Variables need to be after obje
             if (g.Name().equals(s)) return g;
         }
         return null;
+    }
+
+    public static void StartAll() {
+        for (h = 0; h < instances.size(); h++) {
+            GameObject g = instances.get(h);
+            g.Start();
+        }
     }
 
     public static void PrepareObjects() {
@@ -199,7 +206,7 @@ public class GameObject extends engine.Object {//Variables need to be after obje
         temp.SetTransformation(null, -parent.rotation, new Vector2(1, 1).Div(parent.scale));
         localPosition.Set(temp.TransformPoint(position.Sub(parent.position)));
 
-        for (GameObject child : children) child.RecalculateGlobalTransformations();
+        for (int i = 0; i < children.size(); i++) children.get(i).RecalculateGlobalTransformations();
     }
 
     private void RecalculateGlobalTransformations() {
@@ -208,8 +215,8 @@ public class GameObject extends engine.Object {//Variables need to be after obje
         rotation = Mathf.Wrap(parent.rotation + localRotation, 0, 360);
         position.Set(parent.Matrix().TransformPoint(localPosition));
 
-        for (GameObject child : children) {
-            child.RecalculateGlobalTransformations();
+        for (int i = 0; i < children.size(); i++) {
+            children.get(i).RecalculateGlobalTransformations();
         }
     }
 
@@ -348,8 +355,16 @@ public class GameObject extends engine.Object {//Variables need to be after obje
         master.children.remove(this);
     }
 
+    public void Start() {
+        for (int i = 0; i < components.size(); i++) {
+            LogicBehaviour component = components.get(i);
+            component.Start();
+        }
+    }
+
     public void Update() {
-        for (LogicBehaviour component : components) {
+        for (int i = 0; i < components.size(); i++) {
+            LogicBehaviour component = components.get(i);
             component.Update();
         }
     }

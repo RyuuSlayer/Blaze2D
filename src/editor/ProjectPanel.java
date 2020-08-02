@@ -4,6 +4,7 @@ import engine.*;
 import gui.Font;
 import gui.*;
 import input.Mouse;
+import sound.AudioClip;
 
 import java.awt.*;
 import java.io.File;
@@ -112,10 +113,10 @@ public class ProjectPanel {
             containsMouse = 1;
             if (Mouse.GetButtonDown(1)) {
                 List<String> v = new ArrayList<String>();
-                if (selectedType != DataType.Font && selectedType != DataType.Texture && selectedType != DataType.Scene) {
-                    v.add("New Asset");
-                    GUI.SetPopup(new Rect(Mouse.Position().x - 10, Mouse.Position().y - 10, 10, 10), v, this::Popup);
-                }
+				if (selectedType != DataType.Font && selectedType != DataType.Texture && selectedType != DataType.Scene && selectedType != DataType.AudioClip) {
+					v.add("New Asset");
+					GUI.SetPopup(new Rect(Mouse.Position().x - 10, Mouse.Position().y - 10, 10, 10), v, this::Popup);
+				}
             }
         }
 
@@ -147,16 +148,22 @@ public class ProjectPanel {
             }
         } else if (selectedType == DataType.Sprite) {
             List<Sprite> sprites = Sprite.Sprites();
-            scroll2 = GUI.SetScrollView(sprites.size() * 26, scroll2);
-            for (i = 0; i < sprites.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), sprites.get(i), "Sprites/", ".Sprite", containsMouse);
-            }
-        } else if (selectedType == DataType.Texture) {
-            List<Texture> textures = Texture.GetTextures();
-            scroll2 = GUI.SetScrollView(textures.size() * 26, scroll2);
-            for (i = 0; i < textures.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), textures.get(i), "Textures/", "", containsMouse);
-            }
-        }
-    }
+			scroll2 = GUI.SetScrollView(sprites.size() * 26, scroll2);
+			for (i = 0; i < sprites.size(); i++) {
+				RenderAssetType(new Rect(0, i * 26, r.width, 26), sprites.get(i), "Sprites/", ".Sprite", containsMouse);
+			}
+		} else if (selectedType == DataType.Texture) {
+			List<Texture> textures = Texture.GetTextures();
+			scroll2 = GUI.SetScrollView(textures.size() * 26, scroll2);
+			for (i = 0; i < textures.size(); i++) {
+				RenderAssetType(new Rect(0, i * 26, r.width, 26), textures.get(i), "Textures/", "", containsMouse);
+			}
+		} else if (selectedType == DataType.AudioClip) {
+			List<AudioClip> clips = AudioClip.GetClips();
+			scroll2 = GUI.SetScrollView(clips.size() * 26, scroll2);
+			for (i = 0; i < clips.size(); i++) {
+				RenderAssetType(new Rect(0, i * 26, r.width, 26), clips.get(i), "Audio/", "", containsMouse);
+			}
+		}
+	}
 }

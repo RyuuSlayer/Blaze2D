@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Debug {
-    private static final List<String> log = new ArrayList<>();
+    private static final List<String> log = new ArrayList<String>();
     private static int i = 0;
 
     public static void Log(String message) {
@@ -19,9 +19,9 @@ public class Debug {
     }
 
     public static String Log() {
-        StringBuilder ret = new StringBuilder();
-        for (i = 0; i < log.size(); i++) ret.append(log.get(i)).append("\n");
-        return ret.toString();
+        String ret = "";
+        for (i = 0; i < log.size(); i++) ret += (log.get(i) + "\n");
+        return ret;
     }
 
     public static String LastEntry() {

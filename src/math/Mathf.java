@@ -9,9 +9,10 @@ public class Mathf {
         if (val < min) return min;
 
         //If the value is greater than maximum, return maximum
-        return Math.min(val, max);
+        if (val > max) return max;
 
         //Else, return the value
+		return val;
     }
 
     public static float Wrap(float val, float min, float max) {

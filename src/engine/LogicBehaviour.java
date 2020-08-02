@@ -13,7 +13,7 @@ public abstract class LogicBehaviour extends Object {
         if (gameObject == null) gameObject = g;
     }
 
-    public void Awake() {
+    public void Start() {
     }
 
     public void Update() {

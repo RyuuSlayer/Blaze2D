@@ -28,16 +28,12 @@ public class Core {
         //Create the window
         long window = Application.Init();
 
+        //Audio initialization
         long device = ALC10.alcOpenDevice((ByteBuffer) null);
         ALCCapabilities deviceCaps = ALC.createCapabilities(device);
         long context = ALC10.alcCreateContext(device, (IntBuffer) null);
         ALC10.alcMakeContextCurrent(context);
         AL.createCapabilities(deviceCaps);
-        AudioClip test = new AudioClip("/Audio/Platformer-Jam_v1.ogg");
-        //AudioClip test = new AudioClip("/Audio/Platformer-Jam_v2.ogg");
-        //AudioClip test = new AudioClip("Audio/step.ogg");
-        AudioSource as = new AudioSource();
-        as.SetClip(test);
 
         Color clear = Color.black;
 
@@ -61,11 +57,6 @@ public class Core {
             Input.Reset();
             glfwPollEvents();
             Time.Process();
-
-            if (Input.GetKeyDown('g')) {
-                as.Stop();
-                as.Play();
-            }
 
             if (!Application.IsMinimized()) {
                 //Before drawing, clear what's been drawn previously and set the background color

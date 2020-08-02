@@ -19,8 +19,8 @@ public class MenuBar {
 
     private final GUIStyle box;
     private GUIStyle empty;
-    private final GUIStyle stop;
-    public Map<String, List<MenuItem>> menu = new LinkedHashMap<>();
+	public Map<String, List<MenuItem>> menu = new LinkedHashMap<String, List<MenuItem>>();
+	private final GUIStyle stop;
     private String selected;
     private Color prevColor;
 
@@ -49,7 +49,7 @@ public class MenuBar {
     public void Render() {
         float w = Application.Width();
         if (selected != null) {
-            if (!GUI.HasPopup()) selected = null;
+			if (GUI.HasPopup() == false) selected = null;
         }
 
         GUI.Box(new Rect(0, 0, w, 30), box);
@@ -63,35 +63,37 @@ public class MenuBar {
             Rect nameRect = new Rect(offset - index, 0, width, 30);
             if (selected == null) {
                 if (GUI.CenteredButton(m, nameRect, empty, box)) {
-                    List<MenuItem> list = menu.get(m);
-                    List<String> v = new ArrayList<>();
-                    for (MenuItem menuItem : list) v.add(menuItem.name);
-                    GUI.SetPopup(nameRect, v, this::Clicked);
-                    selected = m;
-                }
+					List<MenuItem> list = menu.get(m);
+					List<String> v = new ArrayList<String>();
+					for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
+					GUI.SetPopup(nameRect, v, this::Clicked);
+					selected = m;
+				}
             } else {
                 if (selected.equals(m)) GUI.CenteredButton(m, nameRect, box, box);
                 else {
                     if (GUI.CenteredButton(m, nameRect, empty, box)) {
-                        List<MenuItem> list = menu.get(m);
-                        List<String> v = new ArrayList<>();
-                        for (MenuItem menuItem : list) v.add(menuItem.name);
-                        GUI.SetPopup(nameRect, v, this::Clicked);
-                        selected = m;
-                    }
-                }
-            }
-            offset += width;
-            index++;
-        }
+						List<MenuItem> list = menu.get(m);
+						List<String> v = new ArrayList<String>();
+						for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
+						GUI.SetPopup(nameRect, v, this::Clicked);
+						selected = m;
+					}
+				}
+			}
+			offset += width;
+			index++;
+		}
 
-        GUIStyle style = play;
-        boolean isPlaying = Editor.IsPlaying();
-        if (isPlaying) style = stop;
-        if (GUI.Button("", new Rect(offset - index + 4, 8, 16, 16), style, style)) Editor.Play(!isPlaying);
+		GUIStyle style = play;
+		boolean isPlaying = Editor.IsPlaying();
+		if (isPlaying) {
+			style = stop;
+		}
+		if (GUI.Button("", new Rect(offset - index + 4, 8, 16, 16), style, style)) Editor.Play(!isPlaying);
 
-        GUI.textColor = prevColor;
-    }
+		GUI.textColor = prevColor;
+	}
 
     public void Clicked(String v) {
         List<MenuItem> list = menu.get(selected);

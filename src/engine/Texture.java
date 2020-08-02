@@ -19,7 +19,7 @@ import static org.lwjgl.stb.STBImage.*;
 
 public class Texture extends engine.Object {
     //Temp, iterator and list of textures variables
-    private static final List<Texture> textureInstances = new ArrayList<>();
+    private static final List<Texture> textureInstances = new ArrayList<Texture>();
     private static Texture tmp = null;
     private static int i = 0;
     //Stored info about the texture

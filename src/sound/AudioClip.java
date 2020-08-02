@@ -18,12 +18,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.*;
 
 public class AudioClip extends engine.Object {
-    private static final List<AudioClip> clips = new ArrayList<>();
+    private static final List<AudioClip> clips = new ArrayList<AudioClip>();
     private static int i;
     final int id;
     private ByteBuffer vorbis;
@@ -47,6 +48,17 @@ public class AudioClip extends engine.Object {
             alBufferData(id, info.channels() == 1 ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, pcm, info.sample_rate());
             clips.add(this);
         }
+    }
+
+    public static AudioClip Find(String name) {
+        for (i = 0; i < clips.size(); i++) {
+            if (clips.get(i).Name().equals(name)) return clips.get(i);
+        }
+        return null;
+    }
+
+    public static final List<AudioClip> GetClips() {
+        return clips;
     }
 
     public static void CleanUp() {
@@ -86,12 +98,17 @@ public class AudioClip extends engine.Object {
 
         Path path = Paths.get(resource);
         if (Files.isReadable(path)) {
+            String[] split = resource.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
+            Name(split[split.length - 1]);
+            System.out.println(Name());
+
             try (SeekableByteChannel fc = Files.newByteChannel(path)) {
                 buffer = BufferUtils.createByteBuffer((int) fc.size() + 1);
                 while (fc.read(buffer) != -1) ;
             }
         } else {
-            try (InputStream source = AudioClip.class.getResourceAsStream(resource); ReadableByteChannel rbc = Channels.newChannel(source)) {
+            Name(resource.replaceFirst("/", ""));
+            try (InputStream source = AudioClip.class.getResourceAsStream("/Audio" + resource); ReadableByteChannel rbc = Channels.newChannel(source)) {
                 buffer = BufferUtils.createByteBuffer(bufferSize);
 
                 while (true) {

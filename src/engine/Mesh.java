@@ -13,8 +13,8 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Mesh {
-    private static final List<Mesh> meshList = new ArrayList<>();
-    private final int v_id;
+    private static final List<Mesh> meshList = new ArrayList<Mesh>();
+	private final int v_id;
     private final int u_id;
     private final int vao;
 
@@ -44,7 +44,7 @@ public class Mesh {
     //Static function to clean up all meshes
     public static void CleanAllMesh() {
         //For every mesh, call the local cleanup on it
-        for (Mesh mesh : meshList) mesh.CleanUp();
+		for (int i = 0; i < meshList.size(); i++) meshList.get(i).CleanUp();
     }
 
     public void Render() {
@@ -86,8 +86,8 @@ public class Mesh {
 
     //Local function to delete vaos and vbos
     public void CleanUp() {
-        //Delete the vertex array object and delete the vertices buffer
-        GL30.glDeleteVertexArrays(vao);
-        GL15.glDeleteBuffers(v_id);
-    }
+		//Delete the vertex array object and delete the vertices buffer
+		GL30.glDeleteVertexArrays(vao);
+		GL15.glDeleteBuffers(v_id);
+	}
 }

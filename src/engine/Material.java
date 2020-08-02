@@ -6,12 +6,11 @@ import math.Color;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class Material extends engine.Object {
     //Static variables used for the materials list
-    private static final List<Material> materials = new ArrayList<>();
+    private static final List<Material> materials = new ArrayList<Material>();
     private static int i;
     public Texture texture;
     public Color color;
@@ -90,7 +89,7 @@ public class Material extends engine.Object {
     }
 
     public static void Create(String name) throws IOException {
-        File src = Objects.requireNonNull(Get("DefaultGame")).f;
+        File src = Get("DefaultGame").f;
         File dest = new File(Editor.WorkingDirectory() + "Materials/" + name + ".Material");
 
         try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {

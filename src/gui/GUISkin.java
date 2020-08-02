@@ -7,14 +7,13 @@ import engine.Texture;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class GUISkin extends engine.Object {
-    private static final List<GUISkin> skins = new ArrayList<>();
+    private static final List<GUISkin> skins = new ArrayList<GUISkin>();
     private static int i;
-    private final List<GUIStyle> styles = new ArrayList<>();
     public Texture texture;
+    private final List<GUIStyle> styles = new ArrayList<GUIStyle>();
     private File f = null;
     private long lastModified;
 
@@ -95,7 +94,7 @@ public class GUISkin extends engine.Object {
     }
 
     public static void Create(String name) throws IOException {
-        File src = Objects.requireNonNull(GetSkin("DefaultGUI")).f;
+        File src = GetSkin("DefaultGUI").f;
         File dest = new File(Editor.WorkingDirectory() + "Skins/" + name + ".Skin");
 
         try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {

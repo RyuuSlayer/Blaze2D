@@ -3,6 +3,7 @@ package editor;
 import engine.*;
 import gui.*;
 import math.Vector2;
+import sound.AudioClip;
 
 import java.lang.Object;
 import java.lang.reflect.Field;
@@ -10,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Inspector {
-    private final List<BehaviourAttributes> a = new ArrayList<>();
+    private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
     private int i = 0;
     private int offsetY = 0;
     private int scroll = 0;
@@ -97,174 +98,238 @@ public class Inspector {
         for (int f = 0; f < fields.length; f++) {
             String[] split = fields[f].split(" ");
 
-            switch (split[1]) {
-                case "String":
+            if (split[1].equals("String")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
                     try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            String p = s.get(ba.behaviour).toString();
-                            String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
-                            if (!p.equals(v)) s.set(ba.behaviour, v);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
+                        String p = s.get(ba.behaviour).toString();
+                        String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
+                        if (!p.equals(v)) s.set(ba.behaviour, v);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
-                    break;
-                case "float":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            String p = s.get(ba.behaviour).toString();
-                            float fl = Float.parseFloat(p);
-                            float v = GUI.FloatField(new Rect(0, f * 22 + padding, r.width, 22), split[0], fl, 100);
-                            if (!p.equals(String.valueOf(v))) s.set(ba.behaviour, v);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "int":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            String p = s.get(ba.behaviour).toString();
-                            String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
-                            if (!p.equals(v)) {
-                                try {
-                                    s.set(ba.behaviour, Integer.parseInt(v));
-                                } catch (NumberFormatException e) {
-                                    Debug.Log("Input is not in a number format! Rejecting value.");
-                                }
-                            }
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "Vector2":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            Vector2 p = (Vector2) s.get(ba.behaviour);
-                            Vector2 v = GUI.VectorField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
-                            if (!p.equals(v)) {
-                                s.set(ba.behaviour, v);
-                            }
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "Sprite":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            Sprite sprite = (Sprite) s.get(ba.behaviour);
-                            engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], sprite, Sprite.class, 100);
-                            s.set(ba.behaviour, o);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "GameObject":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            GameObject go = (GameObject) s.get(ba.behaviour);
-                            engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], go, GameObject.class, 100);
-                            s.set(ba.behaviour, o);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "Texture":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            Texture tex = (Texture) s.get(ba.behaviour);
-                            engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], tex, Texture.class, 100);
-                            s.set(ba.behaviour, o);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "GUISkin":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            GUISkin skin = (GUISkin) s.get(ba.behaviour);
-                            engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], skin, GUISkin.class, 100);
-                            s.set(ba.behaviour, o);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "Font":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            Font font = (Font) s.get(ba.behaviour);
-                            engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], font, Font.class, 100);
-                            s.set(ba.behaviour, o);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "Material":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            Material mat = (Material) s.get(ba.behaviour);
-                            engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], mat, Material.class, 100);
-                            s.set(ba.behaviour, o);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case "Shader":
-                    try {
-                        Field s = ba.c.getDeclaredField(split[0]);
-                        try {
-                            Shader shader = (Shader) s.get(ba.behaviour);
-                            engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], shader, Shader.class, 100);
-                            s.set(ba.behaviour, o);
-                        } catch (IllegalArgumentException | IllegalAccessException e) {
-                            e.printStackTrace();
-                        }
-                    } catch (NoSuchFieldException | SecurityException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                default:
-                    GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], "", 100);
-                    break;
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
             }
+            if (split[1].equals("boolean")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        boolean p = (boolean) s.get(ba.behaviour);
+                        boolean v = GUI.Toggle(p, new Rect(0, f * 22 + padding, r.width, 22), split[0], Editor.arrowDown, Editor.arrowRight);
+                        if (p != v) s.set(ba.behaviour, v);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("float")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        String p = s.get(ba.behaviour).toString();
+                        float fl = Float.parseFloat(p);
+                        float v = GUI.FloatField(new Rect(0, f * 22 + padding, r.width, 22), split[0], fl, 100);
+                        if (!p.equals(String.valueOf(v))) s.set(ba.behaviour, v);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("int")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        String p = s.get(ba.behaviour).toString();
+                        String v = GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
+                        if (!p.equals(v)) {
+                            try {
+                                s.set(ba.behaviour, Integer.parseInt(v));
+                            } catch (NumberFormatException e) {
+                                Debug.Log("Input is not in a number format! Rejecting value.");
+                            }
+                        }
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("Vector2")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        Vector2 p = (Vector2) s.get(ba.behaviour);
+                        Vector2 v = GUI.VectorField(new Rect(0, f * 22 + padding, r.width, 22), split[0], p, 100);
+                        if (!p.equals(v)) {
+                            s.set(ba.behaviour, v);
+                        }
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("Sprite")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        Sprite sprite = (Sprite) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], sprite, Sprite.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("GameObject")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        GameObject go = (GameObject) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], go, GameObject.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("Texture")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        Texture tex = (Texture) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], tex, Texture.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("GUISkin")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        GUISkin skin = (GUISkin) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], skin, GUISkin.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("Font")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        Font font = (Font) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], font, Font.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("Material")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        Material mat = (Material) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], mat, Material.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("Shader")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        Shader shader = (Shader) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], shader, Shader.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else if (split[1].equals("AudioClip")) {
+                try {
+                    Field s = ba.c.getDeclaredField(split[0]);
+                    try {
+                        AudioClip clip = (AudioClip) s.get(ba.behaviour);
+                        engine.Object o = GUI.ObjectField(new Rect(0, f * 22 + padding, r.width, 22), split[0], clip, AudioClip.class, 100);
+                        s.set(ba.behaviour, o);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                } catch (NoSuchFieldException e) {
+                    e.printStackTrace();
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
+            } else GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), split[0], "", 100);
             padding += 2;
         }
     }

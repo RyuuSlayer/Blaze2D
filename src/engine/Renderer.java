@@ -15,17 +15,16 @@ import java.util.Map;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
-    private static final List<Map<Material, List<SpriteRenderer>>> renderLayers = new ArrayList<>();
+    private static final List<Map<Material, List<SpriteRenderer>>> renderLayers = new ArrayList<Map<Material, List<SpriteRenderer>>>();
     private static Mesh mesh;
-    private static final int layerCount = 8;
-
-    private static FBO fbo;
     private static Matrix4x4 projection;
+    private static final int layerCount = 8;
+    private static FBO fbo;
     private static int i;
 
     //Initialize the renderer
     public static void Init() {
-        for (i = 0; i < layerCount; i++) renderLayers.add(new HashMap<>());
+        for (i = 0; i < layerCount; i++) renderLayers.add(new HashMap<Material, List<SpriteRenderer>>());
 
         //Create the vertices and uvs and generated mesh using them
         float[] verts = new float[]{0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 0, 1};
@@ -45,10 +44,14 @@ public class Renderer {
         Map<Material, List<SpriteRenderer>> batch = renderLayers.get(r.gameObject.GetLayer());
 
         //Get all the sprite renderers using the material of the passed in renderer
-        List<SpriteRenderer> matRenderers = batch.computeIfAbsent(r.sprite.material, k -> new ArrayList<>());
+        List<SpriteRenderer> matRenderers = batch.get(r.sprite.material);
 
         //If that material does not exist yet or we have no renderers for that material
-        //Create a new list of renderers and set it to the passed in material
+        if (matRenderers == null) {
+            //Create a new list of renderers and set it to the passed in material
+            matRenderers = new ArrayList<SpriteRenderer>();
+            batch.put(r.sprite.material, matRenderers);
+        }
         //And add the sprite renderer to the list
         matRenderers.add(r);
     }
@@ -104,8 +107,8 @@ public class Renderer {
 
         //And unbind the mesh and clear the batch for the next set of batches
         mesh.Unbind();
-        for (Map<Material, List<SpriteRenderer>> renderLayer : renderLayers) {
-            renderLayer.clear();
+        for (int i = 0; i < renderLayers.size(); i++) {
+            renderLayers.get(i).clear();
         }
 
         //Unbind the fbo

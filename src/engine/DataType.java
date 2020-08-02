@@ -8,5 +8,6 @@ public enum DataType {
     Sprite,
     Texture,
     Scene,
-    Script
+    Script,
+    AudioClip
 }

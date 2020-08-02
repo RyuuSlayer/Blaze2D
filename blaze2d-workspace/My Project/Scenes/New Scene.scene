@@ -22,6 +22,11 @@
 		<V shader="">
 		<V renderLayer="0">
 		<V enabled="true">
+	<C Name"sound.AudioSource">
+		<V clip="Platformer-Jam_v1.ogg">
+		<V startGain="-30.0">
+		<V playOnStart="true">
+		<V enabled="true">
 </G>
 <G Name="Sprite" Position="40.0 40.0" Scale="2.0 2.0" Rotation="0.0">
 	<C Name"engine.SpriteRenderer">

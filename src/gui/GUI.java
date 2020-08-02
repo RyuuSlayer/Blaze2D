@@ -16,17 +16,17 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class GUI {
     private static final int boundTex = -1;
-    private static final List<GUIArea> areas = new ArrayList<>();
+    private static final List<GUIArea> areas = new ArrayList<GUIArea>();
     public static Font font;
     public static GUISkin skin;
     private static final Vector2 clickPosition = new Vector2();
     private static Mesh mesh;
     private static Shader shader;
+    private static Matrix4x4 ortho;
+    private static int i;
     public static Color backgroundColor = Color.white;
     public static Color textColor = Color.white;
     public static byte checkDrag;
-    private static Matrix4x4 ortho;
-    private static int i;
     private static Color boundColor = Color.white;
     private static Popup popup;
     private static int area = 0;
@@ -218,6 +218,14 @@ public class GUI {
 
         //If mouse position is not inside the rect and the mouse was not clicked, return false
         return false;
+    }
+
+    public static boolean Toggle(boolean b, Rect r, String name, GUIStyle on, GUIStyle off) {
+        BeginArea(new Rect(r.x, r.y, r.width - 15, r.height));
+        Label(name, 0, 0);
+        EndArea();
+
+        return Toggle(b, r.x + r.width - 15, r.y, on, off);
     }
 
     //Create a check box toggle

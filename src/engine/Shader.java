@@ -10,14 +10,13 @@ import java.io.*;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static org.lwjgl.opengl.GL20.*;
 
 public class Shader extends engine.Object {
     //Static variables to handle all of our shaders
-    private static final List<Shader> shaders = new ArrayList<>();
+    private static final List<Shader> shaders = new ArrayList<Shader>();
     private static int i;
     private int program;
     private int vs;
@@ -98,7 +97,7 @@ public class Shader extends engine.Object {
     }
 
     public static void Create(String name) throws IOException {
-        File src = Objects.requireNonNull(Find("DefaultGameShader")).f;
+        File src = Find("DefaultGameShader").f;
         File dest = new File(Editor.WorkingDirectory() + "Shaders/" + name + ".Shader");
 
         try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {

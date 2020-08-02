@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Camera extends LogicBehaviour {
-    private static final List<Camera> cameras = new ArrayList<>();
+    private static final List<Camera> cameras = new ArrayList<Camera>();
     public Shader shader;
     public int renderLayer = 0;
 
