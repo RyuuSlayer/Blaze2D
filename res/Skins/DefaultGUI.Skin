@@ -23,3 +23,9 @@ Padding: 0,0,0,0
 Name: StopButton
 Offset: 0,64,16,16
 Padding: 0,0,0,0
+Name: ToggleOff
+Offset: 0,32,16,16
+Padding: 0,0,0,0
+Name: ToggleOn
+Offset: 0,48,16,16
+Padding: 0,0,0,0

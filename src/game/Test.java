@@ -9,6 +9,7 @@ public class Test extends LogicBehaviour {
     public int anotherValue = 1;
     public float someFloatValue = 1000;
     public Vector2 someVector = new Vector2(8, 5);
+    public ClassTest myCustomClass = new ClassTest();
 
     public void Update() {
         //if(Input.GetKey(KeyEvent.VK_D)) gameObject.Rotation(gameObject.Rotation() + (Time.DeltaTime() * 10));

@@ -17,21 +17,21 @@ import static org.lwjgl.opengl.GL11.*;
 public class GUI {
     private static final int boundTex = -1;
     private static final List<GUIArea> areas = new ArrayList<GUIArea>();
+    private static final Vector2 clickPosition = new Vector2();
+    public static Color backgroundColor = Color.white;
+    public static Color textColor = Color.white;
     public static Font font;
     public static GUISkin skin;
-    private static final Vector2 clickPosition = new Vector2();
+    public static byte checkDrag;
     private static Mesh mesh;
     private static Shader shader;
     private static Matrix4x4 ortho;
     private static int i;
-    public static Color backgroundColor = Color.white;
-    public static Color textColor = Color.white;
-    public static byte checkDrag;
+    private static char[] c;
+    private static float xTemp;
     private static Color boundColor = Color.white;
     private static Popup popup;
     private static int area = 0;
-    private static char[] c;
-    private static float xTemp;
 
     public static void Init() {
         //Generate mesh information that has inverted uv's

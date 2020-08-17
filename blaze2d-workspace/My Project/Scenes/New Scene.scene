@@ -1,36 +1,54 @@
 <G Name="Brick" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
-	<C Name"engine.SpriteRenderer">
+	<B Name"engine.SpriteRenderer">
 		<V sprite="Brick">
 		<V anchor="0.0 0.0">
 		<V enabled="true">
+	</B>
 </G>
 <G Name="Scene" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
-	<C Name"engine.SpriteRenderer">
+	<B Name"engine.SpriteRenderer">
 		<V sprite="Brick">
 		<V anchor="0.5 0.5">
 		<V enabled="true">
+	</B>
+	<B Name"game.Test">
+		<V someValue="">
+		<V anotherValue="1">
+		<V someFloatValue="1000.0">
+		<V someVector="8.0 5.0">
+		<C myCustomClass="game.ClassTest">
+			<V someText="bloop">
+			<V someBoolean="false">
+			<V expanded="true">
+		</C>
+		<V enabled="true">
+	</B>
 </G>
 <G Name="Brick" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
-	<C Name"engine.SpriteRenderer">
+	<B Name"engine.SpriteRenderer">
 		<V sprite="Brick">
 		<V anchor="0.0 0.0">
 		<V enabled="true">
+	</B>
 	<P Name="Scene">
 </G>
 <G Name="Camera" Position="0.0 0.0" Scale="1.0 1.0" Rotation="0.0">
-	<C Name"engine.Camera">
-		<V shader="">
+	<B Name"engine.Camera">
+		<V shader="NULL">
 		<V renderLayer="0">
 		<V enabled="true">
-	<C Name"sound.AudioSource">
+	</B>
+	<B Name"sound.AudioSource">
 		<V clip="Platformer-Jam_v1.ogg">
 		<V startGain="-30.0">
 		<V playOnStart="true">
 		<V enabled="true">
+	</B>
 </G>
 <G Name="Sprite" Position="40.0 40.0" Scale="2.0 2.0" Rotation="0.0">
-	<C Name"engine.SpriteRenderer">
+	<B Name"engine.SpriteRenderer">
 		<V sprite="Brick">
 		<V anchor="0.0 0.0">
 		<V enabled="true">
+	</B>
 </G>

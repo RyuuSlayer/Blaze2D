@@ -74,6 +74,7 @@ public class Application {
         width = w;
         height = h;
         r.Set(0, 0, w, h);
+        ProjectSettings.previousAppSize.Set(w, h);
         GL11.glViewport(0, 0, w, h);
         Renderer.UpdateFBO(w, h);
     }

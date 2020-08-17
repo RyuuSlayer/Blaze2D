@@ -1,30 +1,51 @@
 package editor;
 
 
-import engine.LogicBehaviour;
-
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BehaviourAttributes {
-    public Object behaviour;
-    public Class<?> c;
-    public String[] fields;
+	public Class<?> c;
+	public List<BehaviourField> fields = new ArrayList<BehaviourField>();
 
-    public int height;
+	public int height;
 
-    public BehaviourAttributes(Object o) {
-        this.behaviour = o;
-        c = o.getClass();
+	public BehaviourAttributes(engine.Object o) {
+		c = o.getClass();
 
-        Field[] f = c.getFields();
-        if (o instanceof LogicBehaviour) fields = new String[f.length - 1];
-        else fields = new String[f.length];
-        for (int i = 0; i < fields.length; i++) {
-            String[] splitName = f[i].getType().toString().split("\\.");
-            fields[i] = f[i].getName() + " " + splitName[splitName.length - 1];
+		SetClass(o, 0);
+		height -= 2;
+	}
 
-            if (i < fields.length - 1) height += 24;
-            else height += 22;
-        }
-    }
+	private void SetClass(engine.Object o, int offset) {
+		Field[] fields = o.getClass().getFields();
+		for (int i = 0; i < fields.length; i++) {
+			Field f = fields[i];
+			if (f.getName().equals("enabled") || f.getName().equals("expanded")) continue;
+
+			this.fields.add(new BehaviourField(o, f, offset));
+			if (engine.CustomClass.class.isAssignableFrom(f.getType())) {
+				try {
+					if (((engine.CustomClass) f.get(o)).expanded) SetClass((engine.Object) f.get(o), offset + 16);
+				} catch (IllegalArgumentException | IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			}
+
+			height += 24;
+		}
+	}
+}
+
+class BehaviourField {
+	engine.Object object;
+	Field field;
+	int offset;
+
+	public BehaviourField(engine.Object o, Field f, int offset) {
+		object = o;
+		field = f;
+		this.offset = offset;
+	}
 }

@@ -12,7 +12,7 @@ public class Mathf {
         if (val > max) return max;
 
         //Else, return the value
-		return val;
+        return val;
     }
 
     public static float Wrap(float val, float min, float max) {

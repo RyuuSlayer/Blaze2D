@@ -9,6 +9,11 @@ public class Vector2 {
         y = 0;
     }
 
+    public Vector2(float v) {
+        x = v;
+        y = v;
+    }
+
     public Vector2(Vector2 v) {
         x = v.x;
         y = v.y;
