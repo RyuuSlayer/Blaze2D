@@ -5,9 +5,9 @@ import gui.*;
 import math.Vector2;
 import sound.AudioClip;
 
+import java.lang.Object;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.Object;
 
 public class Inspector {
 	private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();

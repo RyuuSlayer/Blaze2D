@@ -120,7 +120,7 @@ public class AudioClip extends engine.Object {
 						buffer = BufferUtils.createByteBuffer(buffer.capacity() * 2).put(buffer);
 					}
 				}
-            }
+			}
         }
 
         buffer.flip();

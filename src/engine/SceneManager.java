@@ -20,149 +20,149 @@ import java.util.List;
 import java.util.Map;
 
 public class SceneManager {
-	private static String currentScene = "";
+    private static String currentScene = "";
 
-	public static final String CurrentScene() {
-		return currentScene;
-	}
+    public static final String CurrentScene() {
+        return currentScene;
+    }
 
-	public static void LoadScene(String name) {
-		currentScene = name;
+    public static void LoadScene(String name) {
+        currentScene = name;
 
-		FileReader fr;
-		try {
-			fr = new FileReader(Editor.WorkingDirectory() + "/Scenes/" + name + ".scene");
-		} catch (FileNotFoundException e) {
-			Debug.Log("Scene " + name + " wasnt loaded because it could not be found");
-			return;
-		}
+        FileReader fr;
+        try {
+            fr = new FileReader(Editor.WorkingDirectory() + "/Scenes/" + name + ".scene");
+        } catch (FileNotFoundException e) {
+            Debug.Log("Scene " + name + " wasnt loaded because it could not be found");
+            return;
+        }
 
-		Camera.Clear();
-		GameObject.Clear();
-		AudioSource.CleanUp();
-		BufferedReader br = new BufferedReader(fr);
-		String line;
+        Camera.Clear();
+        GameObject.Clear();
+        AudioSource.CleanUp();
+        BufferedReader br = new BufferedReader(fr);
+        String line;
 
-		try {
-			GameObject g = null;
-			LogicBehaviour b = null;
+        try {
+            GameObject g = null;
+            LogicBehaviour b = null;
 
-			Map<LogicBehaviour, List<String>> batch = new HashMap<LogicBehaviour, List<String>>();
-			List<String> currentInfo = null;
-			while ((line = br.readLine()) != null) {
-				line = line.replace("\t", "");
-				String[] split = line.split("\"");
+            Map<LogicBehaviour, List<String>> batch = new HashMap<LogicBehaviour, List<String>>();
+            List<String> currentInfo = null;
+            while ((line = br.readLine()) != null) {
+                line = line.replace("\t", "");
+                String[] split = line.split("\"");
 
-				//New Way to create gameobjects after parenting
-				if (line.startsWith("<G")) g = CreateObject(split);
-				else if (line.startsWith("<B")) {
-					b = g.AddComponent(split[1]);
-					currentInfo = new ArrayList<String>();
-				} else if (line.startsWith("</B>")) {
-					batch.put(b, currentInfo);
-					currentInfo = null;
-				} else if (currentInfo != null) currentInfo.add(line);
-				else if (line.startsWith("<P")) g.Parent(GameObject.Find(split[1]));
-			}
+                //New Way to create gameobjects after parenting
+                if (line.startsWith("<G")) g = CreateObject(split);
+                else if (line.startsWith("<B")) {
+                    b = g.AddComponent(split[1]);
+                    currentInfo = new ArrayList<String>();
+                } else if (line.startsWith("</B>")) {
+                    batch.put(b, currentInfo);
+                    currentInfo = null;
+                } else if (currentInfo != null) currentInfo.add(line);
+                else if (line.startsWith("<P")) g.Parent(GameObject.Find(split[1]));
+            }
 
-			for (LogicBehaviour behaviour : batch.keySet()) SetClass(behaviour, batch.get(behaviour));
+            for (LogicBehaviour behaviour : batch.keySet()) SetClass(behaviour, batch.get(behaviour));
 
-			GameObject.Recalculate();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+            GameObject.Recalculate();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-	private static engine.Object SetClass(engine.Object o, List<String> data) {
-		String bLine = "";
-		while (data.size() > 0) {
-			bLine = data.get(0);
+    private static engine.Object SetClass(engine.Object o, List<String> data) {
+        String bLine = "";
+        while (data.size() > 0) {
+            bLine = data.get(0);
 
-			if (bLine.startsWith("<V")) {
-				String[] sep = bLine.split("<V ")[1].split("=");
-				try {
-					SetVariable(o, sep[0], sep[1].split("\"")[1]);
-					data.remove(0);
-					continue;
-				} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-					Debug.Log("Could not set " + sep[0]);
-				}
-			} else if (bLine.startsWith("<C")) {
-				String sep = bLine.split("<C ")[1].split("=")[0];
-				try {
-					Field f = o.getClass().getField(sep);
-					CustomClass cached = (CustomClass) f.get(o).getClass().getConstructor().newInstance();
-					data.remove(0);
-					f.set(o, SetClass(cached, data));
-					continue;
-				} catch (NoSuchFieldException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
-					System.out.println(o.getClass().getCanonicalName() + " Does not contain " + sep);
-					e.printStackTrace();
-					return o;
-				}
-			} else if (bLine.startsWith("</C>")) {
-				data.remove(0);
-				return o;
-			}
-		}
-		return o;
-	}
+            if (bLine.startsWith("<V")) {
+                String[] sep = bLine.split("<V ")[1].split("=");
+                try {
+                    SetVariable(o, sep[0], sep[1].split("\"")[1]);
+                    data.remove(0);
+                    continue;
+                } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                    Debug.Log("Could not set " + sep[0]);
+                }
+            } else if (bLine.startsWith("<C")) {
+                String sep = bLine.split("<C ")[1].split("=")[0];
+                try {
+                    Field f = o.getClass().getField(sep);
+                    CustomClass cached = (CustomClass) f.get(o).getClass().getConstructor().newInstance();
+                    data.remove(0);
+                    f.set(o, SetClass(cached, data));
+                    continue;
+                } catch (NoSuchFieldException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e) {
+                    System.out.println(o.getClass().getCanonicalName() + " Does not contain " + sep);
+                    e.printStackTrace();
+                    return o;
+                }
+            } else if (bLine.startsWith("</C>")) {
+                data.remove(0);
+                return o;
+            }
+        }
+        return o;
+    }
 
-	private static GameObject CreateObject(String[] split) {
-		GameObject g = new GameObject(split[1]);
+    private static GameObject CreateObject(String[] split) {
+        GameObject g = new GameObject(split[1]);
 
-		String[] tSplit = split[3].split(" ");
-		g.Position(Float.parseFloat(tSplit[0]), Float.parseFloat(tSplit[1]));
+        String[] tSplit = split[3].split(" ");
+        g.Position(Float.parseFloat(tSplit[0]), Float.parseFloat(tSplit[1]));
 
-		tSplit = split[5].split(" ");
-		g.Scale(Float.parseFloat(tSplit[0]), Float.parseFloat(tSplit[1]));
+        tSplit = split[5].split(" ");
+        g.Scale(Float.parseFloat(tSplit[0]), Float.parseFloat(tSplit[1]));
 
-		g.Rotation(Float.parseFloat(split[7]));
+        g.Rotation(Float.parseFloat(split[7]));
 
-		return g;
-	}
+        return g;
+    }
 
-	private static void SetVariable(engine.Object o, String field, String input) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
-		Field f = o.getClass().getField(field);
-		if (f == null) return;
+    private static void SetVariable(engine.Object o, String field, String input) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        Field f = o.getClass().getField(field);
+        if (f == null) return;
 
-		String[] splitName = f.getType().toString().split("\\.");
-		String dataType = splitName[splitName.length - 1];
+        String[] splitName = f.getType().toString().split("\\.");
+        String dataType = splitName[splitName.length - 1];
 
-		if (dataType.equals("String")) {
-			f.set(o, input);
-			return;
-		} else if (dataType.equals("int")) {
-			f.set(o, Integer.parseInt(input));
-			return;
-		} else if (dataType.equals("boolean")) {
-			f.set(o, Boolean.valueOf(input));
-			return;
-		} else if (dataType.equals("Vector2")) {
-			String[] split = input.split(" ");
-			f.set(o, new Vector2(Float.parseFloat(split[0]), Float.parseFloat(split[1])));
-			return;
-		} else if (dataType.equals("Sprite")) {
-			f.set(o, Sprite.Get(input));
-			return;
-		} else if (dataType.equals("AudioClip")) {
-			f.set(o, AudioClip.Find(input));
-			return;
-		} else if (dataType.equals("GUISkin")) {
-			f.set(o, GUISkin.GetSkin(input));
-			return;
-		} else if (dataType.equals("Texture")) {
-			f.set(o, Texture.Find(input));
-			return;
-		} else if (dataType.equals("Font")) {
-			f.set(o, Font.Find(input));
-			return;
-		} else if (dataType.equals("Material")) {
-			f.set(o, Material.Get(input));
-			return;
-		} else if (dataType.equals("Shader")) {
-			f.set(o, Shader.Find(input));
-			return;
-		}
-	}
+        if (dataType.equals("String")) {
+            f.set(o, input);
+            return;
+        } else if (dataType.equals("int")) {
+            f.set(o, Integer.parseInt(input));
+            return;
+        } else if (dataType.equals("boolean")) {
+            f.set(o, Boolean.valueOf(input));
+            return;
+        } else if (dataType.equals("Vector2")) {
+            String[] split = input.split(" ");
+            f.set(o, new Vector2(Float.parseFloat(split[0]), Float.parseFloat(split[1])));
+            return;
+        } else if (dataType.equals("Sprite")) {
+            f.set(o, Sprite.Get(input));
+            return;
+        } else if (dataType.equals("AudioClip")) {
+            f.set(o, AudioClip.Find(input));
+            return;
+        } else if (dataType.equals("GUISkin")) {
+            f.set(o, GUISkin.GetSkin(input));
+            return;
+        } else if (dataType.equals("Texture")) {
+            f.set(o, Texture.Find(input));
+            return;
+        } else if (dataType.equals("Font")) {
+            f.set(o, Font.Find(input));
+            return;
+        } else if (dataType.equals("Material")) {
+            f.set(o, Material.Get(input));
+            return;
+        } else if (dataType.equals("Shader")) {
+            f.set(o, Shader.Find(input));
+            return;
+        }
+    }
 }

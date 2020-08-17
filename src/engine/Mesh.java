@@ -13,8 +13,8 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Mesh {
-    private final int v_id;
     private static final List<Mesh> meshList = new ArrayList<Mesh>();
+    private final int v_id;
     private final int u_id;
     private final int vao;
 

@@ -165,5 +165,5 @@ public class ProjectPanel {
                 RenderAssetType(new Rect(0, i * 26, r.width, 26), clips.get(i), "Audio/", "", containsMouse);
             }
         }
-	}
+    }
 }
