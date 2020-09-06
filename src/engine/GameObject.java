@@ -12,32 +12,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject extends engine.Object {
-	public boolean enabled = true;
-	public String tag = "Untagged";
 	private static final GameObject master = new GameObject(false);
 	private static final List<GameObject> instances = new ArrayList<GameObject>();
-	private Vector2 scale = new Vector2(1, 1);
-	private float rotation = 0;
 	private static final Matrix4x4 temp = new Matrix4x4();
-	private Vector2 localScale = new Vector2();
-	private float localRotation = 0;
-
-	private GameObject parent;
 	private static int h;
 	private static int j;
-	private int inline = 0;
 	private static boolean prevFrame = false;
 	private final Vector2 position = new Vector2(0, 0);
 	private final Vector2 localPosition = new Vector2();
-
+	private final List<GameObject> children = new ArrayList<GameObject>();
+	private final List<LogicBehaviour> components = new ArrayList<LogicBehaviour>();
+	private final Matrix4x4 matrix = new Matrix4x4();
+	public boolean enabled = true;
+	public String tag = "Untagged";
+	public float depth = 0;
+	private Vector2 scale = new Vector2(1, 1);
+	private float rotation = 0;
+	private Vector2 localScale = new Vector2();
+	private float localRotation = 0;
+	private GameObject parent;
+	private int inline = 0;
 	private int layer = 0;
 	private byte dirty = 1;
 	private boolean expanded = false;
 	private int i;
-	private final List<GameObject> children = new ArrayList<GameObject>();
-	private final List<LogicBehaviour> components = new ArrayList<LogicBehaviour>();
-	private final Matrix4x4 matrix = new Matrix4x4();
-	public float depth = 0;
 	private Collider collider;
 	private SpriteRenderer renderer;
 

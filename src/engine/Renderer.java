@@ -16,11 +16,10 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
 	private static final List<Map<Material, List<SpriteRenderer>>> renderLayers = new ArrayList<Map<Material, List<SpriteRenderer>>>();
+	private static final int layerCount = 8;
 	private static Mesh mesh;
 	private static Matrix4x4 projection;
-
 	private static FBO fbo;
-	private static final int layerCount = 8;
 	private static int i;
 
 	//Initialize the renderer

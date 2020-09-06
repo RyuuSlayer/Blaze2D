@@ -5,17 +5,17 @@ import gui.*;
 import math.Vector2;
 import sound.AudioClip;
 
+import java.lang.Object;
 import java.util.ArrayList;
 import java.util.List;
-import java.lang.Object;
 
 public class Inspector {
 	private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
+	private final GUIStyle window;
 	private List<LogicBehaviour> l = new ArrayList<LogicBehaviour>();
 	private int i = 0;
 	private int offsetY = 0;
 	private int scroll = 0;
-	private final GUIStyle window;
 
 	public Inspector() {
 		window = Editor.skin.Get("Window");
