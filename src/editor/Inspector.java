@@ -5,17 +5,17 @@ import gui.*;
 import math.Vector2;
 import sound.AudioClip;
 
-import java.lang.Object;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Object;
 
 public class Inspector {
 	private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
-	private final GUIStyle window;
 	private List<LogicBehaviour> l = new ArrayList<LogicBehaviour>();
 	private int i = 0;
 	private int offsetY = 0;
 	private int scroll = 0;
+	private final GUIStyle window;
 
 	public Inspector() {
 		window = Editor.skin.Get("Window");
@@ -37,8 +37,10 @@ public class Inspector {
 			selected.LocalPosition(GUI.VectorField(new Rect(0, 24, r.width, 22), "Position", selected.LocalPosition(), 100));
 			selected.LocalScale(GUI.VectorField(new Rect(0, 48, r.width, 22), "Scale", selected.LocalScale(), 100));
 			selected.LocalRotation(GUI.FloatField(new Rect(0, 72, r.width, 22), "Rotation", selected.LocalRotation(), 100));
+			selected.depth = GUI.FloatField(new Rect(0, 96, r.width, 22), "Depth", selected.depth, 100);
+			selected.SetLayer((int) GUI.FloatField(new Rect(0, 120, r.width, 22), "Layer", selected.GetLayer(), 100));
 
-			offsetY = 96;
+			offsetY = 144;
 			for (i = 0; i < a.size(); i++) {
 				BehaviourAttributes att = a.get(i);
 
@@ -244,7 +246,7 @@ public class Inspector {
 					boolean v = GUI.Toggle(p, new Rect(bf.offset, f * 22 + padding, r.width - bf.offset, 22), bf.field.getName(), Editor.arrowDown, Editor.arrowRight);
 					if (p != v) {
 						((engine.CustomClass) bf.field.get(bf.object)).expanded = v;
-						SetAttributes(Editor.GetInspected(), false);
+						SetAttributes((engine.Object) Editor.GetInspected(), false);
 					}
 				} catch (IllegalArgumentException e) {
 					e.printStackTrace();
@@ -252,6 +254,18 @@ public class Inspector {
 					e.printStackTrace();
 				}
 				GUI.Label(bf.field.getName(), new Vector2(bf.offset, f * 22 + padding));
+			} else if (engine.LogicBehaviour.class.isAssignableFrom(bf.field.getType())) {
+				try {
+					LogicBehaviour behaviour = (LogicBehaviour) bf.field.get(bf.object);
+					engine.Object o = GUI.ObjectField(new Rect(bf.offset, f * 22 + padding, r.width - bf.offset, 22), bf.field.getName(), behaviour, LogicBehaviour.class, 100);
+					bf.field.set(bf.object, o);
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			} else if (type.isArray()) {
+				//Eventually we will put them here
 			} else GUI.TextField(new Rect(0, f * 22 + padding, r.width, 22), bf.field.getName(), "", 100);
 			padding += 2;
 		}

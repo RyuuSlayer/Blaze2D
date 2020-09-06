@@ -5,6 +5,7 @@ import gui.Font;
 import gui.GUISkin;
 import gui.Sprite;
 import math.Vector2;
+import physics.Collider;
 import sound.AudioClip;
 import sound.AudioSource;
 
@@ -37,6 +38,7 @@ public class SceneManager {
             return;
         }
 
+        Collider.Clear(); //New
         Camera.Clear();
         GameObject.Clear();
         AudioSource.CleanUp();
@@ -68,6 +70,9 @@ public class SceneManager {
             for (LogicBehaviour behaviour : batch.keySet()) SetClass(behaviour, batch.get(behaviour));
 
             GameObject.Recalculate();
+
+            List<GameObject> gos = GameObject.Instances();
+            for (GameObject go : gos) go.ResetDirty();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,6 +83,17 @@ public class SceneManager {
         while (data.size() > 0) {
             bLine = data.get(0);
 
+            if (bLine.startsWith("<A")) {
+                String[] sep = bLine.split("<A ")[1].split("=");
+
+                try {
+                    data.remove(0);
+                    SetArray(o, sep[0], data, Integer.parseInt(sep[1].split("\"")[1]));
+                    continue;
+                } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+                    Debug.Log("Could not set " + sep[0]);
+                }
+            }
             if (bLine.startsWith("<V")) {
                 String[] sep = bLine.split("<V ")[1].split("=");
                 try {
@@ -119,6 +135,12 @@ public class SceneManager {
 
         g.Rotation(Float.parseFloat(split[7]));
 
+        g.depth = Float.parseFloat(split[9]);
+
+        g.SetLayer(Integer.parseInt(split[11]));
+
+        g.instanceID(split[13]);
+
         return g;
     }
 
@@ -131,6 +153,9 @@ public class SceneManager {
 
         if (dataType.equals("String")) {
             f.set(o, input);
+            return;
+        } else if (dataType.equals("float")) {
+            f.set(o, Float.parseFloat(input));
             return;
         } else if (dataType.equals("int")) {
             f.set(o, Integer.parseInt(input));
@@ -163,6 +188,27 @@ public class SceneManager {
         } else if (dataType.equals("Shader")) {
             f.set(o, Shader.Find(input));
             return;
+        } else if (dataType.equals("GameObject")) f.set(o, GameObject.FindObjectByID(input));
+        else if (LogicBehaviour.class.isAssignableFrom(f.getType())) {
+            GameObject go = GameObject.FindObjectByID(input);
+            if (go != null) f.set(o, go.GetComponent(dataType));
+        }
+    }
+
+    private static void SetArray(engine.Object o, String fieldName, List<String> data, int size) throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+        Field f = o.getClass().getField(fieldName);
+        if (f == null) return;
+
+        Class<?> type = f.getType().getComponentType();
+
+        if (type == int.class) {
+            int[] array = new int[size];
+            for (int i = 0; i < size; i++) {
+                String s = data.get(0);
+                array[i] = Integer.parseInt(s.split("<V ")[1].split("=")[1].split("\"")[1]);
+                data.remove(0);
+            }
+            f.set(o, array);
         }
     }
 }

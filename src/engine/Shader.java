@@ -201,6 +201,13 @@ public class Shader extends engine.Object {
         }
     }
 
+    //Set afloat uniform using the of the uniform and it's 1 value
+    public void SetUniform(String name, float v) {
+        //Get the location of the uniform and if it exists, pass in the values
+        int location = glGetUniformLocation(program, name);
+        if (location != -1) glUniform1f(location, v);
+    }
+
     //Set a vector2 uniform using the name of the uniform and its 2 values
     public void SetUniform(String name, Vector2 v) {
         SetUniform(name, v.x, v.y);

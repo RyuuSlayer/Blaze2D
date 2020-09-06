@@ -16,10 +16,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Renderer {
 	private static final List<Map<Material, List<SpriteRenderer>>> renderLayers = new ArrayList<Map<Material, List<SpriteRenderer>>>();
-	private static final int layerCount = 8;
 	private static Mesh mesh;
 	private static Matrix4x4 projection;
+
 	private static FBO fbo;
+	private static final int layerCount = 8;
 	private static int i;
 
 	//Initialize the renderer
@@ -60,8 +61,9 @@ public class Renderer {
 	public static void Render(Rect r, Vector2 cameraPosition) {
 		//Bind the fbo an clear the color buffer to black
 		fbo.BindFrameBuffer();
+		glEnable(GL_DEPTH_TEST);
 		glClearColor(0, 1, 1, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Cache the applications size and half size
 		float w = Application.Width();

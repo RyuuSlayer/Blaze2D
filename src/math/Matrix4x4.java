@@ -5,6 +5,7 @@ import java.nio.FloatBuffer;
 public class Matrix4x4 {
 	//A private 2D float array that stores our 4 float by 4 float matrix
 	private final float[][] m = new float[4][4];
+	private boolean dirty = false;
 
 	//Constructor with no parameters and simple calls our defaulting method
 	public Matrix4x4() {
@@ -31,6 +32,14 @@ public class Matrix4x4 {
 
 		//Then return the matrix
 		return matrix;
+	}
+
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	public void setDirty(boolean dirty) {
+		this.dirty = dirty;
 	}
 
 	//Set the matrix to its default values

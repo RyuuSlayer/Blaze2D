@@ -11,6 +11,7 @@ import static org.lwjgl.opengl.GL11.*;
 public class FBO {
 	private final int frameBufferID;
 	private final Texture texture;
+	private final int depthBufferID;
 	private final int width;
 	private final int height;
 
@@ -22,6 +23,7 @@ public class FBO {
 
 		//Create the frame buffer
 		frameBufferID = CreateFrameBuffer();
+		depthBufferID = CreateDepthBufferAttachment();
 
 		//Create the texture attachment and create a texture from the generated id
 		int textureID = CreateTextureAttachment();
@@ -40,12 +42,14 @@ public class FBO {
 	public void BindFrameBuffer() {
 		//Bind texture slot 0 and bind the framebuffer
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, depthBufferID);
 		GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameBufferID);
 	}
 
 	//Unbind the frame buffer
 	public void UnBind() {
 		//Tell opengl not to use an fbo
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
 		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 
@@ -74,6 +78,14 @@ public class FBO {
 
 		//Then return the texture id
 		return texture;
+	}
+
+	private int CreateDepthBufferAttachment() {
+		int buffer = GL30.glGenRenderbuffers();
+		GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, buffer);
+		GL30.glRenderbufferStorage(GL30.GL_RENDERBUFFER, GL11.GL_DEPTH_COMPONENT, width, height);
+		GL30.glFramebufferRenderbuffer(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL30.GL_RENDERBUFFER, buffer);
+		return buffer;
 	}
 
 	//Clean up the fbo

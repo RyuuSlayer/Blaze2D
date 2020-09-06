@@ -42,4 +42,8 @@ public class Rect {
         Vector2 v = new Vector2(Math.max(x, r.x), Math.max(y, r.y));
         return new Rect(v.x, v.y, Math.min(x + width, r.x + r.width) - v.x, Math.min(y + height, r.y + r.height) - v.y);
     }
+
+    public String ToString() {
+        return "(" + x + ", " + y + ", " + width + ", " + height + ")";
+    }
 }

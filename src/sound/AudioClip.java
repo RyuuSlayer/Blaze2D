@@ -24,11 +24,12 @@ import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.*;
 
 public class AudioClip extends engine.Object {
-	private static final List<AudioClip> clips = new ArrayList<AudioClip>();
-	private static int i;
 	final int id;
 	private ByteBuffer vorbis;
 	private ShortBuffer pcm;
+
+	private static final List<AudioClip> clips = new ArrayList<AudioClip>();
+	private static int i;
 
 	public AudioClip(String fileName) {
 		id = alGenBuffers();

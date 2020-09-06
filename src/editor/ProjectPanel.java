@@ -84,7 +84,7 @@ public class ProjectPanel {
 
     private void RenderAssetType(Rect r, engine.Object asset, String folder, String ext, byte containsMouse) throws CloneNotSupportedException {
         if (selected != null) {
-            if (asset.equals(selected)) {
+            if (asset.instanceID().equals(selected.instanceID())) {
                 if (GUI.Button(asset.Name(), r, box, box)) {
                     if (Mouse.MultiClicked()) {
                         File f = new File(Editor.WorkingDirectory() + folder + asset.Name() + ext);
@@ -163,6 +163,18 @@ public class ProjectPanel {
             scroll2 = GUI.SetScrollView(clips.size() * 26, scroll2);
             for (i = 0; i < clips.size(); i++) {
                 RenderAssetType(new Rect(0, i * 26, r.width, 26), clips.get(i), "Audio/", "", containsMouse);
+            }
+        } else if (selectedType == DataType.Script) {
+            List<LogicBehaviour> scripts = EditorUtil.GetImportedClasses();
+            scroll2 = GUI.SetScrollView(scripts.size() * 26, scroll2);
+            for (i = 0; i < scripts.size(); i++) {
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), scripts.get(i), "Scripts/", "", containsMouse);
+            }
+        } else if (selectedType == DataType.Scene) {
+            List<Scene> scenes = Scene.GetScenes();
+            scroll2 = GUI.SetScrollView(scenes.size() * 26, scroll2);
+            for (i = 0; i < scenes.size(); i++) {
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), scenes.get(i), "Scenes/", "", containsMouse);
             }
         }
     }

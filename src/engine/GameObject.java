@@ -5,40 +5,43 @@ import editor.EditorUtil;
 import math.Mathf;
 import math.Matrix4x4;
 import math.Vector2;
+import physics.Collider;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-public class GameObject extends engine.Object {//Variables need to be after object creation and behaviour creation
-	private static final GameObject master = new GameObject(false);
-	private static final List<GameObject> instances = new ArrayList<GameObject>();
-	private static final Matrix4x4 temp = new Matrix4x4();
-	private static int h;
-	private static int j;
-	private final Vector2 position = new Vector2(0, 0);
-	//New
-	private final Vector2 localPosition = new Vector2();
-	private final List<GameObject> children = new ArrayList<GameObject>();
-	private final List<LogicBehaviour> components = new ArrayList<LogicBehaviour>();
-	private final Matrix4x4 matrix = new Matrix4x4();
+public class GameObject extends engine.Object {
 	public boolean enabled = true;
 	public String tag = "Untagged";
+	private static final GameObject master = new GameObject(false);
+	private static final List<GameObject> instances = new ArrayList<GameObject>();
 	private Vector2 scale = new Vector2(1, 1);
 	private float rotation = 0;
+	private static final Matrix4x4 temp = new Matrix4x4();
 	private Vector2 localScale = new Vector2();
 	private float localRotation = 0;
+
 	private GameObject parent;
+	private static int h;
+	private static int j;
 	private int inline = 0;
-	private String id;
+	private static boolean prevFrame = false;
+	private final Vector2 position = new Vector2(0, 0);
+	private final Vector2 localPosition = new Vector2();
+
 	private int layer = 0;
 	private byte dirty = 1;
 	private boolean expanded = false;
 	private int i;
+	private final List<GameObject> children = new ArrayList<GameObject>();
+	private final List<LogicBehaviour> components = new ArrayList<LogicBehaviour>();
+	private final Matrix4x4 matrix = new Matrix4x4();
+	public float depth = 0;
+	private Collider collider;
+	private SpriteRenderer renderer;
 
 	public GameObject(boolean addToHierarchy) {
-		id = UUID.randomUUID().toString();
 		if (!addToHierarchy) {
 			inline = -1;
 			expanded = true;
@@ -50,7 +53,6 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 	}
 
 	public GameObject(String name) {
-		id = UUID.randomUUID().toString();
 		Name(name);
 		instances.add(this);
 		Parent(master);
@@ -76,7 +78,7 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 	public static GameObject FindObjectByID(String s) {
 		for (j = 0; j < instances.size(); j++) {
 			GameObject g = instances.get(j);
-			if (g.id.equals(s)) return g;
+			if (g.instanceID().equals(s)) return g;
 		}
 		return null;
 	}
@@ -98,16 +100,21 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 
 	public static void PrepareObjects() {
 		if (Editor.IsPlaying()) {
+			if (prevFrame == false) Collider.ClearFrame();
 			for (h = 0; h < instances.size(); h++) {
 				GameObject g = instances.get(h);
 				g.Update();
 			}
+
+			Collider.ResolveCollisions();
+			Collider.ClearFrame();
 		}
 
 		for (h = 0; h < instances.size(); h++) {
 			GameObject g = instances.get(h);
 			g.PrepareToRender();
 		}
+		prevFrame = Editor.IsPlaying();
 	}
 
 	public final int GetLayer() {
@@ -115,17 +122,21 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 	}
 
 	public void SetLayer(int l) {
-		layer = (int) Mathf.Clamp((float) layer, 0, Renderer.LayerCount() - 1);
+		layer = (int) Mathf.Clamp((float) l, 0, Renderer.LayerCount() - 1);
 	}
 
 	public final boolean isDirty() {
 		return dirty == 1;
 	}
 
+	public void ResetDirty() {
+		dirty = 0;
+	}
+
 	//Get rid of update matrix because Matrix() already updates it if it's dirty when retrieved
 	public final Matrix4x4 Matrix() {
-		if (dirty == 1) matrix.SetTransformation(position, rotation, scale);
-		dirty = 0;
+		if (matrix.isDirty()) matrix.SetTransformation(position, rotation, scale);
+		matrix.setDirty(false);
 		return matrix;
 	}
 
@@ -153,6 +164,10 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 	public void LocalPosition(float x, float y) {
 		localPosition.Set(x, y);
 		RecalculateGlobalTransformations();
+	}
+
+	public void Move(Vector2 v) {
+		Position(position.Add(v));
 	}
 
 	public final Vector2 Scale() {
@@ -201,6 +216,7 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 
 	private void RecalculateLocalTransformation() {
 		dirty = 1;
+		matrix.setDirty(true);
 		localScale = scale.Div(parent.scale);
 		localRotation = Mathf.Wrap(rotation - parent.rotation, 0, 360);
 		temp.SetTransformation(null, -parent.rotation, new Vector2(1, 1).Div(parent.scale));
@@ -211,6 +227,7 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 
 	private void RecalculateGlobalTransformations() {
 		dirty = 1;
+		matrix.setDirty(true);
 		scale = parent.scale.Mul(localScale);
 		rotation = Mathf.Wrap(parent.rotation + localRotation, 0, 360);
 		position.Set(parent.Matrix().TransformPoint(localPosition));
@@ -252,6 +269,8 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 	public void RemoveComponent(LogicBehaviour b) {
 		for (i = 0; i < components.size(); i++) {
 			if (components.get(i) == b) {
+				if (b == renderer) renderer = null;
+				else if (b == collider) collider = null;
 				components.remove(i);
 				return;
 			}
@@ -260,17 +279,40 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 
 	public void RemoveComponent(String s) {
 		for (i = 0; i < components.size(); i++) {
-			if (components.get(i).Name().equals(s)) {
-				components.remove(i);
+			LogicBehaviour b = components.get(i);
+			if (b.Name().equals(s)) {
+				if (b == renderer) renderer = null;
+				else if (b == collider) collider = null;
+				components.remove(b);
 				return;
 			}
 		}
+	}
+
+	public final SpriteRenderer GetRenderer() {
+		return renderer;
+	}
+
+	public final Collider GetCollider() {
+		return collider;
 	}
 
 	public LogicBehaviour AddComponent(LogicBehaviour b) {
 		if (b == null) {
 			Debug.Log("Could not find behaviour!");
 			return null;
+		} else if (b instanceof Collider) {
+			if (collider != null) {
+				Debug.Log("Only one collider per object is allowed!");
+				return null;
+			}
+			collider = (Collider) b;
+		} else if (b instanceof SpriteRenderer) {
+			if (renderer != null) {
+				Debug.Log("Only one renderer per object is allowed!");
+				return null;
+			}
+			renderer = (SpriteRenderer) b;
 		}
 		b.Init(this);
 		components.add(b);
@@ -278,6 +320,16 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 	}
 
 	public LogicBehaviour AddComponent(String v) {
+		if (v.equals("SpriteRenderer") && renderer != null) {
+			Debug.Log("Only one renderer per object is allowed!");
+			return null;
+		} else if (v.equals("BoxCollider")) {
+			if (collider != null) {
+				Debug.Log("Only one collider per object is allowed!");
+				return null;
+			}
+		}
+
 		Class<?> cls;
 
 		try {
@@ -287,7 +339,10 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 				return null;
 			}
 			try {
-				return AddComponent((LogicBehaviour) cls.getConstructor().newInstance());
+				LogicBehaviour b = AddComponent((LogicBehaviour) cls.getConstructor().newInstance());
+				if (b instanceof Collider) collider = (Collider) b;
+				else if (b instanceof SpriteRenderer) renderer = (SpriteRenderer) b;
+				return b;
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				Debug.Log("Instance of " + v + " could not be instantiated!");
 			}
@@ -298,14 +353,6 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 			Debug.Log("Class " + v + " could not be found!");
 		}
 		return null;
-	}
-
-	void Id(String value) {
-		id = value;
-	}
-
-	public final String ID() {
-		return id;
 	}
 
 	public void Expand(boolean b) {
@@ -375,7 +422,7 @@ public class GameObject extends engine.Object {//Variables need to be after obje
 			if (component.Name().equals("SpriteRenderer")) {
 				SpriteRenderer sr = (SpriteRenderer) component;
 				if (sr.sprite != null) Renderer.AddToRenderer(sr);
-			}
+			} else if (component.Name().equals("BoxCollider")) Collider.AddFrameCollider((Collider) component);
 		}
 	}
 }

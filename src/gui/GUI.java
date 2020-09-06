@@ -142,6 +142,10 @@ public class GUI {
             engine.Object dragged = Editor.DraggedObject();
             if (dragged != null) {
                 if (dragged.getClass() == type) return dragged;
+                else if (dragged.getClass() == GameObject.class && type == LogicBehaviour.class) {
+                    //Work in progress for setting components
+                }
+
             }
         }
 

@@ -24,19 +24,14 @@ public class SpriteRenderer extends LogicBehaviour {
         //Create and set the uv offset uniform
         Rect uv = sprite.UV();
         sprite.material.shader.SetUniform("offset", uv.x, uv.y, uv.width, uv.height);
+
+        sprite.material.shader.SetUniform("depth", gameObject.depth);
     }
 
     public boolean Contains(Vector2 v) {
         if (sprite == null) return false;
 
-        Matrix4x4 m = gameObject.Matrix();
-        Vector2 offset = new Vector2(sprite.offset.width, sprite.offset.height).Mul(anchor).Neg();
-        Vector2[] points = new Vector2[4];
-
-        points[0] = m.TransformPoint(offset);
-        points[1] = m.TransformPoint(new Vector2(offset.x, offset.y + sprite.offset.height));
-        points[2] = m.TransformPoint(new Vector2(offset.x + sprite.offset.width, offset.y + sprite.offset.height));
-        points[3] = m.TransformPoint(new Vector2(offset.x + sprite.offset.width, offset.y));
+        Vector2[] points = GetCorners();
 
         for (i = 0; i < points.length; i++) {
             Vector2 direction;
@@ -46,5 +41,20 @@ public class SpriteRenderer extends LogicBehaviour {
             if (Math.signum(direction.x * (v.y - points[i].y) - direction.y * (v.x - points[i].x)) >= 0) return false;
         }
         return true;
+    }
+
+    public Vector2[] GetCorners() {
+        if (sprite == null) return null;
+
+        Matrix4x4 m = gameObject.Matrix();
+        Vector2 offset = new Vector2(sprite.offset.width, sprite.offset.height).Mul(anchor).Neg();
+
+        Vector2[] ret = new Vector2[4];
+        ret[0] = m.TransformPoint(offset);
+        ret[1] = m.TransformPoint(new Vector2(offset.x, offset.y + sprite.offset.height));
+        ret[2] = m.TransformPoint(new Vector2(offset.x + sprite.offset.width, offset.y + sprite.offset.height));
+        ret[3] = m.TransformPoint(new Vector2(offset.x + sprite.offset.width, offset.y));
+
+        return ret;
     }
 }

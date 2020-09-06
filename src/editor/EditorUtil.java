@@ -22,6 +22,10 @@ public class EditorUtil {
 	private static final List<LogicBehaviour> importedClasses = new ArrayList<LogicBehaviour>();
 	private static int i;
 
+	public static List<LogicBehaviour> GetImportedClasses() {
+		return importedClasses;
+	}
+
 	public static void ImportClass(String path) {
 		InputStream stream = null;
 		try {
