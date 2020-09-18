@@ -13,18 +13,22 @@ public class Debug {
         AddMessage(message);
     }
 
+    public static void Clear() {
+        log.clear();
+    }
+
     private static void AddMessage(String message) {
         log.add(message);
         if (log.size() > 50) log.remove(0);
     }
 
-    public static String Log() {
+    public static final String Log() {
         String ret = "";
         for (i = 0; i < log.size(); i++) ret += (log.get(i) + "\n");
         return ret;
     }
 
-    public static String LastEntry() {
+    public static final String LastEntry() {
         if (log.size() == 0) return "";
         return log.get(log.size() - 1);
     }

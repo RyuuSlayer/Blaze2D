@@ -25,6 +25,13 @@ public abstract class LogicBehaviour extends Object {
     public void OnGUI() {
     }
 
+    public void OnTrigger() {
+        System.out.println(Name());
+    }
+
+    public void OnCollision() {
+    }
+
     public void print(String s) {
         System.out.println(s);
     }

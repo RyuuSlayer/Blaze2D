@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 public class GUISkin extends engine.Object {
     private static final List<GUISkin> skins = new ArrayList<GUISkin>();
     private static int i;
-    private final List<GUIStyle> styles = new ArrayList<GUIStyle>();
     public Texture texture;
+    private final List<GUIStyle> styles = new ArrayList<GUIStyle>();
     private File f = null;
     private long lastModified;
 

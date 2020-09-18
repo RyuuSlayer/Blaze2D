@@ -20,7 +20,6 @@ import java.util.jar.JarFile;
 public class AssetDatabase {
     private static final Class<AssetDatabase> clazz = AssetDatabase.class;
     private static final ClassLoader cl = clazz.getClassLoader();
-    private static final List<String> scenes = new ArrayList<String>();
     private static List<String> textures = new ArrayList<String>();
     private static List<String> fonts = new ArrayList<String>();
     private static List<String> shaders = new ArrayList<String>();
@@ -28,6 +27,7 @@ public class AssetDatabase {
     private static List<String> sprites = new ArrayList<String>();
     private static List<String> skins = new ArrayList<String>();
     private static List<String> audio = new ArrayList<String>();
+    private static final List<String> scenes = new ArrayList<String>();
     private static List<String> scripts = new ArrayList<String>();
 
 
@@ -160,6 +160,19 @@ public class AssetDatabase {
                 }
             }
             jar.close();
+        }
+
+        if (ProjectSettings.isEditor) {
+            scripts = ImportFromExternalDirectory("Scripts", 1);
+
+            textures.addAll(ImportFromExternalDirectory("Textures", 1));
+            fonts.addAll(ImportFromExternalDirectory("Font", 0));
+            shaders.addAll(ImportFromExternalDirectory("Shaders", 0));
+            materials.addAll(ImportFromExternalDirectory("Materials", 0));
+            sprites.addAll(ImportFromExternalDirectory("Sprites", 0));
+            skins.addAll(ImportFromExternalDirectory("Skins", 0));
+            audio.addAll(ImportFromExternalDirectory("Audio", 1));
+            scenes.addAll(ImportFromExternalDirectory("Scenes", 0));
         }
     }
 }

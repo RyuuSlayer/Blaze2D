@@ -15,9 +15,6 @@ import java.util.function.Consumer;
 import static org.lwjgl.opengl.GL11.*;
 
 public class GUI {
-    private static final int boundTex = -1;
-    private static final List<GUIArea> areas = new ArrayList<GUIArea>();
-    private static final Vector2 clickPosition = new Vector2();
     public static Color backgroundColor = Color.white;
     public static Color textColor = Color.white;
     public static Font font;
@@ -29,9 +26,12 @@ public class GUI {
     private static int i;
     private static char[] c;
     private static float xTemp;
+    private static final int boundTex = -1;
     private static Color boundColor = Color.white;
     private static Popup popup;
     private static int area = 0;
+    private static final List<GUIArea> areas = new ArrayList<GUIArea>();
+    private static final Vector2 clickPosition = new Vector2();
 
     public static void Init() {
         //Generate mesh information that has inverted uv's

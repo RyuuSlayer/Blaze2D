@@ -8,6 +8,14 @@ public class Rect {
     public float width;
     public float height;
 
+    //Constructor that sets position and size to 0
+    public Rect() {
+        x = 0;
+        y = 0;
+        width = 0;
+        height = 0;
+    }
+
     //Constructor that sets the position and size of the rectangle
     public Rect(float x, float y, float w, float h) {
         this.x = x;
@@ -20,6 +28,28 @@ public class Rect {
     public void Set(float x, float y, float w, float h) {
         this.x = x;
         this.y = y;
+        width = w;
+        height = h;
+    }
+
+    //Set the size of the rectangle without creating a new one
+    public void SetPosition(Vector2 pos) {
+        this.x = pos.x;
+        this.y = pos.y;
+    }
+
+    public void SetPosition(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    //Set the size of the rectangle without creating a new one
+    public void SetSize(Vector2 size) {
+        width = size.x;
+        height = size.y;
+    }
+
+    public void SetSize(int w, int h) {
         width = w;
         height = h;
     }

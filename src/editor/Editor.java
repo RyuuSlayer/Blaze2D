@@ -4,6 +4,7 @@ import engine.*;
 import gui.GUI;
 import gui.GUISkin;
 import gui.GUIStyle;
+import gui.Sprite;
 import input.Mouse;
 import math.Vector2;
 
@@ -90,6 +91,7 @@ public class Editor {
                 SaveScene(SceneManager.CurrentScene());
                 GameObject.StartAll();
                 playing = 1;
+                Debug.Clear();
             } catch (IOException e) {
                 Debug.Log("Could not save current scene. Play mode could not be started!");
             }
@@ -149,8 +151,31 @@ public class Editor {
                 }
             }, window);
 
-            if (Mouse.GetButtonUp(0)) draggedObject = null;
-            else if (draggedObject != null) GUI.Label(draggedObject.Name(), Mouse.Position());
+            if (Mouse.GetButtonUp(0)) {
+                if (draggedObject != null) {
+                    if (new Rect(400, 30, Application.Width() - 800, Application.Height() - 260).Contains(Mouse.Position())) {
+                        if (draggedObject instanceof Sprite) {
+                            Sprite s = (Sprite) draggedObject;
+                            GameObject go = new GameObject(s.Name());
+
+                            Vector2 gOffset = Mouse.Position().Sub(new Vector2(Application.Size().Mul(0.5f)));
+                            gOffset.y = -gOffset.y;
+                            go.Position(gOffset);
+
+                            SpriteRenderer sr = new SpriteRenderer();
+                            sr.sprite = s;
+                            go.AddComponent(sr);
+                        }
+                        //Have to make sure draggable is prefab and not already in the scene
+                        //else if(draggedObject instanceof GameObject)
+                        //{
+                        //GameObject g = (GameObject) draggedObject;
+                        //Alter drop position here
+                        //}
+                    }
+                    draggedObject = null;
+                }
+            }
         }
 
         //Unbind the gui
@@ -217,6 +242,7 @@ public class Editor {
         File projDir = new File(workingDirectory);
         Boolean newProject = projDir.mkdir();
 
+        new File(workingDirectory + "Audio/").mkdir();
         new File(workingDirectory + "Font/").mkdir();
         new File(workingDirectory + "Materials/").mkdir();
         new File(workingDirectory + "Shaders/").mkdir();

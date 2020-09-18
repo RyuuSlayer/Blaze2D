@@ -4,6 +4,7 @@ import gui.GUISkin;
 import gui.Sprite;
 import input.Input;
 import input.Mouse;
+import math.Vector2;
 import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.opengl.GL;
@@ -13,13 +14,11 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glClearColor;
 
 public class Application {
-    //Window specific variables
-    public static String name = "Blaze Engine | Alpha Build";
-
-    private static int width = 1200;
-    private static int height = 600;
+    private static final Vector2 size = new Vector2(1200, 600);
+    private static final Rect r = new Rect();
     private static long window;
-    private static Rect r;
+    //Window specific variables
+    public static String name = "Logic Engine";
     private static byte minimized = 0;
 
     private static GLFWWindowSizeCallback windowSizeCallback;
@@ -34,10 +33,10 @@ public class Application {
             System.exit(1);
         }
 
-        r = new Rect(0, 0, width, height);
+        r.SetSize(size);
 
         //Create the window, show it and make the context current
-        window = glfwCreateWindow(width, height, name, 0, 0);
+        window = glfwCreateWindow((int) size.x, (int) size.y, name, 0, 0);
         glfwShowWindow(window);
         glfwMakeContextCurrent(window);
 
@@ -71,8 +70,7 @@ public class Application {
     public static void OnWindowResized(long win, int w, int h) {
         if (w == 0 && h == 0) minimized = 1;
         else minimized = 0;
-        width = w;
-        height = h;
+        size.Set(w, h);
         r.Set(0, 0, w, h);
         ProjectSettings.previousAppSize.Set(w, h);
         GL11.glViewport(0, 0, w, h);
@@ -83,12 +81,16 @@ public class Application {
         return minimized == 1;
     }
 
-    public static int Width() {
-        return width;
+    public static final Vector2 Size() {
+        return size;
     }
 
-    public static int Height() {
-        return height;
+    public static final float Width() {
+        return size.x;
+    }
+
+    public static final float Height() {
+        return size.y;
     }
 
     public static Rect GetRect() {

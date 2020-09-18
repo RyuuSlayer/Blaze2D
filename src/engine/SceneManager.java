@@ -9,10 +9,7 @@ import physics.Collider;
 import sound.AudioClip;
 import sound.AudioSource;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -30,19 +27,26 @@ public class SceneManager {
     public static void LoadScene(String name) {
         currentScene = name;
 
-        FileReader fr;
-        try {
-            fr = new FileReader(Editor.WorkingDirectory() + "/Scenes/" + name + ".scene");
-        } catch (FileNotFoundException e) {
-            Debug.Log("Scene " + name + " wasnt loaded because it could not be found");
-            return;
+        BufferedReader br = null;
+        if (ProjectSettings.isEditor) {
+            FileReader fr;
+            try {
+                fr = new FileReader(Editor.WorkingDirectory() + "/Scenes/" + name + ".scene");
+            } catch (FileNotFoundException e) {
+                Debug.Log("Scene " + name + " wasnt loaded because it could not be found");
+                return;
+            }
+            br = new BufferedReader(fr);
+        } else {
+            InputStreamReader isr = new InputStreamReader(SceneManager.class.getResourceAsStream("/Scenes/" + name + ".scene"));
+            br = new BufferedReader(isr);
         }
 
-        Collider.Clear(); //New
+        Collider.Clear();
         Camera.Clear();
         GameObject.Clear();
         AudioSource.CleanUp();
-        BufferedReader br = new BufferedReader(fr);
+
         String line;
 
         try {
@@ -72,7 +76,10 @@ public class SceneManager {
             GameObject.Recalculate();
 
             List<GameObject> gos = GameObject.Instances();
-            for (GameObject go : gos) go.ResetDirty();
+            for (GameObject go : gos) {
+                go.ResetDirty();
+                go.Start();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

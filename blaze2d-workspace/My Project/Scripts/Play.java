@@ -17,14 +17,6 @@ import math.Matrix4x4;
 import engine.SpriteRenderer;
 
 public class Play extends LogicBehaviour {
-    public GameObject g;
-    public Shader s;
-    public Font f;
-    public Texture t;
-    public GUISkin gs;
-    public Material m;
-    public Sprite sp;
-
     public void Update() {
 
     }
