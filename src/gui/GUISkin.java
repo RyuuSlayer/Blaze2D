@@ -107,6 +107,10 @@ public class GUISkin extends engine.Object {
         new GUISkin(dest.getAbsolutePath().split("\\.")[0]);
     }
 
+    public boolean isInternal() {
+        return f == null;
+    }
+
     //Get a guistyle by name
     public GUIStyle Get(String name) {
         //For all the styles

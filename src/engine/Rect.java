@@ -16,6 +16,14 @@ public class Rect {
         height = 0;
     }
 
+    //Constructor that sets position and size using Vector2's
+    public Rect(Vector2 pos, Vector2 scale) {
+        x = pos.x;
+        y = pos.y;
+        width = scale.x;
+        height = scale.y;
+    }
+
     //Constructor that sets the position and size of the rectangle
     public Rect(float x, float y, float w, float h) {
         this.x = x;
@@ -32,7 +40,7 @@ public class Rect {
         height = h;
     }
 
-    //Set the size of the rectangle without creating a new one
+    //Get and set the size of the rectangle without creating a new one
     public void SetPosition(Vector2 pos) {
         this.x = pos.x;
         this.y = pos.y;
@@ -43,7 +51,11 @@ public class Rect {
         this.y = y;
     }
 
-    //Set the size of the rectangle without creating a new one
+    public Vector2 GetPosition() {
+        return new Vector2(x, y);
+    }
+
+    //Get and set the size of the rectangle without creating a new one
     public void SetSize(Vector2 size) {
         width = size.x;
         height = size.y;
@@ -52,6 +64,10 @@ public class Rect {
     public void SetSize(int w, int h) {
         width = w;
         height = h;
+    }
+
+    public Vector2 GetSize() {
+        return new Vector2(width, height);
     }
 
     public Rect AddPosition(Rect r) {

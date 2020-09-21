@@ -160,11 +160,13 @@ public class Editor {
 
                             Vector2 gOffset = Mouse.Position().Sub(new Vector2(Application.Size().Mul(0.5f)));
                             gOffset.y = -gOffset.y;
-                            go.Position(gOffset);
+                            go.Position(cameraPosition.Add(gOffset));
 
                             SpriteRenderer sr = new SpriteRenderer();
                             sr.sprite = s;
                             go.AddComponent(sr);
+
+                            SetSelected(go);
                         }
                         //Have to make sure draggable is prefab and not already in the scene
                         //else if(draggedObject instanceof GameObject)
@@ -180,6 +182,21 @@ public class Editor {
 
         //Unbind the gui
         GUI.Unbind();
+    }
+
+    public static void DrawDragged() {
+        GUI.Label(draggedObject.Name(), Mouse.Position());
+
+        Rect sceneRect = new Rect(400, 30, Application.Width() - 800, Application.Height() - 260);
+        if (sceneRect.Contains(Mouse.Position())) {
+            if (draggedObject instanceof Sprite) {
+                Sprite s = (Sprite) draggedObject;
+                GUI.BeginArea(sceneRect);
+                Rect drawRect = new Rect(Mouse.Position().Sub(new Vector2(0, s.offset.height)).Sub(sceneRect.GetPosition()), s.offset.GetSize());
+                GUI.DrawTextureWithTexCoords(s.material.texture, drawRect, s.UV());
+                GUI.EndArea();
+            }
+        }
     }
 
     public static final engine.Object DraggedObject() {

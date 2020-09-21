@@ -106,6 +106,10 @@ public class Material extends engine.Object {
         return materials;
     }
 
+    public boolean isInternal() {
+        return f == null;
+    }
+
     private void Refresh() throws IOException {
         if (f == null) return;
         File temp = new File(f.getAbsolutePath());

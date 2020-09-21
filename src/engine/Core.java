@@ -84,10 +84,9 @@ public class Core {
                 glClearColor(clear.r, clear.g, clear.b, 1);
 
                 GUI.Prepare();
-                //GUI.Label(Integer.toString(Time.FrameRate()), 10, 200);
                 GUI.DrawPopup();
                 engine.Object dragged = Editor.DraggedObject();
-                if (dragged != null) GUI.Label(dragged.Name(), Mouse.Position());
+                if (dragged != null) Editor.DrawDragged();
                 GUI.Unbind();
             }
             GUI.checkDrag = 0;

@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Collider extends LogicBehaviour {
+    static List<Collider> colliders = new ArrayList<Collider>();
     private static final List<Collider> movers = new ArrayList<Collider>();
     private static final List<Collider> solids = new ArrayList<Collider>();
-    static List<Collider> colliders = new ArrayList<Collider>();
 
     public static void Clear() {
         colliders.clear();

@@ -3,11 +3,14 @@ package editor;
 import engine.*;
 import gui.Font;
 import gui.*;
+import input.Input;
 import input.Mouse;
 import sound.AudioClip;
 
 import java.awt.*;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,10 @@ public class ProjectPanel {
     }
 
     public void RenderTypes(Rect r) {
+        if (Input.GetKeyDown('r')) {
+            File f = new File(Editor.WorkingDirectory() + "Scripts/NewScript.java");
+            EditorUtil.ImportClass(f.getAbsolutePath());
+        }
         DataType[] values = DataType.values();
         scroll1 = GUI.SetScrollView(DataType.values().length * 26, scroll1);
         for (int i = 0; i < values.length; i++) {
@@ -77,6 +84,13 @@ public class ProjectPanel {
                 } catch (IOException e) {
                     e.printStackTrace();
                     Debug.Log("Cannot duplicate default skin asset!");
+                }
+            }
+            if (selectedType == DataType.Script) {
+                try {
+                    CreateScript();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
@@ -130,33 +144,58 @@ public class ProjectPanel {
             }
         } else if (selectedType == DataType.Material) {
             List<Material> materials = Material.Materials();
-            scroll2 = GUI.SetScrollView(materials.size() * 26, scroll2);
+            List<Material> altered = new ArrayList<Material>();
             for (i = 0; i < materials.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), materials.get(i), "Materials/", ".Material", containsMouse);
+                if (!materials.get(i).isInternal()) altered.add(materials.get(i));
+            }
+
+            scroll2 = GUI.SetScrollView(altered.size() * 26, scroll2);
+            for (i = 0; i < altered.size(); i++) {
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), altered.get(i), "Materials/", ".Material", containsMouse);
             }
         } else if (selectedType == DataType.Shader) {
             List<Shader> shaders = Shader.Shaders();
-            scroll2 = GUI.SetScrollView(shaders.size() * 26, scroll2);
+            List<Shader> altered = new ArrayList<Shader>();
             for (i = 0; i < shaders.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), shaders.get(i), "Shaders/", ".Shader", containsMouse);
+                if (!shaders.get(i).isInternal()) altered.add(shaders.get(i));
+            }
+
+            scroll2 = GUI.SetScrollView(altered.size() * 26, scroll2);
+            for (i = 0; i < altered.size(); i++) {
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), altered.get(i), "Shaders/", ".Shader", containsMouse);
             }
         } else if (selectedType == DataType.Skin) {
             List<GUISkin> skins = GUISkin.Skins();
-            scroll2 = GUI.SetScrollView(skins.size() * 26, scroll2);
+            List<GUISkin> altered = new ArrayList<GUISkin>();
             for (i = 0; i < skins.size(); i++) {
+                if (!skins.get(i).isInternal()) altered.add(skins.get(i));
+            }
+
+            scroll2 = GUI.SetScrollView(altered.size() * 26, scroll2);
+            for (i = 0; i < altered.size(); i++) {
                 RenderAssetType(new Rect(0, i * 26, r.width, 26), skins.get(i), "Skins/", ".Skin", containsMouse);
             }
         } else if (selectedType == DataType.Sprite) {
             List<Sprite> sprites = Sprite.Sprites();
-            scroll2 = GUI.SetScrollView(sprites.size() * 26, scroll2);
+            List<Sprite> altered = new ArrayList<Sprite>();
             for (i = 0; i < sprites.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), sprites.get(i), "Sprites/", ".Sprite", containsMouse);
+                if (!sprites.get(i).isInternal()) altered.add(sprites.get(i));
+            }
+
+            scroll2 = GUI.SetScrollView(altered.size() * 26, scroll2);
+            for (i = 0; i < altered.size(); i++) {
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), altered.get(i), "Sprites/", ".Sprite", containsMouse);
             }
         } else if (selectedType == DataType.Texture) {
             List<Texture> textures = Texture.GetTextures();
-            scroll2 = GUI.SetScrollView(textures.size() * 26, scroll2);
+            List<Texture> altered = new ArrayList<Texture>();
             for (i = 0; i < textures.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), textures.get(i), "Textures/", "", containsMouse);
+                if (!textures.get(i).isInternal()) altered.add(textures.get(i));
+            }
+
+            scroll2 = GUI.SetScrollView(altered.size() * 26, scroll2);
+            for (i = 0; i < altered.size(); i++) {
+                RenderAssetType(new Rect(0, i * 26, r.width, 26), altered.get(i), "Textures/", "", containsMouse);
             }
         } else if (selectedType == DataType.AudioClip) {
             List<AudioClip> clips = AudioClip.GetClips();
@@ -177,5 +216,37 @@ public class ProjectPanel {
                 RenderAssetType(new Rect(0, i * 26, r.width, 26), scenes.get(i), "Scenes/", "", containsMouse);
             }
         }
+    }
+
+    //All this is new. I rewrote it after getting some sleep
+    public void CreateScript() throws IOException {
+        int n = -1;
+        File f = new File(Editor.WorkingDirectory() + "Scripts/NewScript.java");
+        if (!f.exists()) {
+            f.createNewFile();
+            n = 0;
+        } else {
+            for (n = 1; n < 30; n++) {
+                f = new File(Editor.WorkingDirectory() + "Scripts/NewScript_" + n + ".java");
+                if (!f.exists()) {
+                    f.createNewFile();
+                    break;
+                } else if (n == 30) n = -1;
+            }
+        }
+        if (n == -1) {
+            Debug.Log("The name NewScript can only have up to 30 entries. Please rename 1 more of the current scripts. File not created");
+            return;
+        }
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        if (n == 0)
+            bw.write("import engine.LogicBehaviour;\r\n\r\npublic class NewScript extends LogicBehaviour\r\n{\r\n\tpublic void Update()\r\n\t{\r\n\t\t\r\n\t}\r\n}");
+        else
+            bw.write("import engine.LogicBehaviour;\r\n\r\npublic class NewScript_" + n + " extends LogicBehaviour\r\n{\r\n\tpublic void Update()\r\n\t{\r\n\t\t\r\n\t}\r\n}");
+        bw.close();
+
+        //We can now do this, had to pass in absolute path because workingdirectory uses \ while scripts is use /
+        EditorUtil.ImportClass(f.getAbsolutePath());
     }
 }

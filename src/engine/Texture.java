@@ -129,6 +129,10 @@ public class Texture extends engine.Object {
         return id;
     }
 
+    public boolean isInternal() {
+        return f == null;
+    }
+
     public void Bind() {
         //Bind this texture into texture position 0
         glActiveTexture(GL_TEXTURE0);

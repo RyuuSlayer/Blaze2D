@@ -83,6 +83,10 @@ public class EditorUtil {
         importedClasses.add(l);
     }
 
+    public static void ReloadClass(Class<?> c) {
+        //To reload the class, simply do the same as import class, but check is imported classes already has it imported before adding it, else replace it
+    }
+
     public static LogicBehaviour GetBehaviour(String name) {
         for (i = 0; i < importedClasses.size(); i++) {
             if (importedClasses.get(i).Name().equals(name)) {

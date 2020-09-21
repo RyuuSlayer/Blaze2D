@@ -79,9 +79,7 @@ public class GUI {
     //Create a vector field with a name and box
     public static Vector2 VectorField(Rect r, String name, Vector2 v, float padding) {
         //Display the name of the field in an area so it wont be too long
-        BeginArea(new Rect(r.x, r.y, padding, r.height));
-        Label(name, 0, 0);
-        EndArea();
+        Label(name, r.x, r.y);
 
         //Get a quarter of the total render area and render a float field for x and y at those locations
         float half = (r.width - padding) / 2.0f;
@@ -113,9 +111,7 @@ public class GUI {
     //Create a text field with a name and box
     public static String TextField(Rect r, String name, String v, float padding) {
         //Display the name of the field in an area so it wont be too long
-        BeginArea(new Rect(r.x, r.y, padding, r.height));
-        Label(name, 0, 0);
-        EndArea();
+        Label(name, r.x, r.y);
 
         //If we click on the input box
         //This is temporary, will change in later episodes

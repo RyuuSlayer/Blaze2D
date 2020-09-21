@@ -8,12 +8,12 @@ import input.Input;
 import math.Vector2;
 
 public class Test extends LogicBehaviour {
+    public float moveSpeed = 10;
+    SpriteRenderer sr;
     private final Sprite[] walkDown = new Sprite[3];
     private final Sprite[] walkLeft = new Sprite[3];
     private final Sprite[] walkRight = new Sprite[3];
     private final Sprite[] walkUp = new Sprite[3];
-    public float moveSpeed = 10;
-    SpriteRenderer sr;
     private Sprite[] current;
     private float walkTime = 0;
 

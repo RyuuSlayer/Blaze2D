@@ -14,12 +14,13 @@ import static org.lwjgl.glfw.GLFW.*;
 enum CursorImage {Pointer, Hand, HScroll, VScroll}
 
 public class Mouse extends GLFWMouseButtonCallback {
-    private static final byte[] buttons = new byte[8];
-    private static final byte[] buttonsDown = new byte[8];
-    private static final byte[] buttonsUp = new byte[8];
     private static byte anyButton = 0;
     private static byte anyButtonDown = 0;
     private static byte anyButtonUp = 0;
+    private static final byte[] buttons = new byte[8];
+    private static final byte[] buttonsDown = new byte[8];
+    private static final byte[] buttonsUp = new byte[8];
+
     private static int i;
     private static long window;
     private static DoubleBuffer xBuffer;
@@ -27,7 +28,7 @@ public class Mouse extends GLFWMouseButtonCallback {
 
     private static int scroll = 0;
     private static byte doubleClicked = 0;
-    private static float lastDown = 0;
+    private static float lastUp = 0;
 
     public Mouse() {
         window = Application.Window();
@@ -51,7 +52,7 @@ public class Mouse extends GLFWMouseButtonCallback {
         anyButtonUp = 0;
 
         scroll = 0;
-        lastDown += Time.UnscaledDelta();
+        lastUp += Time.UnscaledDelta();
         doubleClicked = 0;
     }
 
@@ -99,14 +100,14 @@ public class Mouse extends GLFWMouseButtonCallback {
             buttonsDown[button] = 1;
             anyButtonDown = 1;
             buttons[button] = 1;
-
-            if (lastDown < 0.3f) doubleClicked = 1;
-            lastDown = 0;
         }
         if (action == GLFW_RELEASE) {
             buttonsUp[button] = 1;
             anyButtonUp = 1;
             buttons[button] = 0;
+
+            if (lastUp < 0.3f) doubleClicked = 1;
+            lastUp = 0;
         }
     }
 }

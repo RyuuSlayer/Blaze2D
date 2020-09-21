@@ -110,6 +110,10 @@ public class Sprite extends engine.Object {
         return new Rect(offset.x / w, offset.y / h, offset.width / w, offset.height / h);
     }
 
+    public boolean isInternal() {
+        return f == null;
+    }
+
     private void Refresh() throws IOException {
         if (f == null) return;
         File temp = new File(f.getAbsolutePath());

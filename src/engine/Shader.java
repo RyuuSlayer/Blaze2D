@@ -151,6 +151,10 @@ public class Shader extends engine.Object {
         return sb.toString().split("ENDVERTEX");
     }
 
+    public boolean isInternal() {
+        return f == null;
+    }
+
     private void Refresh() {
         if (f == null) return;
         if (f.lastModified() == lastModified) return;

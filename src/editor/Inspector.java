@@ -11,11 +11,11 @@ import java.util.List;
 
 public class Inspector {
     private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
-    private final GUIStyle window;
     private List<LogicBehaviour> l = new ArrayList<LogicBehaviour>();
     private int i = 0;
     private int offsetY = 0;
     private int scroll = 0;
+    private final GUIStyle window;
 
     public Inspector() {
         window = Editor.skin.Get("Window");
@@ -26,7 +26,7 @@ public class Inspector {
         if (inspected == null) return;
 
         if (inspected instanceof GameObject) {
-            int addition = 122;
+            int addition = 170;
             for (i = 0; i < a.size(); i++) addition += a.get(i).height + (window.padding.y + window.padding.height) + 2;
             scroll = GUI.SetScrollView(addition, scroll);
 

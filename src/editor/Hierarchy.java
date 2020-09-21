@@ -110,11 +110,13 @@ public class Hierarchy {
                     sr.sprite = s;
                     go.AddComponent(sr);
                     go.Parent(parent);
+                    Editor.SetSelected(go);
                     return 1;
                 } else if (dragged instanceof GameObject) {
                     GameObject g = (GameObject) dragged;
                     if (g == parent) return 1;
                     g.Parent(parent);
+                    Editor.SetSelected(g);
                     return 1;
                 }
             }
