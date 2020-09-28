@@ -1,6 +1,5 @@
 package gui;
 
-import editor.Editor;
 import engine.Rect;
 import engine.Texture;
 
@@ -14,8 +13,6 @@ public class GUISkin extends engine.Object {
     private static int i;
     public Texture texture;
     private final List<GUIStyle> styles = new ArrayList<GUIStyle>();
-    private File f = null;
-    private long lastModified;
 
     //Import a skin by name
     public GUISkin(String name) {
@@ -91,20 +88,6 @@ public class GUISkin extends engine.Object {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void Create(String name) throws IOException {
-        File src = GetSkin("DefaultGUI").f;
-        File dest = new File(Editor.WorkingDirectory() + "Skins/" + name + ".Skin");
-
-        try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {
-            byte[] buffer = new byte[1024];
-            int length;
-
-            while ((length = fis.read(buffer)) > 0) fos.write(buffer, 0, length);
-        }
-
-        new GUISkin(dest.getAbsolutePath().split("\\.")[0]);
     }
 
     public boolean isInternal() {

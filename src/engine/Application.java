@@ -1,5 +1,6 @@
 package engine;
 
+import editor.EditorUtil;
 import gui.GUISkin;
 import gui.Sprite;
 import input.Input;
@@ -16,9 +17,9 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 public class Application {
     private static final Vector2 size = new Vector2(1200, 600);
     private static final Rect r = new Rect();
-    //Window specific variables
-    public static String name = "Blaze2D Engine | Alpha Build";
     private static long window;
+    //Window specific variables
+    public static String name = "Blaze Engine";
     private static byte minimized = 0;
 
     private static GLFWWindowSizeCallback windowSizeCallback;
@@ -59,6 +60,7 @@ public class Application {
 
     private static void OnWindowChangedFocus(long win, boolean focused) {
         if (focused) {
+            EditorUtil.RefreshAllScripts();
             Sprite.RefreshAll();
             GUISkin.RefreshAll();
             Material.RefreshAll();

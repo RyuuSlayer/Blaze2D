@@ -1,8 +1,12 @@
 package engine;
 
+import java.io.File;
 import java.util.UUID;
 
 public abstract class Object implements Cloneable {
+    public File f = null;
+    public Long lastModified;
+
     private String name = "";
     private String instanceID = UUID.randomUUID().toString();
 

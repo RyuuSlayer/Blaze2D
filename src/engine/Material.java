@@ -1,6 +1,5 @@
 package engine;
 
-import editor.Editor;
 import math.Color;
 
 import java.io.*;
@@ -15,8 +14,6 @@ public class Material extends engine.Object {
     public Texture texture;
     public Color color;
     public Shader shader;
-    private File f = null;
-    private long lastModified;
 
     //Create a texture on the fly
     public Material(String n, Texture t, Color c, Shader s) {
@@ -86,20 +83,6 @@ public class Material extends engine.Object {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static void Create(String name) throws IOException {
-        File src = Get("DefaultGame").f;
-        File dest = new File(Editor.WorkingDirectory() + "Materials/" + name + ".Material");
-
-        try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {
-            byte[] buffer = new byte[1024];
-            int length;
-
-            while ((length = fis.read(buffer)) > 0) fos.write(buffer, 0, length);
-        }
-
-        new Material(dest.getAbsolutePath().split("\\.")[0]);
     }
 
     public static final List<Material> Materials() {

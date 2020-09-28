@@ -3,7 +3,6 @@ package editor;
 import engine.*;
 import gui.Font;
 import gui.*;
-import input.Input;
 import input.Mouse;
 import sound.AudioClip;
 
@@ -30,10 +29,6 @@ public class ProjectPanel {
     }
 
     public void RenderTypes(Rect r) {
-        if (Input.GetKeyDown('r')) {
-            File f = new File(Editor.WorkingDirectory() + "Scripts/NewScript.java");
-            EditorUtil.ImportClass(f.getAbsolutePath());
-        }
         DataType[] values = DataType.values();
         scroll1 = GUI.SetScrollView(DataType.values().length * 26, scroll1);
         for (int i = 0; i < values.length; i++) {
@@ -42,10 +37,6 @@ public class ProjectPanel {
                 if (GUI.Button(values[i].name() + "s", temp, empty, empty)) selectedType = values[i];
             } else {
                 GUI.Button(values[i].name() + "s", temp, box, box);
-                //Rect s = GUI.Box(temp, box);
-                //GUI.BeginArea(s);
-                //GUI.Label(values[i].name() + "s", 0, 0);
-                //GUI.EndArea();
             }
         }
     }
@@ -56,34 +47,34 @@ public class ProjectPanel {
         if (s.equals("New Asset")) {
             if (selectedType == DataType.Shader) {
                 try {
-                    Shader.Create("New Shader");
+                    CreateShader();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Debug.Log("Cannot duplicate default shader asset!");
+                    Debug.Log("Cannot create shader asset!");
                 }
             }
             if (selectedType == DataType.Material) {
                 try {
-                    Material.Create("New Material");
+                    CreateMaterial();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Debug.Log("Cannot duplicate default material asset!");
+                    Debug.Log("Cannot create material asset!");
                 }
             }
             if (selectedType == DataType.Skin) {
                 try {
-                    GUISkin.Create("New Skin");
+                    CreateSkin();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Debug.Log("Cannot duplicate default skin asset!");
+                    Debug.Log("Cannot create skin asset!");
                 }
             }
             if (selectedType == DataType.Sprite) {
                 try {
-                    Sprite.Create("New Sprite");
+                    CreateSprite();
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Debug.Log("Cannot duplicate default skin asset!");
+                    Debug.Log("Cannot create sprite asset!");
                 }
             }
             if (selectedType == DataType.Script) {
@@ -91,6 +82,7 @@ public class ProjectPanel {
                     CreateScript();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Debug.Log("Cannot create script!");
                 }
             }
         }
@@ -101,12 +93,16 @@ public class ProjectPanel {
             if (asset.instanceID().equals(selected.instanceID())) {
                 if (GUI.Button(asset.Name(), r, box, box)) {
                     if (Mouse.MultiClicked()) {
-                        File f = new File(Editor.WorkingDirectory() + folder + asset.Name() + ext);
-                        if (f.exists()) {
-                            try {
-                                Desktop.getDesktop().open(f);
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                        if (selectedType == DataType.Scene) {
+                            SceneManager.LoadScene(asset.Name());
+                        } else {
+                            File f = new File(Editor.WorkingDirectory() + folder + asset.Name() + ext);
+                            if (f.exists()) {
+                                try {
+                                    Desktop.getDesktop().open(f);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
@@ -218,7 +214,122 @@ public class ProjectPanel {
         }
     }
 
-    //All this is new. I rewrote it after getting some sleep
+    public void CreateSprite() throws IOException {
+        int n = -1;
+        File f = new File(Editor.WorkingDirectory() + "Sprites/NewSprite.Sprite");
+        if (!f.exists()) {
+            f.createNewFile();
+            n = 0;
+        } else {
+            for (n = 1; n < 30; n++) {
+                f = new File(Editor.WorkingDirectory() + "Sprites/NewSprite_" + n + ".Sprite");
+                if (!f.exists()) {
+                    f.createNewFile();
+                    break;
+                } else if (n == 30) n = -1;
+            }
+        }
+        if (n == -1) {
+            Debug.Log("The name NewSprite can only have up to 30 entries. Please rename 1 more of the current sprites. File not created");
+            return;
+        }
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        bw.write("Material: NULL\r\nOffset: 0,0,16,16\r\npadding: 0,0,0,0");
+        bw.close();
+
+        new Sprite(f.getAbsolutePath().split("\\.")[0]);
+    }
+
+    public void CreateMaterial() throws IOException {
+        int n = -1;
+        File f = new File(Editor.WorkingDirectory() + "Materials/NewMaterial.Material");
+        if (!f.exists()) {
+            f.createNewFile();
+            n = 0;
+        } else {
+            for (n = 1; n < 30; n++) {
+                f = new File(Editor.WorkingDirectory() + "Materials/NewMaterial_" + n + ".Material");
+                if (!f.exists()) {
+                    f.createNewFile();
+                    break;
+                } else if (n == 30) n = -1;
+            }
+        }
+        if (n == -1) {
+            Debug.Log("The name NewMaterial can only have up to 30 entries. Please rename 1 more of the current materials. File not created");
+            return;
+        }
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        bw.write("Texture: NULL\r\nColor: 1,1,1,1\r\nShader: NULL");
+        bw.close();
+
+        new Material(f.getAbsolutePath().split("\\.")[0]);
+    }
+
+    public void CreateShader() throws IOException {
+        int n = -1;
+        File f = new File(Editor.WorkingDirectory() + "Shaders/NewShader.Shader");
+        if (!f.exists()) {
+            f.createNewFile();
+            n = 0;
+        } else {
+            for (n = 1; n < 30; n++) {
+                f = new File(Editor.WorkingDirectory() + "Shaders/NewShader_" + n + ".Shader");
+                if (!f.exists()) {
+                    f.createNewFile();
+                    break;
+                } else if (n == 30) n = -1;
+            }
+        }
+        if (n == -1) {
+            Debug.Log("The name NewShader can only have up to 30 entries. Please rename 1 more of the current shaders. File not created");
+            return;
+        }
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+
+        bw.write("#version 140\r\n" + "\r\n" + "in vec2 position;\r\n" + "in vec2 textureCoords;\r\n" + "\r\n" + "out vec4 color;\r\n" + "out vec2 uvCoords;\r\n" + "\r\n" +
+                "uniform vec4 matColor;\r\n" + "uniform mat4 projection;\r\n" + "uniform vec4 offset;\r\n" + "uniform vec2 pixelScale;\r\n" + "uniform vec2 screenPos;\r\n" + "uniform mat4 transformationMatrix;\r\n" + "uniform vec2 anchor;\r\n" + "uniform vec2 camPos;\r\n" + "uniform float depth;\r\n" + "\r\n" +
+                "void main()\r\n" + "{\r\n" + "	color = matColor;\r\n" + "	\r\n" + "	vec4 worldPosition = vec4((position - anchor) * pixelScale, depth, 1) * transformationMatrix;\r\n" + "	gl_Position = projection * (worldPosition - vec4(camPos, 0, 0));\r\n" + "	uvCoords = (textureCoords * offset.zw) + offset.xy;\r\n" + "}\r\n" +
+                "\r\n" + "ENDVERTEX\r\n" + "\r\n" +
+                "#version 140\r\n" + "\r\n" +
+                "uniform sampler2D sampler;\r\n" + "\r\n" + "in vec4 color;\r\n" + "in vec2 uvCoords;\r\n" + "\r\n" +
+                "void main()\r\n" + "{\r\n" + "	gl_FragColor = color * texture2D(sampler, uvCoords);\r\n" + "}");
+
+        bw.close();
+
+        new Shader(f.getAbsolutePath().split("\\.")[0]);
+    }
+
+    public void CreateSkin() throws IOException {
+        int n = -1;
+        File f = new File(Editor.WorkingDirectory() + "Skins/NewSkin.Skin");
+        if (!f.exists()) {
+            f.createNewFile();
+            n = 0;
+        } else {
+            for (n = 1; n < 30; n++) {
+                f = new File(Editor.WorkingDirectory() + "Skins/NewSkin_" + n + ".Skin");
+                if (!f.exists()) {
+                    f.createNewFile();
+                    break;
+                } else if (n == 30) n = -1;
+            }
+        }
+        if (n == -1) {
+            Debug.Log("The name NewSkin can only have up to 30 entries. Please rename 1 more of the current skins. File not created");
+            return;
+        }
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+        bw.write("image: DefaultGUI\r\nName: Default\r\nOffset: 0,0,16,16\r\nPadding: 0,0,0,0");
+        bw.close();
+
+        new GUISkin(f.getAbsolutePath().split("\\.")[0]);
+    }
+
     public void CreateScript() throws IOException {
         int n = -1;
         File f = new File(Editor.WorkingDirectory() + "Scripts/NewScript.java");

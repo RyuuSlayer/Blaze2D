@@ -1,6 +1,5 @@
 package gui;
 
-import editor.Editor;
 import engine.Material;
 import engine.Rect;
 
@@ -16,8 +15,6 @@ public class Sprite extends engine.Object {
     public Material material;
     public Rect offset;
     public Rect padding;
-    private File f = null;
-    private long lastModified;
 
     //Import a sprite by name
     public Sprite(String name) {
@@ -83,20 +80,6 @@ public class Sprite extends engine.Object {
 
     public static final List<Sprite> Sprites() {
         return sprites;
-    }
-
-    public static void Create(String name) throws IOException {
-        File src = Get("Default").f;
-        File dest = new File(Editor.WorkingDirectory() + "Sprites/" + name + ".Sprite");
-
-        try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {
-            byte[] buffer = new byte[1024];
-            int length;
-
-            while ((length = fis.read(buffer)) > 0) fos.write(buffer, 0, length);
-        }
-
-        new Sprite(dest.getAbsolutePath().split("\\.")[0]);
     }
 
     //Return the UV of the sprite

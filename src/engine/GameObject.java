@@ -7,6 +7,7 @@ import math.Matrix4x4;
 import math.Vector2;
 import physics.Collider;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -291,6 +292,14 @@ public class GameObject extends engine.Object {
         }
     }
 
+    public void RemoveComponent(int i) {
+        LogicBehaviour b = components.get(i);
+
+        if (b == renderer) renderer = null;
+        else if (b == collider) collider = null;
+        components.remove(b);
+    }
+
     public final SpriteRenderer GetRenderer() {
         return renderer;
     }
@@ -355,6 +364,37 @@ public class GameObject extends engine.Object {
             Debug.Log("Class " + v + " could not be found!");
         }
         return null;
+    }
+
+    public void RefreshComponent(LogicBehaviour b) {
+        for (int c = 0; c < components.size(); c++) {
+            LogicBehaviour temp = components.get(c);
+
+            if (temp.Name() != b.Name()) continue;
+
+            try {
+                components.set(c, b.getClass().getConstructor().newInstance());
+
+                LogicBehaviour behaviour = components.get(c);
+
+                Field[] newFields = behaviour.getClass().getFields();
+                Field[] oldFields = temp.getClass().getFields();
+
+                for (int f1 = 0; f1 < oldFields.length; f1++) {
+                    Field oF = oldFields[f1];
+
+                    for (int f2 = 0; f2 < newFields.length; f2++) {
+                        Field nF = newFields[f2];
+                        if (nF.getName().equals(oF.getName())) {
+                            nF.set(behaviour, oF.get(temp));
+                        }
+                    }
+                }
+
+            } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void Expand(boolean b) {

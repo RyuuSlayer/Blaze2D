@@ -33,7 +33,8 @@ public class BehaviourAttributes {
                 }
             }
 
-            height += 24;
+            if (engine.Rect.class.isAssignableFrom(f.getType())) height += 48;
+            else height += 24;
         }
     }
 }

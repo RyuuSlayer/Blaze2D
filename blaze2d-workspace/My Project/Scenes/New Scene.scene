@@ -198,7 +198,7 @@
 </G>
 <G Name="Table" Position="-20.0 0.0" Scale="1.0 1.0" Rotation="0.0" Depth="0.1" Layer="0" ID="9886cf35-2508-4788-8db2-e3b6704384cf">
 	<B Name"engine.SpriteRenderer">
-		<V sprite="Table">
+		<V sprite="NULL">
 		<V anchor="0.0 0.0">
 		<V enabled="true">
 	</B>

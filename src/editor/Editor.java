@@ -19,6 +19,7 @@ public class Editor {
     public static final String workspaceDirectory = System.getProperty("user.dir") + "/blaze2d-workspace/";
     public static final String editorVersion = "0.53";
     public static GUISkin skin;
+    public static GUIStyle xClose;
     public static GUIStyle arrowDown;
     public static GUIStyle arrowRight;
     public static GUIStyle toggleOff;
@@ -69,6 +70,7 @@ public class Editor {
 
     public static void Init() {
         skin = GUISkin.GetSkin("DefaultGUI");
+        xClose = skin.Get("XClose");
         arrowDown = skin.Get("ArrowDown");
         arrowRight = skin.Get("ArrowRight");
         toggleOff = skin.Get("ToggleOff");
@@ -216,6 +218,10 @@ public class Editor {
         if (o != null) i.SetAttributes(o, true);
     }
 
+    public static void RefreshInspected() {
+        i.SetAttributes(inspected, false);
+    }
+
     public static final GameObject GetSelected() {
         return selected;
     }
@@ -350,41 +356,6 @@ public class Editor {
     //Write a variable inside a class
     private static void WriteVariable(Field f, Object o, FileWriter fw, String starter) throws IllegalArgumentException, IllegalAccessException, IOException {
         if (f.getType().isArray()) {
-			/*
-			Class<?> c = f.get(o).getClass();
-			Class<?> type = c.getComponentType();
-			if(c.getComponentType().isArray()) return;
-			//New to add array type to it so we know what kind of array we need to create
-			if(type == int.class) {int[] arr = (int[]) f.get(o); fw.write(starter + "<A " + f.getName() + "=\"" + arr.length + "\">\n"); for(int i = 0; i < arr.length; i++) fw.write(starter + "\t<V Element" + i + "=\"" + arr[i] + "\">\n");}
-			else if(type == double.class) {double[] arr = (double[]) f.get(o); fw.write(starter + "<A " + f.getName() + "=\"" + arr.length + "\">\n"); for(int i = 0; i < arr.length; i++) fw.write(starter + "\t<V Element" + i + "=\"" + arr[i] + "\">\n");}
-			else if(type == short.class) {short[] arr = (short[]) f.get(o); fw.write(starter + "<A " + f.getName() + "=\"" + arr.length + "\">\n"); for(int i = 0; i < arr.length; i++) fw.write(starter + "\t<V Element" + i + "=\"" + arr[i] + "\">\n");}
-			else if(type == byte.class) {byte[] arr = (byte[]) f.get(o); fw.write(starter + "<A " + f.getName() + "=\"" + arr.length + "\">\n"); for(int i = 0; i < arr.length; i++) fw.write(starter + "\t<V Element" + i + "=\"" + arr[i] + "\">\n");}
-			else if(type == boolean.class) {boolean[] arr = (boolean[]) f.get(o); fw.write(starter + "<A " + f.getName() + "=\"" + arr.length + "\">\n"); for(int i = 0; i < arr.length; i++) fw.write(starter + "\t<V Element" + i + "=\"" + arr[i] + "\">\n");}
-			else if(type == String.class) {String[] arr = (String[]) f.get(o); fw.write(starter + "<A " + f.getName() + "=\"" + arr.length + "\">\n"); for(int i = 0; i < arr.length; i++) fw.write(starter + "\t<V Element" + i + "=\"" + arr[i] + "\">\n");}
-			else if(!c.getComponentType().isPrimitive())
-			{
-				Object[] arr = (Object[]) f.get(o);
-				fw.write(starter + "<A " + f.getName() + "=\"" + arr.length + "\">\n");
-				for(int i = 0; i < arr.length; i++)
-				{
-					Object current = arr[i];
-					if(current instanceof engine.CustomClass)
-					{
-						WriteClass((engine.Object) current, fw, starter + "\t", "Element" + i);
-					}
-					else if(current instanceof engine.Object)
-					{
-						if(f.get(o) == null) fw.write(starter + "\t<V Element" + i + "=\"NULL\">\n");
-						else fw.write(starter + "\t<V Element" + i + "=\"" + ((engine.Object) current).Name() + "\">\n");
-					}
-					else if(current.getClass() == Vector2.class)
-					{
-						Vector2 v = (Vector2) current;
-						fw.write(starter + "\t<V Element" + i + "=\"" + v.x + " " + v.y + "\">\n");
-					}
-				}
-			}
-			*/
         } else if (engine.CustomClass.class.isAssignableFrom(f.getType())) {
             WriteClass((engine.Object) f.get(o), fw, starter, f.getName());
         } else if (engine.Object.class.isAssignableFrom(f.getType())) {

@@ -82,6 +82,10 @@ public class Vector2 {
         return new Vector2(this.x / x, this.y / y);
     }
 
+    public Vector2 Length() {
+        return new Vector2(this.x * x + this.y * y);
+    }
+
     public Vector2 Neg() {
         return new Vector2(-x, -y);
     }

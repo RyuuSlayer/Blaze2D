@@ -29,3 +29,6 @@ Padding: 0,0,0,0
 Name: ToggleOn
 Offset: 0,48,16,16
 Padding: 0,0,0,0
+Name: XClose
+Offset: 16,64,16,16
+Padding: 0,0,0,0

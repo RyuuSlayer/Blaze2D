@@ -7,6 +7,7 @@ import gui.GUI;
 import input.Input;
 import input.Mouse;
 import math.Color;
+import math.Vector2;
 import org.lwjgl.openal.AL;
 import org.lwjgl.openal.ALC;
 import org.lwjgl.openal.ALC10;
@@ -84,6 +85,7 @@ public class Core {
                 glClearColor(clear.r, clear.g, clear.b, 1);
 
                 GUI.Prepare();
+                GUI.Label(String.valueOf(Time.FrameRate()), new Vector2(10, 300));
                 GUI.DrawPopup();
                 engine.Object dragged = Editor.DraggedObject();
                 if (dragged != null) Editor.DrawDragged();

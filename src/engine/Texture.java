@@ -26,8 +26,6 @@ public class Texture extends engine.Object {
     private final int id;
     private int width;
     private int height;
-    private File f = null;
-    private long lastModified;
     private IntBuffer w;
     private IntBuffer h;
     private IntBuffer c;

@@ -1,6 +1,5 @@
 package engine;
 
-import editor.Editor;
 import math.Color;
 import math.Matrix4x4;
 import math.Vector2;
@@ -21,8 +20,6 @@ public class Shader extends engine.Object {
     private int program;
     private int vs;
     private int fs;
-    private File f = null;
-    private long lastModified;
 
     //Constructor that takes in the name of the shader
     public Shader(String fileName) {
@@ -94,20 +91,6 @@ public class Shader extends engine.Object {
 
     public static final List<Shader> Shaders() {
         return shaders;
-    }
-
-    public static void Create(String name) throws IOException {
-        File src = Find("DefaultGameShader").f;
-        File dest = new File(Editor.WorkingDirectory() + "Shaders/" + name + ".Shader");
-
-        try (FileInputStream fis = new FileInputStream(src); FileOutputStream fos = new FileOutputStream(dest)) {
-            byte[] buffer = new byte[1024];
-            int length;
-
-            while ((length = fis.read(buffer)) > 0) fos.write(buffer, 0, length);
-        }
-
-        new Shader(dest.getAbsolutePath().split("\\.")[0]);
     }
 
     //Create a shader from a specified filename

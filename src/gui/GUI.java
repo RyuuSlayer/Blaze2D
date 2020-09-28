@@ -29,6 +29,8 @@ public class GUI {
     private static final int boundTex = -1;
     private static Color boundColor = Color.white;
     private static Popup popup;
+    private static boolean ignoreMouseUp = false;
+
     private static int area = 0;
     private static final List<GUIArea> areas = new ArrayList<GUIArea>();
     private static final Vector2 clickPosition = new Vector2();
@@ -70,10 +72,31 @@ public class GUI {
 
     public static void SetPopup(Rect nameRect, List<String> list, Consumer<String> func) {
         popup = new Popup(nameRect, list, func);
+        ignoreMouseUp = true;
     }
 
     public static void DrawPopup() {
-        if (popup != null) popup = popup.Draw();
+        if (popup != null) {
+            ignoreMouseUp = false;
+            popup = popup.Draw();
+        }
+    }
+
+    //Create a vector field with a name and box
+    public static Rect VectorField(Rect r, String name, Rect r2, float padding) {
+        //Display the name of the field in an area so it wont be too long
+        Label(name, r.x, r.y);
+
+        //Get a quarter of the total render area and render a float field for x and y at those locations
+        float half = (r.width - padding) / 2.0f;
+        float halfH = r.height / 2.0f;
+        float x = FloatField(new Rect(r.x + padding, r.y, half, halfH), "x", r2.x, 10);
+        float y = FloatField(new Rect(r.x + padding + half, r.y, half, halfH), "y", r2.y, 10);
+        float w = FloatField(new Rect(r.x + padding, r.y + halfH, half, halfH), "w", r2.x, 10);
+        float h = FloatField(new Rect(r.x + padding + half, r.y + halfH, half, halfH), "h", r2.y, 10);
+
+        //And return the new vector
+        return new Rect(x, y, w, h);
     }
 
     //Create a vector field with a name and box
@@ -170,9 +193,11 @@ public class GUI {
             else Label(text, r.x, r.y);
 
             //If we left clicked, return true
-            if (Mouse.GetButtonDown(0)) checkDrag = 1;
-            else if (Mouse.GetButtonUp(0)) {
-                return rf.Contains(clickPosition);
+            if (!ignoreMouseUp) {
+                if (Mouse.GetButtonDown(0)) checkDrag = 1;
+                else if (Mouse.GetButtonUp(0)) {
+                    return rf.Contains(clickPosition);
+                }
             }
         } else {
             //If the button doesn't contain the mouse, draw the normal box style
@@ -206,9 +231,11 @@ public class GUI {
             Label(text, x, y);
 
             //If we left clicked, return true
-            if (Mouse.GetButtonDown(0)) checkDrag = 1;
-            else if (Mouse.GetButtonUp(0)) {
-                return rf.Contains(clickPosition);
+            if (!ignoreMouseUp) {
+                if (Mouse.GetButtonDown(0)) checkDrag = 1;
+                else if (Mouse.GetButtonUp(0) && !ignoreMouseUp) {
+                    return rf.Contains(clickPosition);
+                }
             }
         } else {
             //If the button doesn't contain the mouse, draw the normal box style
@@ -342,8 +369,6 @@ public class GUI {
     //Draw a texture of a given scale at a given position with a given uv coordinate
     public static void DrawTextureWithTexCoords(Texture tex, Rect drawRect, Rect uv, Color c) {
         //If we have an area, get the intersection between this rect and the current rect
-        //if(area == null) return;
-        //Rect r = area.GetIntersection(new Rect(drawRect.x + area.x, drawRect.y + area.y, drawRect.width, drawRect.height));
         GUIArea a = areas.get(area);
         if (a.area == null) return;
         Rect r = a.area.GetIntersection(new Rect(drawRect.x + a.area.x, (drawRect.y + a.area.y) - a.Scroll(), drawRect.width, drawRect.height));

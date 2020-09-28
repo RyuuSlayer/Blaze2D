@@ -1,5 +1,6 @@
 package editor;
 
+import engine.GameObject;
 import engine.LogicBehaviour;
 
 import javax.tools.JavaCompiler;
@@ -26,14 +27,14 @@ public class EditorUtil {
         return importedClasses;
     }
 
-    public static void ImportClass(String path) {
+    public static LogicBehaviour ImportClass(String path) {
         InputStream stream = null;
         try {
             stream = new FileInputStream(path);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        if (stream == null) return;
+        if (stream == null) return null;
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         String seperator = System.getProperty("line.separator");
@@ -57,7 +58,7 @@ public class EditorUtil {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-        if (classURL == null) return;
+        if (classURL == null) return null;
 
         URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{classURL});
 
@@ -67,7 +68,7 @@ public class EditorUtil {
         } catch (ClassNotFoundException e1) {
             e1.printStackTrace();
         }
-        if (myClass == null) return;
+        if (myClass == null) return null;
 
         //Return if class is not LogicBehaviour, but isn't compiling correctly
         //if(!LogicBehaviour.class.isAssignableFrom(myClass)) return;
@@ -78,13 +79,36 @@ public class EditorUtil {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             e.printStackTrace();
         }
-        if (l == null) return;
+        if (l == null) return null;
 
+        l.f = new File(Editor.WorkingDirectory() + "Scripts/" + l.Name() + ".java");
+        l.lastModified = l.f.lastModified();
+
+        for (i = 0; i < importedClasses.size(); i++) {
+            if (importedClasses.get(i).Name().equals(l.Name())) {
+                importedClasses.set(i, l);
+                return l;
+            }
+        }
         importedClasses.add(l);
+        return l;
     }
 
-    public static void ReloadClass(Class<?> c) {
-        //To reload the class, simply do the same as import class, but check is imported classes already has it imported before adding it, else replace it
+    public static void RefreshAllScripts() {
+        for (i = 0; i < importedClasses.size(); i++) {
+            LogicBehaviour b = importedClasses.get(i);
+            if (b.f == null) return;
+            File temp = new File(b.f.getAbsolutePath());
+            if (!temp.exists()) return;
+
+            if (temp.lastModified() == b.lastModified) return;
+
+            b = ImportClass(temp.getAbsolutePath());
+
+            List<GameObject> goList = GameObject.Instances();
+            for (int g = 0; g < goList.size(); g++) goList.get(g).RefreshComponent(b);
+            Editor.RefreshInspected();
+        }
     }
 
     public static LogicBehaviour GetBehaviour(String name) {

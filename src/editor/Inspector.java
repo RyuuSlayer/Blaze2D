@@ -46,41 +46,19 @@ public class Inspector {
 
                 float h = att.height + (window.padding.y + window.padding.height);
                 GUI.Window(new Rect(0, offsetY, r.width, h), att.c.getSimpleName() + ".Java", this::DrawVariables, window);
+                if (GUI.Button("", new Rect(r.width - 23, offsetY + 7, 16, 16), Editor.xClose, Editor.xClose)) {
+                    selected.RemoveComponent(i);
+                    SetAttributes(selected, false);
+                }
                 offsetY += h + 2;
             }
 
             if (GUI.Button("+ Add Component +", new Rect(0, offsetY, r.width, 26), "Button", "ButtonHover")) {
-                //String output = tinyfd_inputBox("Add Component", "What component would you like to add?", "");
                 String output = Dialog.InputDialog("Add Component", "");
                 if (output == null) return;
 
                 LogicBehaviour l = selected.AddComponent(output);
                 if (l != null) SetAttributes(selected, true);
-				
-				/*
-				Class<?> cls;
-				try
-				{
-					cls = Class.forName("game." + output);
-					
-					try
-					{
-						try {selected.AddComponent((LogicBehaviour)cls.getConstructor().newInstance());}
-						catch (IllegalArgumentException e) {e.printStackTrace();}
-						catch (InvocationTargetException e) {e.printStackTrace();}
-						catch (NoSuchMethodException e) {e.printStackTrace();}
-						catch (SecurityException e) {e.printStackTrace();}
-						
-						SetAttributes(selected);
-					}
-					catch (InstantiationException | IllegalAccessException e){
-						tinyfd_messageBox("Could not add component!", "The component you are trying to add does not exist in the game package", "okcancel", "Error", true);
-					}
-				}
-				catch (ClassNotFoundException e)
-				{
-					tinyfd_messageBox("Could not add component!", "The component you are trying to add does not exist in the game package", "okcancel", "Error", true);
-				}*/
             }
             offsetY = 0;
         } else {
@@ -259,6 +237,19 @@ public class Inspector {
                     LogicBehaviour behaviour = (LogicBehaviour) bf.field.get(bf.object);
                     engine.Object o = GUI.ObjectField(new Rect(bf.offset, f * 22 + padding, r.width - bf.offset, 22), bf.field.getName(), behaviour, LogicBehaviour.class, 100);
                     bf.field.set(bf.object, o);
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            } else if (name.equals("Rect")) {
+                try {
+                    Rect fieldRect = (Rect) bf.field.get(bf.object);
+                    Rect v = GUI.VectorField(new Rect(bf.offset, f * 22 + padding, r.width - bf.offset, 44), bf.field.getName(), fieldRect, 100);
+                    if (!fieldRect.equals(v)) {
+                        bf.field.set(bf.object, v);
+                    }
+                    padding += 22;
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
