@@ -20,6 +20,7 @@ import java.util.jar.JarFile;
 public class AssetDatabase {
     private static final Class<AssetDatabase> clazz = AssetDatabase.class;
     private static final ClassLoader cl = clazz.getClassLoader();
+    private static final List<String> scenes = new ArrayList<String>();
     private static List<String> textures = new ArrayList<String>();
     private static List<String> fonts = new ArrayList<String>();
     private static List<String> shaders = new ArrayList<String>();
@@ -27,7 +28,6 @@ public class AssetDatabase {
     private static List<String> sprites = new ArrayList<String>();
     private static List<String> skins = new ArrayList<String>();
     private static List<String> audio = new ArrayList<String>();
-    private static final List<String> scenes = new ArrayList<String>();
     private static List<String> scripts = new ArrayList<String>();
 
 

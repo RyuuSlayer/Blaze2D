@@ -35,6 +35,7 @@ public class MenuBar {
         Add("File", new MenuItem("Export Build", this::File));
         Add("File", new MenuItem("Quit", this::File));
         Add("Asset", new MenuItem("New GameObject", this::Asset));
+        Add("Create", new MenuItem("Macs Tileset", this::Create));
     }
 
     private static void AddAssets(String path, JarOutputStream jos) {
@@ -106,6 +107,7 @@ public class MenuBar {
 
         prevColor = GUI.textColor;
         GUI.textColor = Color.white;
+
         float offset = 0;
         float index = 0;
         for (String m : menu.keySet()) {
@@ -214,6 +216,13 @@ public class MenuBar {
 
     public void Asset(MenuItem m) {
         if (m.name.equals("New GameObject")) new GameObject("New GameObject");
+    }
+
+    public void Create(MenuItem m) {
+        if (m.name.equals("Macs Tileset")) {
+            Debug.Log("This feature is in development and is currently disabled!");
+            System.err.println("Tileset creation is currently in development and is disabled! Sprite reformatting also needs to be done before this feature is unlocked and useable.");
+        }
     }
 
     private void Export(String path) throws IOException, URISyntaxException {

@@ -39,9 +39,10 @@ public class Texture extends engine.Object {
 
         ByteBuffer data;
         if (fileName.startsWith("/")) {
-            Name(fileName.replaceFirst("/", ""));
+            String name = fileName.replaceFirst("/", "");
+            Name(name.split("\\.")[0]);
 
-            InputStream is = Texture.class.getResourceAsStream("/Textures/" + Name());
+            InputStream is = Texture.class.getResourceAsStream("/Textures/" + name);
             byte[] bytes = new byte[8000];
             int curByte = 0;
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -59,7 +60,7 @@ public class Texture extends engine.Object {
             data = stbi_load_from_memory(buffer, w, h, c, 4);
         } else {
             String[] split = fileName.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
-            Name(split[split.length - 1]);
+            Name(split[split.length - 1].split("\\.")[0]);
             data = stbi_load(fileName, w, h, c, 4);
 
             f = new File(fileName);

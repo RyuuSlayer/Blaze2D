@@ -1,9 +1,9 @@
 package physics;
 
 public class BoxCollider extends Collider {
-    public boolean isTrigger = false;
+	public boolean isTrigger = false;
 
-    public BoxCollider() {
-        Collider.colliders.add(this);
-    }
+	public BoxCollider() {
+		Collider.colliders.add(this);
+	}
 }

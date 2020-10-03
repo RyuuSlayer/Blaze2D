@@ -37,7 +37,8 @@ public class Hierarchy {
                 continue;
             }
 
-            offset += 20;
+            offset += GUI.font.FontHeight();
+            //offset += 20;
             loop.remove(g);
         }
         scroll = GUI.SetScrollView(offset, scroll);
@@ -68,8 +69,9 @@ public class Hierarchy {
                     GUI.Box(clickRect, "Box");
                     if (Input.GetKeyDown(261) || Input.GetKeyDown(259)) {
                         Editor.SetSelected(null);
-                        children.clear(); //Put this after g.destroy
+
                         g.Destroy();
+                        children.clear();
 
                         return;
                     }

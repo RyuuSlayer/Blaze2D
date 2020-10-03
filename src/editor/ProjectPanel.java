@@ -71,7 +71,7 @@ public class ProjectPanel {
             }
             if (selectedType == DataType.Sprite) {
                 try {
-                    CreateSprite();
+                    CreateSprite("NewSprite");
                 } catch (IOException e) {
                     e.printStackTrace();
                     Debug.Log("Cannot create sprite asset!");
@@ -91,7 +91,55 @@ public class ProjectPanel {
     private void RenderAssetType(Rect r, engine.Object asset, String folder, String ext, byte containsMouse) throws CloneNotSupportedException {
         if (selected != null) {
             if (asset.instanceID().equals(selected.instanceID())) {
-                if (GUI.Button(asset.Name(), r, box, box)) {
+                if (asset instanceof Texture) {
+                    if (GUI.Button("", r, box, box)) {
+                        if (Mouse.MultiClicked()) {
+                            if (selectedType == DataType.Scene) {
+                                SceneManager.LoadScene(asset.Name());
+                            } else {
+                                File f = new File(Editor.WorkingDirectory() + folder + asset.Name() + ext);
+                                if (f.exists()) {
+                                    try {
+                                        Desktop.getDesktop().open(f);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    GUI.BeginArea(r);
+                    GUI.DrawTexture((Texture) asset, new Rect(12, 7, 64, 64));
+                    GUI.Label(asset.Name(), 12, 73);
+                    GUI.EndArea();
+                } else if (asset instanceof Sprite) {
+                    if (GUI.Button("", r, box, box)) {
+                        if (Mouse.MultiClicked()) {
+                            if (selectedType == DataType.Scene) {
+                                SceneManager.LoadScene(asset.Name());
+                            } else {
+                                File f = new File(Editor.WorkingDirectory() + folder + asset.Name() + ext);
+                                if (f.exists()) {
+                                    try {
+                                        Desktop.getDesktop().open(f);
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    GUI.BeginArea(r);
+                    Sprite s = (Sprite) asset;
+                    if (s.material != null) {
+                        if (s.material.texture != null)
+                            GUI.DrawTextureWithTexCoords(s.material.texture, new Rect(12, 7, 64, 64), s.UV());
+                        //else draw no texture image
+                    }
+                    //else draw no material image
+                    GUI.Label(asset.Name(), 12, 73);
+                    GUI.EndArea();
+                } else if (GUI.Button(asset.Name(), r, box, box)) {
                     if (Mouse.MultiClicked()) {
                         if (selectedType == DataType.Scene) {
                             SceneManager.LoadScene(asset.Name());
@@ -108,8 +156,48 @@ public class ProjectPanel {
                     }
                     Editor.SetSelectedAsset(asset.clone());
                 }
+            } else {
+                if (asset instanceof Texture) {
+                    if (GUI.Button("", r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+                    GUI.BeginArea(r);
+                    GUI.DrawTexture((Texture) asset, new Rect(12, 7, 64, 64));
+                    GUI.Label(asset.Name(), 12, 73);
+                    GUI.EndArea();
+                } else if (asset instanceof Sprite) {
+                    if (GUI.Button("", r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+                    GUI.BeginArea(r);
+                    Sprite s = (Sprite) asset;
+                    if (s.material != null) {
+                        if (s.material.texture != null)
+                            GUI.DrawTextureWithTexCoords(s.material.texture, new Rect(12, 7, 64, 64), s.UV());
+                        //else draw no texture image
+                    }
+                    //else draw no material image
+                    GUI.Label(asset.Name(), 12, 73);
+                    GUI.EndArea();
+                } else if (GUI.Button(asset.Name(), r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+            }
+        } else {
+            if (asset instanceof Texture) {
+                if (GUI.Button("", r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+                GUI.BeginArea(r);
+                GUI.DrawTexture((Texture) asset, new Rect(12, 7, 64, 64));
+                GUI.Label(asset.Name(), 12, 73);
+                GUI.EndArea();
+            } else if (asset instanceof Sprite) {
+                if (GUI.Button("", r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+                GUI.BeginArea(r);
+                Sprite s = (Sprite) asset;
+                if (s.material != null) {
+                    if (s.material.texture != null)
+                        GUI.DrawTextureWithTexCoords(s.material.texture, new Rect(12, 7, 64, 64), s.UV());
+                    //else draw no texture image
+                }
+                //else draw no material image
+                GUI.Label(asset.Name(), 12, 73);
+                GUI.EndArea();
             } else if (GUI.Button(asset.Name(), r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
-        } else if (GUI.Button(asset.Name(), r, empty, empty)) Editor.SetSelectedAsset(asset.clone());
+        }
         if (GUI.checkDrag == 1 && containsMouse == 1) {
             GUI.checkDrag = 0;
             Editor.SetDraggableObject(asset);
@@ -177,10 +265,19 @@ public class ProjectPanel {
             for (i = 0; i < sprites.size(); i++) {
                 if (!sprites.get(i).isInternal()) altered.add(sprites.get(i));
             }
+            int columns = (int) (r.width / 88.0f);
+            int rows = (int) Math.ceil((float) altered.size() / (float) columns);
+            scroll2 = GUI.SetScrollView(rows * 110, scroll2);
 
-            scroll2 = GUI.SetScrollView(altered.size() * 26, scroll2);
-            for (i = 0; i < altered.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), altered.get(i), "Sprites/", ".Sprite", containsMouse);
+            for (int y = 0; y < rows; y++) {
+                int current = 0;
+                for (int x = 0; x < columns; x++) {
+                    current = y * columns + x;
+                    if (current >= altered.size()) break;
+
+                    RenderAssetType(new Rect(x * 88, y * 110, 88, 110), altered.get(current), "Sprites/", "", containsMouse);
+                }
+                if (current >= altered.size()) break;
             }
         } else if (selectedType == DataType.Texture) {
             List<Texture> textures = Texture.GetTextures();
@@ -189,9 +286,19 @@ public class ProjectPanel {
                 if (!textures.get(i).isInternal()) altered.add(textures.get(i));
             }
 
-            scroll2 = GUI.SetScrollView(altered.size() * 26, scroll2);
-            for (i = 0; i < altered.size(); i++) {
-                RenderAssetType(new Rect(0, i * 26, r.width, 26), altered.get(i), "Textures/", "", containsMouse);
+            int columns = (int) (r.width / 88.0f);
+            int rows = (int) Math.ceil((float) altered.size() / (float) columns);
+            scroll2 = GUI.SetScrollView(rows * 110, scroll2);
+
+            for (int y = 0; y < rows; y++) {
+                int current = 0;
+                for (int x = 0; x < columns; x++) {
+                    current = y * columns + x;
+                    if (current >= altered.size()) break;
+
+                    RenderAssetType(new Rect(x * 88, y * 110, 88, 110), altered.get(current), "Textures/", "", containsMouse);
+                }
+                if (current >= altered.size()) break;
             }
         } else if (selectedType == DataType.AudioClip) {
             List<AudioClip> clips = AudioClip.GetClips();
@@ -214,15 +321,15 @@ public class ProjectPanel {
         }
     }
 
-    public void CreateSprite() throws IOException {
+    public Sprite CreateSprite(String name) throws IOException {
         int n = -1;
-        File f = new File(Editor.WorkingDirectory() + "Sprites/NewSprite.Sprite");
+        File f = new File(Editor.WorkingDirectory() + "Sprites/" + name + ".Sprite");
         if (!f.exists()) {
             f.createNewFile();
             n = 0;
         } else {
             for (n = 1; n < 30; n++) {
-                f = new File(Editor.WorkingDirectory() + "Sprites/NewSprite_" + n + ".Sprite");
+                f = new File(Editor.WorkingDirectory() + "Sprites/" + name + "_" + n + ".Sprite");
                 if (!f.exists()) {
                     f.createNewFile();
                     break;
@@ -231,17 +338,37 @@ public class ProjectPanel {
         }
         if (n == -1) {
             Debug.Log("The name NewSprite can only have up to 30 entries. Please rename 1 more of the current sprites. File not created");
-            return;
+            return null;
         }
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         bw.write("Material: NULL\r\nOffset: 0,0,16,16\r\npadding: 0,0,0,0");
         bw.close();
 
-        new Sprite(f.getAbsolutePath().split("\\.")[0]);
+        return new Sprite(f.getAbsolutePath().split("\\.")[0]);
     }
 
-    public void CreateMaterial() throws IOException {
+    public void SaveSprite(Sprite sprite) {
+        if (sprite == null) {
+            Debug.Log("Cannot save a sprite without passing in a sprite to save!");
+            return;
+        }
+
+        File f = sprite.f;
+
+        try {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(f));
+
+            if (sprite.material == null) bw.write("Material: NULL\r\nOffset: 0,0,16,16\r\npadding: 0,0,0,0");
+            else
+                bw.write("Material: " + sprite.material.Name() + "\r\nOffset: " + sprite.offset.ToShortString() + "\r\npadding: " + sprite.padding.ToShortString());
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Material CreateMaterial() throws IOException {
         int n = -1;
         File f = new File(Editor.WorkingDirectory() + "Materials/NewMaterial.Material");
         if (!f.exists()) {
@@ -258,17 +385,17 @@ public class ProjectPanel {
         }
         if (n == -1) {
             Debug.Log("The name NewMaterial can only have up to 30 entries. Please rename 1 more of the current materials. File not created");
-            return;
+            return null;
         }
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         bw.write("Texture: NULL\r\nColor: 1,1,1,1\r\nShader: NULL");
         bw.close();
 
-        new Material(f.getAbsolutePath().split("\\.")[0]);
+        return new Material(f.getAbsolutePath().split("\\.")[0]);
     }
 
-    public void CreateShader() throws IOException {
+    public Shader CreateShader() throws IOException {
         int n = -1;
         File f = new File(Editor.WorkingDirectory() + "Shaders/NewShader.Shader");
         if (!f.exists()) {
@@ -285,7 +412,7 @@ public class ProjectPanel {
         }
         if (n == -1) {
             Debug.Log("The name NewShader can only have up to 30 entries. Please rename 1 more of the current shaders. File not created");
-            return;
+            return null;
         }
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
@@ -300,10 +427,10 @@ public class ProjectPanel {
 
         bw.close();
 
-        new Shader(f.getAbsolutePath().split("\\.")[0]);
+        return new Shader(f.getAbsolutePath().split("\\.")[0]);
     }
 
-    public void CreateSkin() throws IOException {
+    public GUISkin CreateSkin() throws IOException {
         int n = -1;
         File f = new File(Editor.WorkingDirectory() + "Skins/NewSkin.Skin");
         if (!f.exists()) {
@@ -320,17 +447,17 @@ public class ProjectPanel {
         }
         if (n == -1) {
             Debug.Log("The name NewSkin can only have up to 30 entries. Please rename 1 more of the current skins. File not created");
-            return;
+            return null;
         }
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         bw.write("image: DefaultGUI\r\nName: Default\r\nOffset: 0,0,16,16\r\nPadding: 0,0,0,0");
         bw.close();
 
-        new GUISkin(f.getAbsolutePath().split("\\.")[0]);
+        return new GUISkin(f.getAbsolutePath().split("\\.")[0]);
     }
 
-    public void CreateScript() throws IOException {
+    public LogicBehaviour CreateScript() throws IOException {
         int n = -1;
         File f = new File(Editor.WorkingDirectory() + "Scripts/NewScript.java");
         if (!f.exists()) {
@@ -347,7 +474,7 @@ public class ProjectPanel {
         }
         if (n == -1) {
             Debug.Log("The name NewScript can only have up to 30 entries. Please rename 1 more of the current scripts. File not created");
-            return;
+            return null;
         }
 
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
@@ -358,6 +485,6 @@ public class ProjectPanel {
         bw.close();
 
         //We can now do this, had to pass in absolute path because workingdirectory uses \ while scripts is use /
-        EditorUtil.ImportClass(f.getAbsolutePath());
+        return EditorUtil.ImportClass(f.getAbsolutePath());
     }
 }

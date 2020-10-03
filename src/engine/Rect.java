@@ -40,6 +40,14 @@ public class Rect {
         height = h;
     }
 
+    //Set the position and size of the rectangle without creating a new one using vector2's
+    public void Set(Vector2 pos, Vector2 size) {
+        this.x = pos.x;
+        this.y = pos.y;
+        width = size.x;
+        height = size.y;
+    }
+
     //Get and set the size of the rectangle without creating a new one
     public void SetPosition(Vector2 pos) {
         this.x = pos.x;
@@ -74,6 +82,10 @@ public class Rect {
         return new Rect(r.x + x, r.y + y, width, height);
     }
 
+    public Rect AddPosition(Vector2 v) {
+        return new Rect(v.x + x, v.y + y, width, height);
+    }
+
     //Return whether or not a specific point is inside this rectangle
     public boolean Contains(Vector2 v) {
         return v.x > x && v.x < x + width && v.y > y && v.y < y + height;
@@ -87,6 +99,10 @@ public class Rect {
         if (!Intersects(r)) return null;
         Vector2 v = new Vector2(Math.max(x, r.x), Math.max(y, r.y));
         return new Rect(v.x, v.y, Math.min(x + width, r.x + r.width) - v.x, Math.min(y + height, r.y + r.height) - v.y);
+    }
+
+    public String ToShortString() {
+        return x + "," + y + "," + width + "," + height;
     }
 
     public String ToString() {

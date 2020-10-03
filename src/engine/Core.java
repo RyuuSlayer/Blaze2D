@@ -85,7 +85,7 @@ public class Core {
                 glClearColor(clear.r, clear.g, clear.b, 1);
 
                 GUI.Prepare();
-                GUI.Label(String.valueOf(Time.FrameRate()), new Vector2(10, 300));
+                GUI.Label("FPS: " + Time.FrameRate(), new Vector2(Application.Width() - 65, 3));
                 GUI.DrawPopup();
                 engine.Object dragged = Editor.DraggedObject();
                 if (dragged != null) Editor.DrawDragged();

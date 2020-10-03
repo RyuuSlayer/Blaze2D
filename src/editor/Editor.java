@@ -26,6 +26,7 @@ public class Editor {
     public static GUIStyle toggleOn;
     public static GUIStyle window;
     public static Rect sceneArea = new Rect(0, 0, 0, 0);
+    public static Vector2 snapping = new Vector2(32, 32);
     public static Vector2 cameraPosition = new Vector2();
     private static byte configInit = 0;
     private static String workingDirectory = "";
@@ -142,7 +143,7 @@ public class Editor {
                 if (Mouse.GetButtonUp(2)) draggingScene = 0;
             }
 
-            GUI.Window(new Rect(0, 30, 400, Application.Height() - 260), "Hierarchy", h::Render, window);
+            GUI.Window(new Rect(0, 30, 400, Application.Height() - 230), "Hierarchy", h::Render, window);
             GUI.Window(new Rect(Application.Width() - 400, 30, 400, Application.Height() - 260), "Inspector", i::Render, window);
             GUI.Window(new Rect(0, Application.Height() - 230, 400, 200), "Asset Types", p::RenderTypes, window);
             GUI.Window(new Rect(400, Application.Height() - 230, Application.Width() - 400, 200), "Assets", t -> {
@@ -162,7 +163,11 @@ public class Editor {
 
                             Vector2 gOffset = Mouse.Position().Sub(new Vector2(Application.Size().Mul(0.5f)));
                             gOffset.y = -gOffset.y;
-                            go.Position(cameraPosition.Add(gOffset));
+
+                            if (snapping.x < 1) snapping.x = 1;
+                            else if (snapping.y < 1) snapping.y = 1;
+
+                            go.Position(cameraPosition.Add(gOffset).Div(snapping).Floor().Mul(snapping));
 
                             SpriteRenderer sr = new SpriteRenderer();
                             sr.sprite = s;

@@ -52,7 +52,8 @@ public class GUI {
     public static void Prepare() {
         //Clear the areas, and the screen area and set the current area to the screen size
         areas.clear();
-        areas.add(new GUIArea(Application.GetRect()));
+        //areas.add(new GUIArea(Application.GetRect());
+        areas.add(new GUIArea(Application.GetRect(), Application.GetRect()));
         area = 0;
 
         //Disable depth, pass create and pass in the ortho matrix and bg color and bind the mesh
@@ -154,7 +155,7 @@ public class GUI {
         ret = GUI.TextField(r, name, ret, padding);
 
         GUIArea a = areas.get(area);
-        Rect rf = r.AddPosition(a.area);
+        Rect rf = r.AddPosition(a.culled);
         rf.y -= a.Scroll();
 
         if (Mouse.GetButtonUp(0) && rf.Contains(Mouse.Position()) && type != null) {
@@ -180,8 +181,10 @@ public class GUI {
     //Button function using style variables
     public static boolean Button(String text, Rect r, GUIStyle normalStyle, GUIStyle hoverStyle) {
         GUIArea a = areas.get(area);
-        Rect rf = r.AddPosition(a.area);
+        Rect rf = r.AddPosition(a.culled);
         rf.y -= a.Scroll();
+        rf = a.culled.GetIntersection(rf);
+        if (rf == null) return false;
 
         //If the button contains the mouse position
         if (rf.Contains(Mouse.Position())) {
@@ -218,8 +221,10 @@ public class GUI {
 
     public static boolean CenteredButton(String text, Rect r, GUIStyle normalStyle, GUIStyle hoverStyle) {
         GUIArea a = areas.get(area);
-        Rect rf = r.AddPosition(a.area);
+        Rect rf = r.AddPosition(a.culled);
         rf.y -= a.Scroll();
+        rf = a.culled.GetIntersection(rf);
+        if (rf == null) return false;
 
         float x = r.x + ((r.width / 2f) - ((float) font.StringWidth(text) / 2f));
         float y = r.y + ((r.height / 2f) - (font.FontHeight() / 2f));
@@ -247,11 +252,14 @@ public class GUI {
         return false;
     }
 
+    //Create a check box toggle with label
     public static boolean Toggle(boolean b, Rect r, String name, GUIStyle on, GUIStyle off) {
+        //Begin an area for culling and draw the label
         BeginArea(new Rect(r.x, r.y, r.width - 15, r.height));
         Label(name, 0, 0);
         EndArea();
 
+        //Return a normal toggle
         return Toggle(b, r.x + r.width - 15, r.y, on, off);
     }
 
@@ -370,15 +378,16 @@ public class GUI {
     public static void DrawTextureWithTexCoords(Texture tex, Rect drawRect, Rect uv, Color c) {
         //If we have an area, get the intersection between this rect and the current rect
         GUIArea a = areas.get(area);
-        if (a.area == null) return;
-        Rect r = a.area.GetIntersection(new Rect(drawRect.x + a.area.x, (drawRect.y + a.area.y) - a.Scroll(), drawRect.width, drawRect.height));
+        if (a.culled == null) return;
+        //Rect r = a.area.GetIntersection(new Rect(drawRect.x + a.area.x, (drawRect.y + a.area.y) - a.Scroll(), drawRect.width, drawRect.height));
+        Rect r = a.culled.GetIntersection(new Rect(drawRect.x + a.actual.x, (drawRect.y + a.actual.y) - a.Scroll(), drawRect.width, drawRect.height));
 
         //If the rect isn't visible, return
         if (r == null) return;
 
         //Calculate the x and y positions and uv offset by cropping it out
-        float x = uv.x + ((((r.x - drawRect.x) - a.area.x) / drawRect.width) * uv.width);
-        float y = uv.y + ((((r.y - drawRect.y) - (a.area.y - a.Scroll())) / drawRect.height) * uv.height);
+        float x = uv.x + ((((r.x - drawRect.x) - a.actual.x) / drawRect.width) * uv.width);
+        float y = uv.y + ((((r.y - drawRect.y) - (a.actual.y - a.Scroll())) / drawRect.height) * uv.height);
         Rect u = new Rect(x, y, (r.width / drawRect.width) * uv.width, (r.height / drawRect.height) * uv.height);
 
         //Bind the texture
@@ -436,7 +445,9 @@ public class GUI {
     //Begin and end a drawing area
     public static void BeginArea(Rect r) {
         GUIArea a = areas.get(area);
-        areas.add(new GUIArea(a.area.GetIntersection(new Rect(a.area.x + r.x, (a.area.y + r.y) - a.Scroll(), r.width, r.height))));
+        //areas.add(new GUIArea(a.area.GetIntersection(new Rect(a.area.x + r.x, (a.area.y + r.y) - a.Scroll(), r.width, r.height))));
+        Rect actual = new Rect(a.actual.x + r.x, (a.actual.y + r.y) - a.Scroll(), r.width, r.height);
+        areas.add(new GUIArea(a.culled.GetIntersection(actual), actual));
         area = areas.size() - 1;
     }
 

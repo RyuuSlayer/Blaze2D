@@ -82,8 +82,16 @@ public class Vector2 {
         return new Vector2(this.x / x, this.y / y);
     }
 
-    public Vector2 Length() {
-        return new Vector2(this.x * x + this.y * y);
+    public float Length() {
+        return (float) Math.sqrt(x * x + y * y);
+    }
+
+    public Vector2 Floor() {
+        return new Vector2((float) Math.floor(x), (float) Math.floor(y));
+    }
+
+    public Vector2 Ceil() {
+        return new Vector2((float) Math.ceil(x), (float) Math.ceil(y));
     }
 
     public Vector2 Neg() {

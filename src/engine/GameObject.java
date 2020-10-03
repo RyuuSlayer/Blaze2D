@@ -18,6 +18,7 @@ public class GameObject extends engine.Object {
     private static int h;
     private static int j;
     private static final Matrix4x4 temp = new Matrix4x4();
+    private static int total = 0;
     private static boolean prevFrame = false;
     public boolean enabled = true;
     public String tag = "Untagged";
@@ -45,7 +46,7 @@ public class GameObject extends engine.Object {
             inline = -1;
             expanded = true;
             return;
-        }
+        } else total += 1;
         Name("New GameObject");
         instances.add(this);
         Parent(master);
@@ -55,6 +56,7 @@ public class GameObject extends engine.Object {
         Name(name);
         instances.add(this);
         Parent(master);
+        total += 1;
     }
 
     public static void Recalculate() {
@@ -88,6 +90,10 @@ public class GameObject extends engine.Object {
             if (g.Name().equals(s)) return g;
         }
         return null;
+    }
+
+    public static final int Total() {
+        return total;
     }
 
     public static void StartAll() {
@@ -436,12 +442,12 @@ public class GameObject extends engine.Object {
     }
 
     public void Destroy() {
-        Parent(null);
         for (i = 0; i < children.size(); i++) children.get(i).Destroy();
         instances.remove(this);
 
         children.clear();
         master.children.remove(this);
+        total -= 1;
     }
 
     public void Start() {
