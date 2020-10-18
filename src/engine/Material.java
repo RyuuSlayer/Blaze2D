@@ -8,12 +8,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class Material extends engine.Object {
-    //Static variables used for the materials list
-    private static final List<Material> materials = new ArrayList<Material>();
-    private static int i;
     public Texture texture;
     public Color color;
     public Shader shader;
+
+    //Static variables used for the materials list
+    private static final List<Material> materials = new ArrayList<Material>();
+    private static int i;
 
     //Create a texture on the fly
     public Material(String n, Texture t, Color c, Shader s) {
@@ -75,6 +76,10 @@ public class Material extends engine.Object {
         return null;
     }
 
+    public static final List<Material> Materials() {
+        return materials;
+    }
+
     public static void RefreshAll() {
         for (i = 0; i < materials.size(); i++) {
             try {
@@ -83,14 +88,6 @@ public class Material extends engine.Object {
                 e.printStackTrace();
             }
         }
-    }
-
-    public static final List<Material> Materials() {
-        return materials;
-    }
-
-    public boolean isInternal() {
-        return f == null;
     }
 
     private void Refresh() throws IOException {
@@ -130,5 +127,9 @@ public class Material extends engine.Object {
         //Unbind the shader and texture
         shader.Unbind();
         texture.Unbind();
+    }
+
+    public boolean isInternal() {
+        return f == null;
     }
 }

@@ -12,7 +12,7 @@ import input.Mouse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Hierarchy {
+public class Hierarchy extends engine.Object {
     private Rect clickRect;
     private int i;
     private int scroll;
@@ -38,7 +38,6 @@ public class Hierarchy {
             }
 
             offset += GUI.font.FontHeight();
-            //offset += 20;
             loop.remove(g);
         }
         scroll = GUI.SetScrollView(offset, scroll);
@@ -85,7 +84,7 @@ public class Hierarchy {
 
             clickRect.Set(0, (r.y + offsetY) - scroll, r.width, 20);
 
-            if (clickRect.Contains(Mouse.Position())) {
+            if (clickRect.Contains(Mouse.Position()) && !GUI.HasPopup()) {
                 if (Mouse.GetButtonUp(0)) Editor.SetSelected(g);
                 else if (Mouse.GetButtonDown(0)) Editor.SetDraggableObject(g);
                 if (dropped == 0) dropped = CheckDrop(g);

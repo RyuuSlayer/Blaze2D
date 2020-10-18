@@ -14,12 +14,13 @@ import java.util.regex.Pattern;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Shader extends engine.Object {
-    //Static variables to handle all of our shaders
-    private static final List<Shader> shaders = new ArrayList<Shader>();
-    private static int i;
     private int program;
     private int vs;
     private int fs;
+
+    //Static variables to handle all of our shaders
+    private static final List<Shader> shaders = new ArrayList<Shader>();
+    private static int i;
 
     //Constructor that takes in the name of the shader
     public Shader(String fileName) {
@@ -71,28 +72,6 @@ public class Shader extends engine.Object {
         shaders.add(this);
     }
 
-    //Get a shader by name
-    public static Shader Find(String name) {
-        //For all the shaders
-        for (i = 0; i < shaders.size(); i++) {
-            //If we have came across the shader were looking for, return it
-            if (shaders.get(i).Name().equals(name)) return shaders.get(i);
-        }
-
-        //If we didn't find a shader by that name, return null
-        return null;
-    }
-
-    public static void RefreshAll() {
-        for (i = 0; i < shaders.size(); i++) {
-            shaders.get(i).Refresh();
-        }
-    }
-
-    public static final List<Shader> Shaders() {
-        return shaders;
-    }
-
     //Create a shader from a specified filename
     private String[] CreateShader(String fileName) {
         //Create a stringbuilder and buffered reader
@@ -134,8 +113,22 @@ public class Shader extends engine.Object {
         return sb.toString().split("ENDVERTEX");
     }
 
-    public boolean isInternal() {
-        return f == null;
+    //Get a shader by name
+    public static Shader Find(String name) {
+        //For all the shaders
+        for (i = 0; i < shaders.size(); i++) {
+            //If we have came across the shader were looking for, return it
+            if (shaders.get(i).Name().equals(name)) return shaders.get(i);
+        }
+
+        //If we didn't find a shader by that name, return null
+        return null;
+    }
+
+    public static void RefreshAll() {
+        for (i = 0; i < shaders.size(); i++) {
+            shaders.get(i).Refresh();
+        }
     }
 
     private void Refresh() {
@@ -238,5 +231,9 @@ public class Shader extends engine.Object {
     public void Unbind() {
         //Unbind it by setting it to 0
         glUseProgram(0);
+    }
+
+    public static final List<Shader> Shaders() {
+        return shaders;
     }
 }

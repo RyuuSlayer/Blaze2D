@@ -17,10 +17,11 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 public class Application {
     private static final Vector2 size = new Vector2(1200, 600);
     private static final Rect r = new Rect();
-    //Window specific variables
-    public static String name = "Blaze2D Engine";
     private static long window;
+    //Window specific variables
+    public static String name = "Blaze Engine";
     private static byte minimized = 0;
+    private static byte initialized = 0;
 
     private static GLFWWindowSizeCallback windowSizeCallback;
     private static GLFWWindowFocusCallback windowFocusCallback;
@@ -34,6 +35,7 @@ public class Application {
             System.exit(1);
         }
 
+        initialized = 1;
         r.SetSize(size);
 
         //Create the window, show it and make the context current
@@ -67,6 +69,15 @@ public class Application {
             Texture.RefreshAll();
             Shader.RefreshAll();
         }
+    }
+
+    public static void SetWindowSize(int w, int h) {
+        if (initialized == 1) return;
+        size.Set(w, h);
+    }
+
+    public static void SetWindowSize(long win, int w, int h) {
+        glfwSetWindowSize(win, w, h);
     }
 
     public static void OnWindowResized(long win, int w, int h) {

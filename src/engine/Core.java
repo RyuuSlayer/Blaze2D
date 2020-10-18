@@ -16,6 +16,7 @@ import sound.AudioClip;
 import sound.AudioSource;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
@@ -79,7 +80,7 @@ public class Core {
                 } else if (Editor.IsPlaying()) {
                     Renderer.Render(new Rect(0, 30, Application.Width(), Application.Height() - 60), null);
                 } else {
-                    Renderer.Render(new Rect(400, 30, Application.Width() - 800, Application.Height() - 260), Editor.cameraPosition);
+                    Renderer.Render(Editor.GetSceneDrawArea(), Editor.cameraPosition);
                 }
 
                 glClearColor(clear.r, clear.g, clear.b, 1);
@@ -96,6 +97,9 @@ public class Core {
             //At the very end, swap the buffers
             glfwSwapBuffers(window);
         }
+
+        if (ProjectSettings.isEditor) Editor.SaveConfig(new File(Editor.workspaceDirectory + "config.properties"));
+
         //Cleanup the memory
         AudioClip.CleanUp();
         AudioSource.CleanUp();

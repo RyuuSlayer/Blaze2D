@@ -9,10 +9,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class GUISkin extends engine.Object {
-    private static final List<GUISkin> skins = new ArrayList<GUISkin>();
-    private static int i;
     public Texture texture;
+    private static final List<GUISkin> skins = new ArrayList<GUISkin>();
     private final List<GUIStyle> styles = new ArrayList<GUIStyle>();
+    private static int i;
 
     //Import a skin by name
     public GUISkin(String name) {
@@ -80,20 +80,6 @@ public class GUISkin extends engine.Object {
         return null;
     }
 
-    public static void RefreshAll() {
-        for (i = 0; i < skins.size(); i++) {
-            try {
-                skins.get(i).Refresh();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public boolean isInternal() {
-        return f == null;
-    }
-
     //Get a guistyle by name
     public GUIStyle Get(String name) {
         //For all the styles
@@ -104,6 +90,16 @@ public class GUISkin extends engine.Object {
 
         //If we didn't find a style by that name, return null
         return null;
+    }
+
+    public static void RefreshAll() {
+        for (i = 0; i < skins.size(); i++) {
+            try {
+                skins.get(i).Refresh();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void Refresh() throws IOException {

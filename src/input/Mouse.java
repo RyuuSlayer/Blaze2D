@@ -11,8 +11,6 @@ import java.nio.DoubleBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-enum CursorImage {Pointer, Hand, HScroll, VScroll}
-
 public class Mouse extends GLFWMouseButtonCallback {
     private static byte anyButton = 0;
     private static byte anyButtonDown = 0;
@@ -30,6 +28,9 @@ public class Mouse extends GLFWMouseButtonCallback {
     private static byte doubleClicked = 0;
     private static float lastUp = 0;
 
+    private static final long[] cursors = new long[4];
+    private static int currentCursor = 0;
+
     public Mouse() {
         window = Application.Window();
         xBuffer = BufferUtils.createDoubleBuffer(1);
@@ -42,6 +43,11 @@ public class Mouse extends GLFWMouseButtonCallback {
             }
 
         });
+
+        cursors[0] = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+        cursors[1] = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+        cursors[2] = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+        cursors[3] = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
     }
 
     public static void Reset() {
@@ -54,6 +60,10 @@ public class Mouse extends GLFWMouseButtonCallback {
         scroll = 0;
         lastUp += Time.UnscaledDelta();
         doubleClicked = 0;
+    }
+
+    public final static long GetCursor() {
+        return currentCursor;
     }
 
     public static final boolean MultiClicked() {
@@ -91,6 +101,12 @@ public class Mouse extends GLFWMouseButtonCallback {
 
     public static int Scroll() {
         return scroll;
+    }
+
+    public static void SetCursor(int cursor) {
+        if (currentCursor == cursor) return;
+        currentCursor = cursor;
+        glfwSetCursor(window, cursors[cursor]);
     }
 
     @Override

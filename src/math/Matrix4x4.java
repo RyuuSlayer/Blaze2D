@@ -12,28 +12,6 @@ public class Matrix4x4 {
         SetIdentity();
     }
 
-    //Create and return an orthographic projection matrix based on custom values that are past in
-    public static Matrix4x4 Ortho(float left, float right, float bottom, float top, float near, float far) {
-        //Create a new matrix
-        Matrix4x4 matrix = new Matrix4x4();
-
-        //Calculate and store the size of our 3d viewport
-        float width = right - left;
-        float height = top - bottom;
-        float depth = far - near;
-
-        //Set the data into the matrix
-        matrix.m[0][0] = 2f / width;
-        matrix.m[1][1] = 2f / height;
-        matrix.m[2][2] = -2f / depth;
-        matrix.m[3][0] = -(right + left) / width;
-        matrix.m[3][1] = -(top + bottom) / height;
-        matrix.m[3][2] = -(far + near) / depth;
-
-        //Then return the matrix
-        return matrix;
-    }
-
     public boolean isDirty() {
         return dirty;
     }
@@ -91,5 +69,27 @@ public class Matrix4x4 {
         p.x = m[0][3] + (m[0][0] * v.x + -m[1][0] * v.y);
         p.y = m[1][3] + (-m[0][1] * v.x + m[1][1] * v.y);
         return p;
+    }
+
+    //Create and return an orthographic projection matrix based on custom values that are past in
+    public static Matrix4x4 Ortho(float left, float right, float bottom, float top, float near, float far) {
+        //Create a new matrix
+        Matrix4x4 matrix = new Matrix4x4();
+
+        //Calculate and store the size of our 3d viewport
+        float width = right - left;
+        float height = top - bottom;
+        float depth = far - near;
+
+        //Set the data into the matrix
+        matrix.m[0][0] = 2f / width;
+        matrix.m[1][1] = 2f / height;
+        matrix.m[2][2] = -2f / depth;
+        matrix.m[3][0] = -(right + left) / width;
+        matrix.m[3][1] = -(top + bottom) / height;
+        matrix.m[3][2] = -(far + near) / depth;
+
+        //Then return the matrix
+        return matrix;
     }
 }

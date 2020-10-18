@@ -8,20 +8,17 @@ import java.util.List;
 import static org.lwjgl.openal.AL10.*;
 
 public class AudioSource extends LogicBehaviour {
-    private static final List<AudioSource> sources = new ArrayList<AudioSource>();
-    private final int id;
     public AudioClip clip;
     public float startGain = -30;
     public boolean playOnStart = false;
+
+    private static final List<AudioSource> sources = new ArrayList<AudioSource>();
+    private final int id;
 
     public AudioSource() {
         id = alGenSources();
         SetGain(startGain);
         sources.add(this);
-    }
-
-    public static void CleanUp() {
-        for (int i = 0; i < sources.size(); i++) sources.get(0).Destroy();
     }
 
     public void Start() {
@@ -57,5 +54,9 @@ public class AudioSource extends LogicBehaviour {
         Stop();
         alDeleteSources(id);
         sources.remove(this);
+    }
+
+    public static void CleanUp() {
+        for (int i = 0; i < sources.size(); i++) sources.get(0).Destroy();
     }
 }

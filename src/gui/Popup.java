@@ -13,11 +13,14 @@ public class Popup {
     private final List<String> list;
     private final Consumer<String> func;
     private int i;
+    private final int[] selected;
     private final Rect listArea;
     private final GUIStyle box;
     private Color prevColor;
+    private int g;
 
-    public Popup(Rect nameArea, List<String> list, Consumer<String> func) {
+    public Popup(Rect nameArea, List<String> list, Consumer<String> func, int[] selected) {
+        this.selected = selected;
         this.nameArea = nameArea;
         this.list = list;
         float widest = 0;
@@ -41,10 +44,32 @@ public class Popup {
         prevColor = GUI.textColor;
         GUI.textColor = Color.white;
         for (i = 0; i < list.size(); i++) {
-            if (GUI.CenteredButton(list.get(i), new Rect(drawArea.x, drawArea.y + (28 * i), drawArea.width, 28), null, box)) {
-                func.accept(list.get(i));
-                GUI.textColor = prevColor;
-                return null;
+            if (selected != null) {
+                byte drewSelected = 0;
+                for (g = 0; g < selected.length; g++) {
+                    if (selected[g] == i) {
+                        if (GUI.CenteredButton(list.get(i), new Rect(drawArea.x, drawArea.y + (28 * i), drawArea.width, 28), box, box)) {
+                            func.accept(list.get(i));
+                            GUI.textColor = prevColor;
+                            return null;
+                        }
+                        drewSelected = 1;
+                        break;
+                    }
+                }
+                if (drewSelected == 0) {
+                    if (GUI.CenteredButton(list.get(i), new Rect(drawArea.x, drawArea.y + (28 * i), drawArea.width, 28), null, box)) {
+                        func.accept(list.get(i));
+                        GUI.textColor = prevColor;
+                        return null;
+                    }
+                }
+            } else {
+                if (GUI.CenteredButton(list.get(i), new Rect(drawArea.x, drawArea.y + (28 * i), drawArea.width, 28), null, box)) {
+                    func.accept(list.get(i));
+                    GUI.textColor = prevColor;
+                    return null;
+                }
             }
         }
         GUI.textColor = prevColor;

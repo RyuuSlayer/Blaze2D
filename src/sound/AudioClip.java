@@ -24,11 +24,12 @@ import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.stb.STBVorbis.*;
 
 public class AudioClip extends engine.Object {
-    private static final List<AudioClip> clips = new ArrayList<AudioClip>();
-    private static int i;
     final int id;
     private ByteBuffer vorbis;
     private ShortBuffer pcm;
+
+    private static final List<AudioClip> clips = new ArrayList<AudioClip>();
+    private static int i;
 
     public AudioClip(String fileName) {
         id = alGenBuffers();
@@ -57,20 +58,20 @@ public class AudioClip extends engine.Object {
         return null;
     }
 
-    public static final List<AudioClip> GetClips() {
-        return clips;
-    }
-
-    public static void CleanUp() {
-        for (i = 0; i < clips.size(); i++) clips.get(0).Destroy();
-    }
-
     public final int getID() {
         return id;
     }
 
     public void Destroy() {
         alDeleteBuffers(id);
+    }
+
+    public static final List<AudioClip> GetClips() {
+        return clips;
+    }
+
+    public static void CleanUp() {
+        for (i = 0; i < clips.size(); i++) clips.get(0).Destroy();
     }
 
     private ShortBuffer readVorbis(String resource, int bufferSize, STBVorbisInfo info) throws Exception {

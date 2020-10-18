@@ -13,22 +13,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameObject extends engine.Object {
-    private static final GameObject master = new GameObject(false);
-    private static final List<GameObject> instances = new ArrayList<GameObject>();
-    private static int h;
-    private static int j;
-    private static final Matrix4x4 temp = new Matrix4x4();
-    private static int total = 0;
-    private static boolean prevFrame = false;
     public boolean enabled = true;
     public String tag = "Untagged";
     public float depth = 0;
+
     private final Vector2 position = new Vector2(0, 0);
     private Vector2 scale = new Vector2(1, 1);
     private float rotation = 0;
+
     private final Vector2 localPosition = new Vector2();
     private Vector2 localScale = new Vector2();
     private float localRotation = 0;
+
     private GameObject parent;
     private final List<GameObject> children = new ArrayList<GameObject>();
     private final List<LogicBehaviour> components = new ArrayList<LogicBehaviour>();
@@ -36,10 +32,18 @@ public class GameObject extends engine.Object {
     private final Matrix4x4 matrix = new Matrix4x4();
     private Collider collider;
     private SpriteRenderer renderer;
+
     private int layer = 0;
     private byte dirty = 1;
     private boolean expanded = false;
     private int i;
+
+    private static final GameObject master = new GameObject(false);
+    private static final List<GameObject> instances = new ArrayList<GameObject>();
+    private static final Matrix4x4 temp = new Matrix4x4();
+    private static int h;
+    private static int j;
+    private static int total = 0;
 
     public GameObject(boolean addToHierarchy) {
         if (!addToHierarchy) {
@@ -57,73 +61,6 @@ public class GameObject extends engine.Object {
         instances.add(this);
         Parent(master);
         total += 1;
-    }
-
-    public static void Recalculate() {
-        for (int i = 0; i < master.children.size(); i++) master.children.get(i).RecalculateGlobalTransformations();
-    }
-
-    public static GameObject Master() {
-        return master;
-    }
-
-    static void Clear() {
-        instances.clear();
-        master.children.clear();
-    }
-
-    public static final List<GameObject> Instances() {
-        return instances;
-    }
-
-    public static GameObject FindObjectByID(String s) {
-        for (j = 0; j < instances.size(); j++) {
-            GameObject g = instances.get(j);
-            if (g.instanceID().equals(s)) return g;
-        }
-        return null;
-    }
-
-    public static GameObject Find(String s) {
-        for (j = 0; j < instances.size(); j++) {
-            GameObject g = instances.get(j);
-            if (g.Name().equals(s)) return g;
-        }
-        return null;
-    }
-
-    public static final int Total() {
-        return total;
-    }
-
-    public static void StartAll() {
-        for (h = 0; h < instances.size(); h++) {
-            GameObject g = instances.get(h);
-            g.Start();
-        }
-        if (!ProjectSettings.isEditor) prevFrame = false;
-    }
-
-    public static void PrepareObjects() {
-        if (Editor.IsPlaying() || !ProjectSettings.isEditor) {
-            if (prevFrame == false) {
-                Collider.ClearFrame();
-            }
-            for (h = 0; h < instances.size(); h++) {
-                GameObject g = instances.get(h);
-                g.Update();
-            }
-
-            Collider.CompareCollisions();
-            Collider.ClearFrame();
-        }
-
-        for (h = 0; h < instances.size(); h++) {
-            GameObject g = instances.get(h);
-            g.PrepareToRender();
-        }
-        if (ProjectSettings.isEditor) prevFrame = Editor.IsPlaying();
-        else prevFrame = true;
     }
 
     public final int GetLayer() {
@@ -246,6 +183,12 @@ public class GameObject extends engine.Object {
         }
     }
 
+    private static boolean prevFrame = false;
+
+    public static void Recalculate() {
+        for (int i = 0; i < master.children.size(); i++) master.children.get(i).RecalculateGlobalTransformations();
+    }
+
     public GameObject Parent() {
         return parent;
     }
@@ -312,6 +255,10 @@ public class GameObject extends engine.Object {
 
     public final Collider GetCollider() {
         return collider;
+    }
+
+    public static GameObject Master() {
+        return master;
     }
 
     public LogicBehaviour AddComponent(LogicBehaviour b) {
@@ -420,6 +367,23 @@ public class GameObject extends engine.Object {
         for (i = 0; i < children.size(); i++) children.get(i).SetInline(v + 1);
     }
 
+    static void Clear() {
+        instances.clear();
+        master.children.clear();
+    }
+
+    public static final List<GameObject> Instances() {
+        return instances;
+    }
+
+    public static GameObject FindObjectByID(String s) {
+        for (j = 0; j < instances.size(); j++) {
+            GameObject g = instances.get(j);
+            if (g.instanceID().equals(s)) return g;
+        }
+        return null;
+    }
+
     public List<GameObject> Children() {
         return children;
     }
@@ -486,5 +450,47 @@ public class GameObject extends engine.Object {
                 if (sr.sprite != null) Renderer.AddToRenderer(sr);
             } else if (component.Name().equals("BoxCollider")) Collider.AddFrameCollider((Collider) component);
         }
+    }
+
+    public static GameObject Find(String s) {
+        for (j = 0; j < instances.size(); j++) {
+            GameObject g = instances.get(j);
+            if (g.Name().equals(s)) return g;
+        }
+        return null;
+    }
+
+    public static final int Total() {
+        return total;
+    }
+
+    public static void StartAll() {
+        for (h = 0; h < instances.size(); h++) {
+            GameObject g = instances.get(h);
+            g.Start();
+        }
+        if (!ProjectSettings.isEditor) prevFrame = false;
+    }
+
+    public static void PrepareObjects() {
+        if (Editor.IsPlaying() || !ProjectSettings.isEditor) {
+            if (prevFrame == false) {
+                Collider.ClearFrame();
+            }
+            for (h = 0; h < instances.size(); h++) {
+                GameObject g = instances.get(h);
+                g.Update();
+            }
+
+            Collider.CompareCollisions();
+            Collider.ClearFrame();
+        }
+
+        for (h = 0; h < instances.size(); h++) {
+            GameObject g = instances.get(h);
+            g.PrepareToRender();
+        }
+        if (ProjectSettings.isEditor) prevFrame = Editor.IsPlaying();
+        else prevFrame = true;
     }
 }

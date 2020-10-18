@@ -25,6 +25,24 @@ public class Input extends GLFWKeyCallback {
         anyKeyUp = 0;
     }
 
+    @Override
+    public void invoke(long window, int key, int scancode, int action, int mods) {
+        //return if lwjgl doesn't recognize the key
+        if (key == -1) return;
+
+        anyKey = 1;
+        if (action == GLFW_PRESS) {
+            keysDown[key] = 1;
+            anyKeyDown = 1;
+            keys[key] = 1;
+        }
+        if (action == GLFW_RELEASE) {
+            keysUp[key] = 1;
+            anyKeyUp = 1;
+            keys[key] = 0;
+        }
+    }
+
     public static boolean anyKey() {
         return anyKey == 1;
     }
@@ -59,23 +77,5 @@ public class Input extends GLFWKeyCallback {
 
     public static boolean GetKeyUp(char keycode) {
         return keysUp[KeyEvent.getExtendedKeyCodeForChar(keycode)] == 1;
-    }
-
-    @Override
-    public void invoke(long window, int key, int scancode, int action, int mods) {
-        //return if lwjgl doesn't recognize the key
-        if (key == -1) return;
-
-        anyKey = 1;
-        if (action == GLFW_PRESS) {
-            keysDown[key] = 1;
-            anyKeyDown = 1;
-            keys[key] = 1;
-        }
-        if (action == GLFW_RELEASE) {
-            keysUp[key] = 1;
-            anyKeyUp = 1;
-            keys[key] = 0;
-        }
     }
 }

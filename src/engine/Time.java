@@ -3,13 +3,14 @@ package engine;
 import java.util.concurrent.TimeUnit;
 
 public class Time {
-    private static final long second = 1000000000L;
     public static float timeScale = 1;
+
     private static long rawTime;
     private static float time;
     private static double rawDelta;
     private static float deltaTime;
     private static float unscaledDelta;
+    private static final long second = 1000000000L;
     private static int frameRate;
 
     private static long startTime;

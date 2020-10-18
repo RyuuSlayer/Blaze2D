@@ -18,14 +18,16 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.stb.STBImage.*;
 
 public class Texture extends engine.Object {
-    //Temp, iterator and list of textures variables
-    private static final List<Texture> textureInstances = new ArrayList<Texture>();
-    private static Texture tmp = null;
-    private static int i = 0;
     //Stored info about the texture
     private final int id;
     private int width;
     private int height;
+
+    //Temp, iterator and list of textures variables
+    private static final List<Texture> textureInstances = new ArrayList<Texture>();
+    private static Texture tmp = null;
+    private static int i = 0;
+
     private IntBuffer w;
     private IntBuffer h;
     private IntBuffer c;
@@ -95,6 +97,21 @@ public class Texture extends engine.Object {
         this.height = height;
     }
 
+    //Loop through all the textures and delete them when the application closes
+    public static void CleanUp() {
+        for (i = 0; i < textureInstances.size(); i++) glDeleteTextures(textureInstances.get(i).ID());
+    }
+
+    //Getter methods for texture list, width and length of the texture
+    public static List<Texture> GetTextures() {
+        return textureInstances;
+    }
+
+    //Return the id of this texture
+    public int ID() {
+        return id;
+    }
+
     //Find a texture with a given name
     public static Texture Find(String textureName) {
         //For every texture in our list of textures
@@ -111,36 +128,6 @@ public class Texture extends engine.Object {
         for (i = 0; i < textureInstances.size(); i++) {
             textureInstances.get(i).Refresh();
         }
-    }
-
-    //Loop through all the textures and delete them when the application closes
-    public static void CleanUp() {
-        for (i = 0; i < textureInstances.size(); i++) glDeleteTextures(textureInstances.get(i).ID());
-    }
-
-    //Getter methods for texture list, width and length of the texture
-    public static List<Texture> GetTextures() {
-        return textureInstances;
-    }
-
-    //Return the id of this texture
-    public int ID() {
-        return id;
-    }
-
-    public boolean isInternal() {
-        return f == null;
-    }
-
-    public void Bind() {
-        //Bind this texture into texture position 0
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, id);
-    }
-
-    //Unbind the texture
-    public void Unbind() {
-        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public void Refresh() {
@@ -165,6 +152,17 @@ public class Texture extends engine.Object {
         //Set the image data into the texture using rgba then free the image data
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this.width, this.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         stbi_image_free(data);
+    }
+
+    public void Bind() {
+        //Bind this texture into texture position 0
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, id);
+    }
+
+    //Unbind the texture
+    public void Unbind() {
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
     public int Width() {

@@ -5,11 +5,11 @@ import gui.*;
 import math.Vector2;
 import sound.AudioClip;
 
-import java.lang.Object;
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.Object;
 
-public class Inspector {
+public class Inspector extends engine.Object {
     private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
     private List<LogicBehaviour> l = new ArrayList<LogicBehaviour>();
     private int i = 0;

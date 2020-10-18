@@ -9,12 +9,13 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class Sprite extends engine.Object {
-    //Static information used for all the sprites
-    private static final List<Sprite> sprites = new ArrayList<Sprite>();
-    private static int i;
     public Material material;
     public Rect offset;
     public Rect padding;
+
+    //Static information used for all the sprites
+    private static final List<Sprite> sprites = new ArrayList<Sprite>();
+    private static int i;
 
     //Import a sprite by name
     public Sprite(String name) {
@@ -56,6 +57,10 @@ public class Sprite extends engine.Object {
         }
     }
 
+    public static final List<Sprite> Sprites() {
+        return sprites;
+    }
+
     //Get a sprite by name
     public static Sprite Get(String name) {
         //For all the sprites
@@ -78,25 +83,6 @@ public class Sprite extends engine.Object {
         }
     }
 
-    public static final List<Sprite> Sprites() {
-        return sprites;
-    }
-
-    //Return the UV of the sprite
-    public Rect UV() {
-        //If the offset doesn't exist, return null
-        if (offset == null) return null;
-
-        //And cache the texture size and return the calculated uv
-        float w = material.texture.Width();
-        float h = material.texture.Height();
-        return new Rect(offset.x / w, offset.y / h, offset.width / w, offset.height / h);
-    }
-
-    public boolean isInternal() {
-        return f == null;
-    }
-
     private void Refresh() throws IOException {
         if (f == null) return;
         File temp = new File(f.getAbsolutePath());
@@ -116,5 +102,16 @@ public class Sprite extends engine.Object {
         padding = new Rect(Float.parseFloat(p[0]), Float.parseFloat(p[1]), Float.parseFloat(p[2]), Float.parseFloat(p[3]));
 
         br.close();
+    }
+
+    //Return the UV of the sprite
+    public Rect UV() {
+        //If the offset doesn't exist, return null
+        if (offset == null) return null;
+
+        //And cache the texture size and return the calculated uv
+        float w = material.texture.Width();
+        float h = material.texture.Height();
+        return new Rect(offset.x / w, offset.y / h, offset.width / w, offset.height / h);
     }
 }

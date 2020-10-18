@@ -17,14 +17,14 @@ import java.util.regex.Pattern;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Font extends engine.Object implements Cloneable {
-    private static int i;
-    private static final List<Font> fonts = new ArrayList<Font>();
     private int fontID;
     private BufferedImage bufferedImage;
     private Vector2 imageSize;
     private java.awt.Font font;
     private FontMetrics fontMetrics;
+    private static final List<Font> fonts = new ArrayList<Font>();
     private Texture texture;
+    private static int i;
     private float h;
 
     //Kind of like a library of all the characters glyphs in this font
@@ -65,17 +65,6 @@ public class Font extends engine.Object implements Cloneable {
         this.font = font;
         Name(font.getFontName());
         GenerateFont();
-    }
-
-    public static final List<Font> Fonts() {
-        return fonts;
-    }
-
-    public static Font Find(String name) {
-        for (i = 0; i < fonts.size(); i++) {
-            if (fonts.get(i).Name().equals(name)) return fonts.get(i);
-        }
-        return null;
     }
 
     //Generate the texture font
@@ -120,37 +109,8 @@ public class Font extends engine.Object implements Cloneable {
         return CreateBuffer();
     }
 
-    //Draw all the characters using a specified graphics component
-    private void DrawCharacters(Graphics2D g) {
-        //Start on the top left
-        int tempX = 0;
-        int tempY = 0;
-
-        //For all the characters (that we care about)
-        for (i = 32; i < 256; i++) {
-            //If this character is not one of the usable ones, skip it
-            if (i == 127) continue;
-
-            //Get the character in this iteration and get the characters width
-            char c = (char) i;
-            float charWidth = fontMetrics.charWidth(c);
-
-            //Add a little padding to get rid of artifacts
-            float advance = charWidth + 8;
-
-            //If this character is going to be drawn outside of the screen
-            if (tempX + advance > imageSize.x) {
-                //Drop down one character and start from the left side of the image again
-                tempX = 0;
-                tempY += 1;
-            }
-            //Put this characters information in a glyph and store it. Then draw the character on the texture
-            chars.put(c, new Glyph(tempX / imageSize.x, (tempY * h) / imageSize.y, charWidth / imageSize.x, h / imageSize.y, charWidth, h));
-            g.drawString(String.valueOf(c), tempX, fontMetrics.getMaxAscent() + (h * tempY));
-
-            //Then prepare to draw the next character by moving our x drawing position
-            tempX += advance;
-        }
+    public static final List<Font> Fonts() {
+        return fonts;
     }
 
     //Create and return a byte buffer
@@ -185,6 +145,13 @@ public class Font extends engine.Object implements Cloneable {
         return (Font) super.clone();
     }
 
+    public static Font Find(String name) {
+        for (i = 0; i < fonts.size(); i++) {
+            if (fonts.get(i).Name().equals(name)) return fonts.get(i);
+        }
+        return null;
+    }
+
     //Standard getters
     public int ID() {
         return fontID;
@@ -196,6 +163,39 @@ public class Font extends engine.Object implements Cloneable {
 
     public Map<Character, Glyph> GetCharacters() {
         return chars;
+    }
+
+    //Draw all the characters using a specified graphics component
+    private void DrawCharacters(Graphics2D g) {
+        //Start on the top left
+        int tempX = 0;
+        int tempY = 0;
+
+        //For all the characters (that we care about)
+        for (i = 32; i < 256; i++) {
+            //If this character is not one of the usable ones, skip it
+            if (i == 127) continue;
+
+            //Get the character in this iteration and get the characters width
+            char c = (char) i;
+            float charWidth = fontMetrics.charWidth(c);
+
+            //Add a little padding to get rid of artifacts
+            float advance = charWidth + 8;
+
+            //If this character is going to be drawn outside of the screen
+            if (tempX + advance > imageSize.x) {
+                //Drop down one character and start from the left side of the image again
+                tempX = 0;
+                tempY += 1;
+            }
+            //Put this characters information in a glyph and store it. Then draw the character on the texture
+            chars.put(c, new Glyph(tempX / imageSize.x, (tempY * h) / imageSize.y, charWidth / imageSize.x, h / imageSize.y, charWidth, h));
+            g.drawString(String.valueOf(c), tempX, fontMetrics.getMaxAscent() + (h * tempY));
+
+            //Then prepare to draw the next character by moving our x drawing position
+            tempX += advance;
+        }
     }
 
     //Get the size of a string as if we were to draw it

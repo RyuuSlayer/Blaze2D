@@ -19,16 +19,18 @@ public class GUI {
     public static Color textColor = Color.white;
     public static Font font;
     public static GUISkin skin;
-    public static byte checkDrag;
+
     private static Mesh mesh;
     private static Shader shader;
     private static Matrix4x4 ortho;
+
     private static int i;
     private static char[] c;
     private static float xTemp;
     private static final int boundTex = -1;
     private static Color boundColor = Color.white;
     private static Popup popup;
+    public static byte checkDrag;
     private static boolean ignoreMouseUp = false;
 
     private static int area = 0;
@@ -71,8 +73,8 @@ public class GUI {
         return popup != null;
     }
 
-    public static void SetPopup(Rect nameRect, List<String> list, Consumer<String> func) {
-        popup = new Popup(nameRect, list, func);
+    public static void SetPopup(Rect nameRect, List<String> list, Consumer<String> func, int[] selectedItems) {
+        popup = new Popup(nameRect, list, func, selectedItems);
         ignoreMouseUp = true;
     }
 
@@ -263,6 +265,20 @@ public class GUI {
         return Toggle(b, r.x + r.width - 15, r.y, on, off);
     }
 
+    //Create a check box toggle using a rect
+    public static boolean Toggle(boolean b, Rect r, GUIStyle on, GUIStyle off) {
+        //Set the style based on whether it's true or false
+        GUIStyle s;
+        if (b) s = on;
+        else s = off;
+
+        //If we click on it, return the opposite value
+        if (GUI.Button("", r, s, s)) return !b;
+
+        //Else, return the same value we had
+        return b;
+    }
+
     //Create a check box toggle
     public static boolean Toggle(boolean b, float x, float y, GUIStyle on, GUIStyle off) {
         //Set the style based on whether it's true or false
@@ -377,6 +393,8 @@ public class GUI {
     //Draw a texture of a given scale at a given position with a given uv coordinate
     public static void DrawTextureWithTexCoords(Texture tex, Rect drawRect, Rect uv, Color c) {
         //If we have an area, get the intersection between this rect and the current rect
+        //if(area == null) return;
+        //Rect r = area.GetIntersection(new Rect(drawRect.x + area.x, drawRect.y + area.y, drawRect.width, drawRect.height));
         GUIArea a = areas.get(area);
         if (a.culled == null) return;
         //Rect r = a.area.GetIntersection(new Rect(drawRect.x + a.area.x, (drawRect.y + a.area.y) - a.Scroll(), drawRect.width, drawRect.height));

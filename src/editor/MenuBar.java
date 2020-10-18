@@ -23,6 +23,7 @@ public class MenuBar {
     private final GUIStyle stop;
     private String selected;
     private Color prevColor;
+    private int selectedIndex = 0;
 
     public MenuBar() {
         box = Editor.skin.Get("Box");
@@ -36,6 +37,27 @@ public class MenuBar {
         Add("File", new MenuItem("Quit", this::File));
         Add("Asset", new MenuItem("New GameObject", this::Asset));
         Add("Create", new MenuItem("Macs Tileset", this::Create));
+
+        if (Editor.snapping.x == 1) selectedIndex = 0;
+        else if (Editor.snapping.x == 8) selectedIndex = 1;
+        else if (Editor.snapping.x == 16) selectedIndex = 2;
+        else if (Editor.snapping.x == 32) selectedIndex = 3;
+        else selectedIndex = 4;
+        Add("Snapping", new MenuItem("1x1", this::Snapping));
+        Add("Snapping", new MenuItem("8x8", this::Snapping));
+        Add("Snapping", new MenuItem("16x16", this::Snapping));
+        Add("Snapping", new MenuItem("32x32", this::Snapping));
+        Add("Snapping", new MenuItem("64x64", this::Snapping));
+    }
+
+    public void Add(String parent, MenuItem item) {
+        List<MenuItem> menuItem = menu.get(parent);
+
+        if (menuItem == null) {
+            menuItem = new ArrayList<MenuItem>();
+            menu.put(parent, menuItem);
+        }
+        menuItem.add(item);
     }
 
     private static void AddAssets(String path, JarOutputStream jos) {
@@ -54,6 +76,16 @@ public class MenuBar {
         }
     }
 
+    public void Clicked(String v) {
+        List<MenuItem> list = menu.get(selected);
+        for (MenuItem item : list) {
+            if (item.name.equals(v)) {
+                item.Accept();
+                return;
+            }
+        }
+    }
+
     private static void AddAsset(File f, JarOutputStream jos) throws FileNotFoundException {
         BufferedInputStream in = new BufferedInputStream(new FileInputStream(f));
         try {
@@ -62,98 +94,6 @@ public class MenuBar {
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println(f.getName() + " could not write bytes!");
-        }
-    }
-
-    private static void AddBehaviours(JarOutputStream jos) throws IOException {
-        System.out.println("Exporting Behaviours...");
-
-        List<LogicBehaviour> behaviours = EditorUtil.GetImportedClasses();
-        for (int i = 0; i < behaviours.size(); i++) {
-            Class<?> c = behaviours.get(i).getClass();
-            String path = c.getName().replace('.', '/') + ".class";
-            jos.putNextEntry(new JarEntry(path));
-            InputStream is = c.getClassLoader().getResourceAsStream(path);
-            WriteBytes(is, jos);
-        }
-    }
-
-    private static void WriteBytes(InputStream is, JarOutputStream jos) throws IOException {
-        byte[] buffer = new byte[4096];
-        int bytesRead = 0;
-        while ((bytesRead = is.read(buffer)) != -1) jos.write(buffer, 0, bytesRead);
-        is.close();
-        jos.flush();
-        jos.closeEntry();
-    }
-
-    public void Add(String parent, MenuItem item) {
-        List<MenuItem> menuItem = menu.get(parent);
-
-        if (menuItem == null) {
-            menuItem = new ArrayList<MenuItem>();
-            menu.put(parent, menuItem);
-        }
-        menuItem.add(item);
-    }
-
-    public void Render() {
-        float w = Application.Width();
-        if (selected != null) {
-            if (GUI.HasPopup() == false) selected = null;
-        }
-
-        GUI.Box(new Rect(0, 0, w, 30), box);
-
-        prevColor = GUI.textColor;
-        GUI.textColor = Color.white;
-
-        float offset = 0;
-        float index = 0;
-        for (String m : menu.keySet()) {
-            float width = GUI.font.StringWidth(m) + 10;
-            Rect nameRect = new Rect(offset - index, 0, width, 30);
-            if (selected == null) {
-                if (GUI.CenteredButton(m, nameRect, empty, box)) {
-                    List<MenuItem> list = menu.get(m);
-                    List<String> v = new ArrayList<String>();
-                    for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
-                    GUI.SetPopup(nameRect, v, this::Clicked);
-                    selected = m;
-                }
-            } else {
-                if (selected.equals(m)) GUI.CenteredButton(m, nameRect, box, box);
-                else {
-                    if (GUI.CenteredButton(m, nameRect, empty, box)) {
-                        List<MenuItem> list = menu.get(m);
-                        List<String> v = new ArrayList<String>();
-                        for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
-                        GUI.SetPopup(nameRect, v, this::Clicked);
-                        selected = m;
-                    }
-                }
-            }
-            offset += width;
-            index++;
-        }
-
-        GUIStyle style = play;
-        boolean isPlaying = Editor.IsPlaying();
-        if (isPlaying) {
-            style = stop;
-        }
-        if (GUI.Button("", new Rect(offset - index + 4, 8, 16, 16), style, style)) Editor.Play(!isPlaying);
-
-        GUI.textColor = prevColor;
-    }
-
-    public void Clicked(String v) {
-        List<MenuItem> list = menu.get(selected);
-        for (MenuItem item : list) {
-            if (item.name.equals(v)) {
-                item.Accept();
-                return;
-            }
         }
     }
 
@@ -218,10 +158,156 @@ public class MenuBar {
         if (m.name.equals("New GameObject")) new GameObject("New GameObject");
     }
 
+    private static void AddBehaviours(JarOutputStream jos) throws IOException {
+        System.out.println("Exporting Behaviours...");
+
+        List<LogicBehaviour> behaviours = EditorUtil.GetImportedClasses();
+        for (int i = 0; i < behaviours.size(); i++) {
+            Class<?> c = behaviours.get(i).getClass();
+            String path = c.getName().replace('.', '/') + ".class";
+            jos.putNextEntry(new JarEntry(path));
+            InputStream is = c.getClassLoader().getResourceAsStream(path);
+            WriteBytes(is, jos);
+        }
+    }
+
+    private static void WriteBytes(InputStream is, JarOutputStream jos) throws IOException {
+        byte[] buffer = new byte[4096];
+        int bytesRead = 0;
+        while ((bytesRead = is.read(buffer)) != -1) jos.write(buffer, 0, bytesRead);
+        is.close();
+        jos.flush();
+        jos.closeEntry();
+    }
+
+    public void Render() {
+        float w = Application.Width();
+        if (selected != null) {
+            if (GUI.HasPopup() == false) selected = null;
+        }
+
+        GUI.Box(new Rect(0, 0, w, 30), box);
+
+        prevColor = GUI.textColor;
+        GUI.textColor = Color.white;
+
+        float offset = 0;
+        float index = 0;
+        for (String m : menu.keySet()) {
+            float width = GUI.font.StringWidth(m) + 10;
+            Rect nameRect = new Rect(offset - index, 0, width, 30);
+            if (selected == null) {
+                if (GUI.CenteredButton(m, nameRect, empty, box)) {
+                    List<MenuItem> list = menu.get(m);
+                    List<String> v = new ArrayList<String>();
+                    for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
+                    if (m.equals("Snapping")) GUI.SetPopup(nameRect, v, this::Clicked, new int[]{selectedIndex});
+                    else GUI.SetPopup(nameRect, v, this::Clicked, null);
+                    selected = m;
+                }
+            } else {
+                if (selected.equals(m)) GUI.CenteredButton(m, nameRect, box, box);
+                else {
+                    if (GUI.CenteredButton(m, nameRect, empty, box)) {
+                        List<MenuItem> list = menu.get(m);
+                        List<String> v = new ArrayList<String>();
+                        for (int i = 0; i < list.size(); i++) v.add(list.get(i).name);
+                        GUI.SetPopup(nameRect, v, this::Clicked, null);
+                        selected = m;
+                    }
+                }
+            }
+            offset += width;
+            index++;
+        }
+
+        GUIStyle style = play;
+        boolean isPlaying = Editor.IsPlaying();
+        if (isPlaying) {
+            style = stop;
+        }
+        if (GUI.Button("", new Rect(offset - index + 4, 8, 16, 16), style, style)) Editor.Play(!isPlaying);
+
+        GUI.textColor = prevColor;
+    }
+
+    public void Snapping(MenuItem m) {
+        if (m.name.equals("1x1")) {
+            Editor.snapping.Set(1, 1);
+            selectedIndex = 0;
+        }
+        if (m.name.equals("8x8")) {
+            Editor.snapping.Set(8, 8);
+            selectedIndex = 1;
+        }
+        if (m.name.equals("16x16")) {
+            Editor.snapping.Set(16, 16);
+            selectedIndex = 2;
+        }
+        if (m.name.equals("32x32")) {
+            Editor.snapping.Set(32, 32);
+            selectedIndex = 3;
+        }
+        if (m.name.equals("64x64")) {
+            Editor.snapping.Set(64, 64);
+            selectedIndex = 4;
+        }
+    }
+
     public void Create(MenuItem m) {
         if (m.name.equals("Macs Tileset")) {
             Debug.Log("This feature is in development and is currently disabled!");
             System.err.println("Tileset creation is currently in development and is disabled! Sprite reformatting also needs to be done before this feature is unlocked and useable.");
+			/*
+			String result = Dialog.InputDialog("What material will you use?", "");
+			Material mat = Material.Get(result);
+
+			if(mat == null)
+			{
+				Debug.Log("Creating a macs tileset requires that you use a pre-existing material!");
+				return;
+			}
+			for(int y = 0; y < 16; y++)
+			{
+				for(int x = 0; x < 16; x++)
+				{
+					if(x % 2 == 0)
+					{
+						try
+						{
+							Sprite s = Editor.projectPanel().CreateSprite(mat.Name() + "_" + x + "_" + y);
+							s.material = mat;
+							s.offset = new Rect(x * 32, y * 32, 32, 32);
+							Editor.projectPanel().SaveSprite(s);
+						}
+						catch (IOException e) {e.printStackTrace();}
+
+						if(y % 3 == 0)
+						{
+							try
+							{
+								Sprite s = Editor.projectPanel().CreateSprite(mat.Name() + "_" + x + "_" + y + "_Center");
+								s.material = mat;
+								s.offset = new Rect(x * 32 + 16, y * 32 + 48, 32, 32);
+								Editor.projectPanel().SaveSprite(s);
+							}
+							catch (IOException e) {e.printStackTrace();}
+						}
+					}
+					else
+					{
+						try
+						{
+							Sprite s = Editor.projectPanel().CreateSprite(mat.Name() + "_" + x + "_" + y);
+							s.material = mat;
+							s.offset = new Rect(x * 32, y * 32, 32, 32);
+							Editor.projectPanel().SaveSprite(s);
+						}
+						catch (IOException e) {e.printStackTrace();}
+					}
+				}
+			}
+			*/
         }
     }
 

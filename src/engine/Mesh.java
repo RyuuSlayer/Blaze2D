@@ -13,10 +13,11 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Mesh {
-    private static final List<Mesh> meshList = new ArrayList<Mesh>();
     private final int v_id;
     private final int u_id;
     private final int vao;
+
+    private static final List<Mesh> meshList = new ArrayList<Mesh>();
 
     //Creates a mesh using specified verts and uv's
     public Mesh(float[] vertices, float[] uvs) {
@@ -39,12 +40,6 @@ public class Mesh {
 
         //Add this mesh to our list of meshes
         meshList.add(this);
-    }
-
-    //Static function to clean up all meshes
-    public static void CleanAllMesh() {
-        //For every mesh, call the local cleanup on it
-        for (int i = 0; i < meshList.size(); i++) meshList.get(i).CleanUp();
     }
 
     public void Render() {
@@ -89,5 +84,11 @@ public class Mesh {
         //Delete the vertex array object and delete the vertices buffer
         GL30.glDeleteVertexArrays(vao);
         GL15.glDeleteBuffers(v_id);
+    }
+
+    //Static function to clean up all meshes
+    public static void CleanAllMesh() {
+        //For every mesh, call the local cleanup on it
+        for (int i = 0; i < meshList.size(); i++) meshList.get(i).CleanUp();
     }
 }

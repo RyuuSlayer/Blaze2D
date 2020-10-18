@@ -16,11 +16,10 @@ import math.Vector2;
 import math.Matrix4x4;
 import engine.SpriteRenderer;
 
-public class Play extends LogicBehaviour
-{
-	public int b = 0;
-	public void Update()
-	{
-		
-	}
+public class Play extends LogicBehaviour {
+    public int b = 0;
+
+    public void Update() {
+
+    }
 }
