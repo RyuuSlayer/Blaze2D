@@ -1,11 +1,6 @@
 package math;
 
 public class Color {
-    public float r = 1;
-    public float g = 1;
-    public float b = 1;
-    public float a = 1;
-
     public static final Color black = new Color(0, 0, 0);
     public static final Color white = new Color(1, 1, 1);
     public static final Color red = new Color(1, 0, 0);
@@ -17,6 +12,10 @@ public class Color {
     public static final Color yellow = new Color(1, 1, 0);
     public static final Color cyan = new Color(0, 1, 1);
     public static final Color magenta = new Color(1, 0, 1);
+    public float r = 1;
+    public float g = 1;
+    public float b = 1;
+    public float a = 1;
 
     //Color constructor with alpha
     public Color(float r, float g, float b, float a) {

@@ -20,123 +20,123 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class EditorUtil {
-    private static final List<LogicBehaviour> importedClasses = new ArrayList<LogicBehaviour>();
-    private static int i;
+	private static final List<LogicBehaviour> importedClasses = new ArrayList<LogicBehaviour>();
+	private static int i;
 
-    public static List<LogicBehaviour> GetImportedClasses() {
-        return importedClasses;
-    }
+	public static List<LogicBehaviour> GetImportedClasses() {
+		return importedClasses;
+	}
 
-    public static LogicBehaviour ImportClass(String path) {
-        InputStream stream = null;
-        try {
-            stream = new FileInputStream(path);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        if (stream == null) return null;
+	public static LogicBehaviour ImportClass(String path) {
+		InputStream stream = null;
+		try {
+			stream = new FileInputStream(path);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (stream == null) return null;
 
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        String seperator = System.getProperty("line.separator");
-        String tempProperty = System.getProperty("java.io.tmpdir");
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		String seperator = System.getProperty("line.separator");
+		String tempProperty = System.getProperty("java.io.tmpdir");
 
-        String[] name = path.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
-        Path srcPath = Paths.get(tempProperty, name[name.length - 1]);
+		String[] name = path.replaceAll(Pattern.quote("\\"), "\\\\").split("\\\\");
+		Path srcPath = Paths.get(tempProperty, name[name.length - 1]);
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        try {
-            Files.write(srcPath, reader.lines().collect(Collectors.joining(seperator)).getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        compiler.run(null, null, null, srcPath.toString());
-        Path p = srcPath.getParent().resolve(name[name.length - 1].split("\\.")[0] + ".class");
+		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
+		try {
+			Files.write(srcPath, reader.lines().collect(Collectors.joining(seperator)).getBytes(StandardCharsets.UTF_8));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		compiler.run(null, null, null, srcPath.toString());
+		Path p = srcPath.getParent().resolve(name[name.length - 1].split("\\.")[0] + ".class");
 
-        URL classURL = null;
-        try {
-            classURL = p.getParent().toFile().toURI().toURL();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        if (classURL == null) return null;
+		URL classURL = null;
+		try {
+			classURL = p.getParent().toFile().toURI().toURL();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		if (classURL == null) return null;
 
-        URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{classURL});
+		URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{classURL});
 
-        Class<?> myClass = null;
-        try {
-            myClass = classLoader.loadClass(name[name.length - 1].split("\\.")[0]);
-        } catch (ClassNotFoundException e1) {
-            e1.printStackTrace();
-        }
-        if (myClass == null) return null;
+		Class<?> myClass = null;
+		try {
+			myClass = classLoader.loadClass(name[name.length - 1].split("\\.")[0]);
+		} catch (ClassNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		if (myClass == null) return null;
 
-        //Return if class is not LogicBehaviour, but isn't compiling correctly
-        //if(!LogicBehaviour.class.isAssignableFrom(myClass)) return;
+		//Return if class is not LogicBehaviour, but isn't compiling correctly
+		//if(!LogicBehaviour.class.isAssignableFrom(myClass)) return;
 
-        LogicBehaviour l = null;
-        try {
-            l = (LogicBehaviour) myClass.getConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-            e.printStackTrace();
-        }
-        if (l == null) return null;
+		LogicBehaviour l = null;
+		try {
+			l = (LogicBehaviour) myClass.getConstructor().newInstance();
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+			e.printStackTrace();
+		}
+		if (l == null) return null;
 
-        l.f = new File(Editor.WorkingDirectory() + "Scripts/" + l.Name() + ".java");
-        l.lastModified = l.f.lastModified();
+		l.f = new File(Editor.WorkingDirectory() + "Scripts/" + l.Name() + ".java");
+		l.lastModified = l.f.lastModified();
 
-        for (i = 0; i < importedClasses.size(); i++) {
-            if (importedClasses.get(i).Name().equals(l.Name())) {
-                importedClasses.set(i, l);
-                return l;
-            }
-        }
-        importedClasses.add(l);
-        return l;
-    }
+		for (i = 0; i < importedClasses.size(); i++) {
+			if (importedClasses.get(i).Name().equals(l.Name())) {
+				importedClasses.set(i, l);
+				return l;
+			}
+		}
+		importedClasses.add(l);
+		return l;
+	}
 
-    public static void RefreshAllScripts() {
-        for (i = 0; i < importedClasses.size(); i++) {
-            LogicBehaviour b = importedClasses.get(i);
-            if (b.f == null) return;
-            File temp = new File(b.f.getAbsolutePath());
-            if (!temp.exists()) return;
+	public static void RefreshAllScripts() {
+		for (i = 0; i < importedClasses.size(); i++) {
+			LogicBehaviour b = importedClasses.get(i);
+			if (b.f == null) return;
+			File temp = new File(b.f.getAbsolutePath());
+			if (!temp.exists()) return;
 
-            if (temp.lastModified() == b.lastModified) return;
+			if (temp.lastModified() == b.lastModified) return;
 
-            b = ImportClass(temp.getAbsolutePath());
+			b = ImportClass(temp.getAbsolutePath());
 
-            List<GameObject> goList = GameObject.Instances();
-            for (int g = 0; g < goList.size(); g++) goList.get(g).RefreshComponent(b);
-            Editor.RefreshInspected();
-        }
-    }
+			List<GameObject> goList = GameObject.Instances();
+			for (int g = 0; g < goList.size(); g++) goList.get(g).RefreshComponent(b);
+			Editor.RefreshInspected();
+		}
+	}
 
-    public static LogicBehaviour GetBehaviour(String name) {
-        for (i = 0; i < importedClasses.size(); i++) {
-            if (importedClasses.get(i).Name().equals(name)) {
-                try {
-                    return importedClasses.get(i).getClass().getConstructor().newInstance();
-                } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return null;
-    }
+	public static LogicBehaviour GetBehaviour(String name) {
+		for (i = 0; i < importedClasses.size(); i++) {
+			if (importedClasses.get(i).Name().equals(name)) {
+				try {
+					return importedClasses.get(i).getClass().getConstructor().newInstance();
+				} catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
+	}
 
-    public static void CleanUp() {
-        String path;
-        File javaFile;
-        File classFile;
+	public static void CleanUp() {
+		String path;
+		File javaFile;
+		File classFile;
 
-        for (i = 0; i < importedClasses.size(); i++) {
-            LogicBehaviour l = importedClasses.get(i);
-            path = l.getClass().getProtectionDomain().getCodeSource().getLocation() + l.Name();
-            javaFile = new File(path + ".java");
-            classFile = new File(path + ".class");
+		for (i = 0; i < importedClasses.size(); i++) {
+			LogicBehaviour l = importedClasses.get(i);
+			path = l.getClass().getProtectionDomain().getCodeSource().getLocation() + l.Name();
+			javaFile = new File(path + ".java");
+			classFile = new File(path + ".class");
 
-            javaFile.delete();
-            classFile.delete();
-        }
-    }
+			javaFile.delete();
+			classFile.delete();
+		}
+	}
 }

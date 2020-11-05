@@ -1,7 +1,7 @@
 package gui;
 
-import engine.Rect;
 import engine.Texture;
+import math.Rect;
 
 public class GUIStyle {
     public String name;

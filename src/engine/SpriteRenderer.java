@@ -2,6 +2,7 @@ package engine;
 
 import gui.Sprite;
 import math.Matrix4x4;
+import math.Rect;
 import math.Vector2;
 
 public class SpriteRenderer extends LogicBehaviour {

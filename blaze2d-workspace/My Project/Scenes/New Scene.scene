@@ -13,9 +13,12 @@
 	</B>
 	<B Name"game.Test">
 		<V moveSpeed="60.0">
+		<V s="Something">
 		<V enabled="true">
 	</B>
-	<B Name"physics.BoxCollider">
+	<B Name"physics.AABBCollider">
+		<V size="28.0 42.0">
+		<V anchor="0.0 0.0">
 		<V isTrigger="false">
 		<V enabled="true">
 	</B>
@@ -216,20 +219,12 @@
 		<V anchor="0.0 0.0">
 		<V enabled="true">
 	</B>
-	<B Name"physics.BoxCollider">
-		<V isTrigger="false">
-		<V enabled="true">
-	</B>
 	<P Name="Tables">
 </G>
 <G Name="Macs_14_6" Position="32.0 -64.0" Scale="1.0 1.0" Rotation="0.0" Depth="0.1" Layer="0" ID="15c7e59d-417b-4fca-bc0f-7750f749dace">
 	<B Name"engine.SpriteRenderer">
 		<V sprite="Macs_14_6">
 		<V anchor="0.0 0.0">
-		<V enabled="true">
-	</B>
-	<B Name"physics.BoxCollider">
-		<V isTrigger="false">
 		<V enabled="true">
 	</B>
 	<P Name="Tables">
@@ -258,15 +253,17 @@
 		<V anchor="0.0 0.0">
 		<V enabled="true">
 	</B>
+	<B Name"physics.AABBCollider">
+		<V size="32.0 32.0">
+		<V anchor="0.0 0.0">
+		<V isTrigger="false">
+		<V enabled="true">
+	</B>
 </G>
 <G Name="Stone Hole" Position="-32.0 -64.0" Scale="1.0 1.0" Rotation="0.0" Depth="0.1" Layer="0" ID="9c681ca1-acee-4ffc-84fb-f08730027a30">
 	<B Name"engine.SpriteRenderer">
 		<V sprite="Macs_10_3">
 		<V anchor="0.0 0.0">
-		<V enabled="true">
-	</B>
-	<B Name"physics.BoxCollider">
-		<V isTrigger="false">
 		<V enabled="true">
 	</B>
 </G>
@@ -276,7 +273,9 @@
 		<V anchor="0.0 0.0">
 		<V enabled="true">
 	</B>
-	<B Name"physics.BoxCollider">
+	<B Name"physics.CircleCollider">
+		<V radius="16.0">
+		<V anchor="16.0 16.0">
 		<V isTrigger="false">
 		<V enabled="true">
 	</B>
