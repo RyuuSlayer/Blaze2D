@@ -27,89 +27,89 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Core {
-	public static void main(String[] args) {
-		Editor.InitConfig();
+    public static void main(String[] args) {
+        Editor.InitConfig();
 
-		InputStream is = Core.class.getResourceAsStream("/Project.Settings");
-		if (is == null) EngineBootLoader.Init();
-		else {
-			ProjectSettings.Load(new BufferedReader(new InputStreamReader(is)), false);
-		}
+        InputStream is = Core.class.getResourceAsStream("/Project.Settings");
+        if (is == null) EngineBootLoader.Init();
+        else {
+            ProjectSettings.Load(new BufferedReader(new InputStreamReader(is)), false);
+        }
 
-		//Create the window
-		long window = Application.Init();
+        //Create the window
+        long window = Application.Init();
 
-		//Audio initialization
-		long device = ALC10.alcOpenDevice((ByteBuffer) null);
-		ALCCapabilities deviceCaps = ALC.createCapabilities(device);
-		long context = ALC10.alcCreateContext(device, (IntBuffer) null);
-		ALC10.alcMakeContextCurrent(context);
-		AL.createCapabilities(deviceCaps);
+        //Audio initialization
+        long device = ALC10.alcOpenDevice((ByteBuffer) null);
+        ALCCapabilities deviceCaps = ALC.createCapabilities(device);
+        long context = ALC10.alcCreateContext(device, (IntBuffer) null);
+        ALC10.alcMakeContextCurrent(context);
+        AL.createCapabilities(deviceCaps);
 
-		Color clear = Color.black;
+        Color clear = Color.black;
 
-		AssetDatabase.LoadAllResources();
+        AssetDatabase.LoadAllResources();
 
-		//Initialize the GUI
-		GUI.Init();
-		Editor.Init();
-		Renderer.Init();
-		Time.Init();
+        //Initialize the GUI
+        GUI.Init();
+        Editor.Init();
+        Renderer.Init();
+        Time.Init();
 
-		SceneManager.LoadScene("New Scene");
+        SceneManager.LoadScene("New Scene");
 
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-		//While the application should not be closed
-		while (!glfwWindowShouldClose(window)) {
-			//At the start, poll events
-			Mouse.Reset();
-			Input.Reset();
-			glfwPollEvents();
-			Time.Process();
+        //While the application should not be closed
+        while (!glfwWindowShouldClose(window)) {
+            //At the start, poll events
+            Mouse.Reset();
+            Input.Reset();
+            glfwPollEvents();
+            Time.Process();
 
-			if (!Application.IsMinimized()) {
-				//Before drawing, clear what's been drawn previously and set the background color
-				glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            if (!Application.IsMinimized()) {
+                //Before drawing, clear what's been drawn previously and set the background color
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-				if (ProjectSettings.isEditor) Editor.Render();
-				GameObject.PrepareObjects();
+                if (ProjectSettings.isEditor) Editor.Render();
+                GameObject.PrepareObjects();
 
-				if (!ProjectSettings.isEditor) {
-					Renderer.Render(new Rect(0, 0, Application.Width(), Application.Height()), null);
-				} else if (Editor.IsPlaying()) {
-					Renderer.Render(new Rect(0, 30, Application.Width(), Application.Height() - 60), null);
-				} else {
-					Renderer.Render(Editor.GetSceneDrawArea(), Editor.cameraPosition);
-				}
+                if (!ProjectSettings.isEditor) {
+                    Renderer.Render(new Rect(0, 0, Application.Width(), Application.Height()), null);
+                } else if (Editor.IsPlaying()) {
+                    Renderer.Render(new Rect(0, 30, Application.Width(), Application.Height() - 60), null);
+                } else {
+                    Renderer.Render(Editor.GetSceneDrawArea(), Editor.cameraPosition);
+                }
 
-				glClearColor(clear.r, clear.g, clear.b, 1);
+                glClearColor(clear.r, clear.g, clear.b, 1);
 
-				GUI.Prepare();
-				GUI.Label("FPS: " + Time.FrameRate(), new Vector2(Application.Width() - 65, 3));
-				GUI.DrawPopup();
-				engine.Object dragged = Editor.DraggedObject();
-				if (dragged != null) Editor.DrawDragged();
-				GUI.Unbind();
-			}
-			GUI.checkDrag = 0;
+                GUI.Prepare();
+                GUI.Label("FPS: " + Time.FrameRate(), new Vector2(Application.Width() - 65, 3));
+                GUI.DrawPopup();
+                engine.Object dragged = Editor.DraggedObject();
+                if (dragged != null) Editor.DrawDragged();
+                GUI.Unbind();
+            }
+            GUI.checkDrag = 0;
 
-			//At the very end, swap the buffers
-			glfwSwapBuffers(window);
-		}
+            //At the very end, swap the buffers
+            glfwSwapBuffers(window);
+        }
 
-		if (ProjectSettings.isEditor) Editor.SaveConfig(new File(Editor.workspaceDirectory + "config.properties"));
+        if (ProjectSettings.isEditor) Editor.SaveConfig(new File(Editor.workspaceDirectory + "config.properties"));
 
-		//Cleanup the memory
-		AudioClip.CleanUp();
-		AudioSource.CleanUp();
-		Texture.CleanUp();
-		Mesh.CleanAllMesh();
-		EditorUtil.CleanUp();
-		ALC10.alcCloseDevice(device);
+        //Cleanup the memory
+        AudioClip.CleanUp();
+        AudioSource.CleanUp();
+        Texture.CleanUp();
+        Mesh.CleanAllMesh();
+        EditorUtil.CleanUp();
+        ALC10.alcCloseDevice(device);
 
-		//Destroy the window
-		glfwTerminate();
-	}
+        //Destroy the window
+        glfwTerminate();
+    }
 }

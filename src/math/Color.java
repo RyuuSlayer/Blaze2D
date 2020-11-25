@@ -37,6 +37,10 @@ public class Color {
     }
 
     //Returns a string that contains the color values
+    public String ToShortString() {
+        return r + "," + g + "," + b + "," + a;
+    }
+
     public String ToString() {
         return "(" + r + ", " + g + ", " + b + ", " + a + ")";
     }
