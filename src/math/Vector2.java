@@ -54,6 +54,20 @@ public class Vector2 implements Cloneable {
         return end.Sub(start).Normalized();
     }
 
+    public static Vector2 Intersection(Vector2 start1, Vector2 end1, Vector2 start2, Vector2 end2) {
+        float denom = (end2.y - start2.y) * (end1.x - start1.x) - (end2.x - start2.x) * (end1.y - start1.y);
+        if (denom == 0) {
+            return null;
+        }
+
+        float a = ((end2.x - start2.x) * (start1.y - start2.y) - (end2.y - start2.y) * (start1.x - start2.x)) / denom;
+        float b = ((end1.x - start1.x) * (start1.y - start2.y) - (end1.y - start1.y) * (start1.x - start2.x)) / denom;
+        if (a >= 0 && a <= 1 && b >= 0 && b <= 1) {
+            return new Vector2(start1.x + a * (end1.x - start1.x), start1.y + a * (end1.y - start1.y));
+        }
+        return null;
+    }
+
     public void Set(Vector2 v) {
         x = v.x;
         y = v.y;
@@ -122,6 +136,14 @@ public class Vector2 implements Cloneable {
 
     public float SqrLength() {
         return x * x + y * y;
+    }
+
+    public float Min() {
+        return Math.min(x, y);
+    }
+
+    public float Max() {
+        return Math.max(x, y);
     }
 
     public Vector2 Floor() {

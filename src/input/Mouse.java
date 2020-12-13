@@ -12,21 +12,24 @@ import java.nio.DoubleBuffer;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Mouse extends GLFWMouseButtonCallback {
-    private static final byte[] buttons = new byte[8];
-    private static final byte[] buttonsDown = new byte[8];
-    private static final byte[] buttonsUp = new byte[8];
-    private static final long[] cursors = new long[4];
     private static byte anyButton = 0;
     private static byte anyButtonDown = 0;
     private static byte anyButtonUp = 0;
+    private static final byte[] buttons = new byte[8];
+    private static final byte[] buttonsDown = new byte[8];
+    private static final byte[] buttonsUp = new byte[8];
+
     private static int i;
     private static long window;
     private static DoubleBuffer xBuffer;
     private static DoubleBuffer yBuffer;
+
     private static int scroll = 0;
     private static byte doubleClicked = 0;
     private static float lastUp = 0;
+
     private static int currentCursor = 0;
+    private static final long[] cursors = new long[4];
 
     public Mouse() {
         window = Application.Window();

@@ -9,9 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Collider extends LogicBehaviour {
+    static List<Collider> colliders = new ArrayList<Collider>();
     private static final List<Collider> movers = new ArrayList<Collider>();
     private static final List<Collider> solids = new ArrayList<Collider>();
-    static List<Collider> colliders = new ArrayList<Collider>();
     public boolean isTrigger = false;
 
     public static void Clear() {
@@ -38,14 +38,20 @@ public class Collider extends LogicBehaviour {
                 Collider solid = solids.get(s);
                 if (mover instanceof BoundsCollider && solid instanceof BoundsCollider)
                     CompareCollision((BoundsCollider) mover, (BoundsCollider) solid);
+
                 else if (mover instanceof AABBCollider && solid instanceof AABBCollider)
                     CompareCollision((AABBCollider) mover, (AABBCollider) solid);
-                else if (mover instanceof CircleCollider && solid instanceof CircleCollider)
-                    CompareCollision((CircleCollider) mover, (CircleCollider) solid);
                 else if (mover instanceof AABBCollider && solid instanceof CircleCollider)
                     CompareCollision((AABBCollider) mover, (CircleCollider) solid, 0);
+                else if (mover instanceof AABBCollider && solid instanceof LineCollider)
+                    CompareCollision((AABBCollider) mover, (LineCollider) solid);
+
+                else if (mover instanceof CircleCollider && solid instanceof CircleCollider)
+                    CompareCollision((CircleCollider) mover, (CircleCollider) solid);
                 else if (mover instanceof CircleCollider && solid instanceof AABBCollider)
-                    CompareCollision((AABBCollider) mover, (CircleCollider) solid, 1);
+                    CompareCollision((AABBCollider) solid, (CircleCollider) mover, 1);
+                else if (mover instanceof CircleCollider && solid instanceof LineCollider)
+                    CompareCollision((CircleCollider) mover, (LineCollider) solid);
             }
             mover.gameObject.ResetDirty();
             solids.add(mover);
@@ -98,7 +104,7 @@ public class Collider extends LogicBehaviour {
         }
     }
 
-
+    //Bounds Collider vs Bounds Collider
     private static void CompareCollision(BoundsCollider mover, BoundsCollider solid) {
         SpriteRenderer moverRenderer = mover.gameObject.GetRenderer();
         SpriteRenderer solidRenderer = solid.gameObject.GetRenderer();
@@ -148,6 +154,41 @@ public class Collider extends LogicBehaviour {
         }
     }
 
+    private static void CompareCollision(AABBCollider mover, LineCollider solid) {
+        List<Vector2> corners = mover.GetCorners();
+        Vector2 start = corners.get(0);
+        Vector2 center = start.Add(corners.get(2).Sub(start).Mul(0.5f));
+
+        Vector2 lineStart = solid.GetWorldStart();
+        Vector2 lineEnd = solid.GetWorldEnd();
+
+        int collided = 0;
+        for (int i = 0; i < 4; i++) {
+            Vector2 corner = corners.get(i);
+            if (Vector2.Intersection(center, corner, lineStart, lineEnd) != null) {
+                Vector2 projection = corner.Project(lineStart, lineEnd);
+                mover.gameObject.Move(projection.Sub(corner));
+            }
+        }
+        if (collided == 0) {
+            for (int i = 0; i < 4; i++) {
+                Vector2 corner = corners.get(i);
+                Vector2 next = corners.get((i + 1) % corners.size());
+
+                if (Vector2.Intersection(corner, next, lineStart, lineEnd) != null) {
+                    Rect r = new Rect(start, corners.get(2).Sub(corners.get(0)));
+                    if (r.Contains(lineStart)) {
+                        Vector2 projection = lineStart.Project(corner, next);
+                        mover.gameObject.Move(lineStart.Sub(projection));
+                    } else if (r.Contains(lineEnd)) {
+                        Vector2 projection = lineEnd.Project(corner, next);
+                        mover.gameObject.Move(lineEnd.Sub(projection));
+                    }
+                }
+            }
+        }
+    }
+
     private static void CompareCollision(AABBCollider aabb, CircleCollider circle, int moverStatus) {
         Vector2 center = circle.Center();
         Vector2 closestPoint = center.Project(aabb.GetCorners());
@@ -166,5 +207,28 @@ public class Collider extends LogicBehaviour {
                 else circle.gameObject.Move(offset.Neg());
             }
         }
+    }
+
+    private static void CompareCollision(CircleCollider circle, LineCollider line) {
+        Vector2 start = line.GetWorldStart();
+        Vector2 end = line.GetWorldEnd();
+        Vector2 center = circle.Center();
+
+        Vector2 proj = center.Project(start, end);
+        float distance = Vector2.Distance(center, proj);
+        if (distance < circle.radius) {
+            if (line.isTrigger || circle.isTrigger) {
+                line.gameObject.CallTriggerCallback();
+                circle.gameObject.CallTriggerCallback();
+            } else {
+                line.gameObject.CallCollisionCallback();
+                circle.gameObject.CallCollisionCallback();
+
+                circle.gameObject.Move((Vector2.Direction(center, proj).Mul(circle.radius - distance)).Neg());
+            }
+        }
+    }
+
+    public void Init() {
     }
 }

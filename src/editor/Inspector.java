@@ -4,6 +4,7 @@ import engine.*;
 import gui.*;
 import math.Rect;
 import math.Vector2;
+import physics.Collider;
 import sound.AudioClip;
 
 import java.util.ArrayList;
@@ -11,11 +12,11 @@ import java.util.List;
 
 public class Inspector extends engine.Object {
     private final List<BehaviourAttributes> a = new ArrayList<BehaviourAttributes>();
-    private final GUIStyle window;
     private List<LogicBehaviour> l = new ArrayList<LogicBehaviour>();
     private int i = 0;
     private int offsetY = 0;
     private int scroll = 0;
+    private final GUIStyle window;
 
     public Inspector() {
         window = Editor.skin.Get("Window");
@@ -81,7 +82,10 @@ public class Inspector extends engine.Object {
                 if (output == null) return;
 
                 LogicBehaviour l = selected.AddComponent(output);
-                if (l != null) SetAttributes(selected, true);
+                if (l != null) {
+                    if (l instanceof Collider) ((Collider) l).Init();
+                    SetAttributes(selected, true);
+                }
             }
             offsetY = 0;
         } else {

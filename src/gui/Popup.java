@@ -12,12 +12,12 @@ public class Popup {
     private final Rect nameArea;
     private final List<String> list;
     private final Consumer<String> func;
-    private final Rect listArea;
-    private final GUIStyle box;
-    private final int[] selected;
     private int i;
     private int g;
+    private final Rect listArea;
+    private final GUIStyle box;
     private Color prevColor;
+    private final int[] selected;
 
     public Popup(Rect nameArea, List<String> list, Consumer<String> func, int[] selected) {
         this.selected = selected;

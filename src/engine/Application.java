@@ -18,9 +18,9 @@ import static org.lwjgl.opengl.GL11.glClearColor;
 public class Application {
     private static final Vector2 size = new Vector2(1200, 600);
     private static final Rect r = new Rect();
-    //Window specific variables
-    public static String name = "Blaze2D Engine";
     private static long window;
+    //Window specific variables
+    public static String name = "Blaze Engine";
     private static byte minimized = 0;
     private static byte initialized = 0;
 

@@ -10,11 +10,11 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 
 public class FBO {
-    private final int width;
-    private final int height;
     private int frameBufferID;
     private Texture texture;
     private int depthBufferID;
+    private final int width;
+    private final int height;
 
     //Constructor to initialize width and height of the fbo
     protected FBO(Vector2 v) {

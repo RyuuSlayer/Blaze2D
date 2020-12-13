@@ -19,11 +19,12 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 
 public class MenuBar {
+    public Map<String, List<MenuItem>> menu = new LinkedHashMap<String, List<MenuItem>>();
+
     private final GUIStyle box;
+    private GUIStyle empty;
     private final GUIStyle play;
     private final GUIStyle stop;
-    public Map<String, List<MenuItem>> menu = new LinkedHashMap<String, List<MenuItem>>();
-    private GUIStyle empty;
     private String selected;
     private Color prevColor;
     private int selectedIndex = 0;

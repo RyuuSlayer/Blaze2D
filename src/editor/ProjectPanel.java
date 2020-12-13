@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectPanel extends engine.Object {
+    public boolean listView = true;
+
     private final GUIStyle box;
     private final GUIStyle empty = null;
     private final GUIStyle shaderIcon;
@@ -23,10 +25,9 @@ public class ProjectPanel extends engine.Object {
     private final GUIStyle scriptIcon;
     private final GUIStyle sceneIcon;
     private final GUIStyle fontIcon;
+    private GUIStyle skinIcon;
     private final GUIStyle audioIcon;
     private final Rect temp = new Rect(0, 0, 0, 0);
-    public boolean listView = true;
-    private GUIStyle skinIcon;
     private DataType selectedType = DataType.Texture;
     private int i;
     private int scroll1 = 0;

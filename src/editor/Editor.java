@@ -13,10 +13,7 @@ import math.Mathf;
 import math.Rect;
 import math.Vector2;
 import org.lwjgl.opengl.GL11;
-import physics.AABBCollider;
-import physics.BoundsCollider;
-import physics.CircleCollider;
-import physics.Collider;
+import physics.*;
 
 import java.io.*;
 import java.lang.Object;
@@ -437,6 +434,9 @@ public class Editor {
                 AABBCollider ac = (AABBCollider) col;
                 Rect r = new Rect(col.gameObject().Position().Add(ac.anchor), ac.size);
                 DrawRect(camera, r, Color.green);
+            } else if (col instanceof LineCollider) {
+                LineCollider lc = (LineCollider) col;
+                DrawLine(camera, lc.GetWorldStart(), lc.GetWorldEnd(), Color.green);
             }
         }
 
@@ -478,6 +478,9 @@ public class Editor {
                     AABBCollider ac = (AABBCollider) col;
                     Rect r = new Rect(col.gameObject().Position().Add(ac.anchor), ac.size);
                     DrawRect(camera, r, Color.green);
+                } else if (col instanceof LineCollider) {
+                    LineCollider lc = (LineCollider) col;
+                    DrawLine(camera, lc.GetWorldStart(), lc.GetWorldEnd(), Color.green);
                 }
             }
         }
@@ -485,10 +488,37 @@ public class Editor {
         GL11.glEnable(GL_DEPTH_TEST);
     }
 
+    private static void DrawLine(Camera c, Vector2 start, Vector2 end, Color color) {
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glColor3f(color.r, color.g, color.b);
+
+        Vector2 pos = c.gameObject().Position().Add(Application.Size().Mul(0.5f)).Add(cameraPosition);
+        GL11.glVertex2f(pos.x - start.x, pos.y - start.y);
+        GL11.glVertex2f(pos.x - end.x, pos.y - end.y);
+
+        GL11.glEnd();
+    }
+	
+	/*
+	private static void DrawLineStrip(Camera c, List<Vector2> v, Color color)
+	{
+		GL11.glBegin(GL11.GL_LINE_LOOP);
+		GL11.glColor3f(color.r, color.g, color.b);
+		Vector2 offset = c.gameObject().Position().Add(Application.Size().Mul(0.5f)).Add(cameraPosition);
+		
+		for(int i = 0; i < v.size(); i++)
+		{
+			Vector2 pos = offset.Sub(v.get(i));
+			GL11.glVertex2f(pos.x, pos.y);
+		}
+		GL11.glEnd();
+	}
+	*/
+
     private static void DrawRect(Camera c, Rect r, Color color) {
         GL11.glBegin(GL11.GL_LINE_LOOP);
         GL11.glColor3f(color.r, color.g, color.b);
-        Vector2 pos = c.gameObject().Position().Sub(r.GetPosition()).Add(Application.Size().Mul(0.5f)).Sub(cameraPosition);
+        Vector2 pos = c.gameObject().Position().Sub(r.GetPosition()).Add(Application.Size().Mul(0.5f)).Add(cameraPosition);
 
         GL11.glVertex2f(pos.x, pos.y);
         GL11.glVertex2f(pos.x, pos.y - r.height);
@@ -500,7 +530,7 @@ public class Editor {
     private static void DrawCircle(Camera c, Vector2 p, float r, Color color) {
         GL11.glBegin(GL11.GL_LINE_LOOP);
         GL11.glColor3f(color.r, color.g, color.b);
-        Vector2 pos = c.gameObject().Position().Sub(p).Add(Application.Size().Mul(0.5f)).Sub(cameraPosition);
+        Vector2 pos = c.gameObject().Position().Sub(p).Add(Application.Size().Mul(0.5f)).Add(cameraPosition);
 
         for (int o = 0; o < 16; o++) {
             float angle = (float) Math.toRadians(((float) o / 16f) * 360f);
@@ -522,7 +552,7 @@ public class Editor {
             p.setProperty("EditorRect", editorDrawArea.ToShortString());
 
             FileWriter writer = new FileWriter(f);
-            p.store(writer, "Logic Configuration");
+            p.store(writer, "Blaze Configuration");
             writer.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
